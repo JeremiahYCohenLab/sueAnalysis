@@ -1,0 +1,173 @@
+function [wsls, transChoiceMatxLow, transChoiceMatxHigh] = transitionAnalysis_opMD(xlFile, sheet, category, probs, tranWin, figFlag)
+
+if nargin < 6
+    figFlag = 0;
+end
+
+if nargin < 5
+    tranWin = 3;
+end
+
+if nargin < 4
+    pHigh = 90;
+    pLow = 50;
+else
+    pHigh = probs(1);
+    pLow = probs(2);
+end
+
+probDiffH = pHigh - 10;
+
+[root, sep] = currComputer();
+transChoiceMatxLow = []; 
+transChoiceMatxHigh = [];
+changeChoiceMatxLow = [];
+changeChoiceMatxHigh = [];
+prevRwdMatxLow = [];
+prevRwdMatxHigh = [];
+range = 20;
+
+[~, dayList, ~] = xlsread(xlFile, sheet);
+[~,col] = find(~cellfun(@isempty,strfind(dayList, category)) == 1);
+dayList = dayList(2:end,col);
+endInd = find(cellfun(@isempty,dayList),1);
+if ~isempty(endInd)
+    dayList = dayList(1:endInd-1,:);
+end
+
+for i = 1: length(dayList)
+    sessionName = dayList{i};
+    [animalName, date] = strtok(sessionName, 'd'); 
+    animalName = animalName(2:end);
+    date = date(1:9);
+    sessionFolder = ['m' animalName date];
+
+    if isstrprop(sessionName(end), 'alpha')
+        sessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session ' sessionName(end) sep sessionName '_sessionData_behav.mat'];
+    else
+        sessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep sessionName '_sessionData_behav.mat'];
+    end
+
+    if exist(sessionDataPath,'file')
+        load(sessionDataPath)
+    else
+        [behSessionData, blockSwitch, ~, ~] = generateSessionData_operantMatchingDecoupled(sessionName);
+    end
+
+    responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window
+    omitInds = isnan([behSessionData.rewardTime]); 
+
+    tempBlockSwitch = blockSwitch;
+    for i = 2:length(blockSwitch)
+        subVal = sum(omitInds(tempBlockSwitch(i-1):tempBlockSwitch(i)));
+        blockSwitch(i:end) = blockSwitch(i:end) - subVal;
+    end
+
+    allReward_R = [behSessionData(responseInds).rewardR]; 
+    allReward_L = [behSessionData(responseInds).rewardL]; 
+    allChoices = NaN(1,length(behSessionData(responseInds)));
+    allChoices(~isnan(allReward_R)) = 1;
+    allChoices(~isnan(allReward_L)) = -1;
+    
+    allRewardsBin = nansum([[behSessionData(responseInds).rewardR]; [behSessionData(responseInds).rewardL]]);
+    prevRewardsBin = [0 allRewardsBin(1:end-1)];
+    changeChoice = [0 abs(diff(allChoices)) > 0];
+    
+
+    rwdProb_R = [behSessionData(responseInds).rewardProbR]; 
+    rwdProb_L = [behSessionData(responseInds).rewardProbL]; 
+
+    for j = 2:(length(blockSwitch) - 1)
+        tmpInd = blockSwitch(j);
+        if tmpInd-tranWin > 0 & tmpInd+tranWin <= length(allChoices)
+            if rwdProb_R(tmpInd-1) == pHigh & rwdProb_R(tmpInd) == 10 & any(diff(rwdProb_L(tmpInd-tranWin:tmpInd+1)) == probDiffH)
+                    if (tmpInd - range - 1) > 0 & length(allChoices) > (tmpInd + range)
+                        transChoiceMatxHigh = [transChoiceMatxHigh; allChoices((tmpInd-range+1):(tmpInd+range))];
+                        changeChoiceMatxHigh = [changeChoiceMatxHigh; changeChoice((tmpInd-range+1):(tmpInd+range))];
+                        prevRwdMatxHigh = [prevRwdMatxHigh; prevRewardsBin((tmpInd-range+1):(tmpInd+range))];
+                    end
+            elseif rwdProb_R(tmpInd-1) == pLow & rwdProb_R(tmpInd) == 10 & any(diff(rwdProb_L(tmpInd-tranWin:tmpInd+1)) == probDiffH)
+                    if (tmpInd - range - 1) > 0 & length(allChoices) > (tmpInd + range)
+                        transChoiceMatxLow = [transChoiceMatxLow; allChoices((tmpInd-range+1):(tmpInd+range))];
+                        changeChoiceMatxLow = [changeChoiceMatxLow; changeChoice((tmpInd-range+1):(tmpInd+range))];
+                        prevRwdMatxLow = [prevRwdMatxLow; prevRewardsBin((tmpInd-range+1):(tmpInd+range))];
+                    end
+            elseif rwdProb_L(tmpInd) == pHigh & rwdProb_L(tmpInd+1) == 10 & any(diff(rwdProb_R(tmpInd-tranWin:tmpInd+1)) == probDiffH)
+                    if (tmpInd - range - 1) > 0 & length(allChoices) > (tmpInd + range)
+                        transChoiceMatxHigh = [transChoiceMatxHigh; (allChoices((tmpInd-range+1):(tmpInd+range))*-1)];
+                        changeChoiceMatxHigh = [changeChoiceMatxHigh; changeChoice((tmpInd-range+1):(tmpInd+range))];
+                        prevRwdMatxHigh = [prevRwdMatxHigh; prevRewardsBin((tmpInd-range+1):(tmpInd+range))];
+                    end 
+            elseif rwdProb_L(tmpInd) == pLow & rwdProb_L(tmpInd+1) == 10 & any(diff(rwdProb_R(tmpInd-tranWin:tmpInd+1)) == probDiffH)
+                    if (tmpInd - range - 1) > 0 & length(allChoices) > (tmpInd + range)
+                        transChoiceMatxLow = [transChoiceMatxLow; (allChoices((tmpInd-range+1):(tmpInd+range))*-1)];
+                        changeChoiceMatxLow = [changeChoiceMatxLow; changeChoice((tmpInd-range+1):(tmpInd+range))];
+                        prevRwdMatxLow = [prevRwdMatxLow; prevRewardsBin((tmpInd-range+1):(tmpInd+range))];
+                    end
+            end   
+        end
+    end
+end   
+
+
+lowAvg = mean(transChoiceMatxLow,1);
+highAvg = mean(transChoiceMatxHigh,1);
+
+for tInd = 1:range*2
+    lS_low(tInd) = sum(changeChoiceMatxLow(find(prevRwdMatxLow(:,tInd)==0), tInd))/sum(prevRwdMatxLow(:,tInd)==0);
+    sem_lS_low(tInd) = sem_bernoulli(sum(changeChoiceMatxLow(find(prevRwdMatxLow(:,tInd)==0), tInd)), sum(prevRwdMatxLow(:,tInd)==0));
+    lS_high(tInd) = sum(changeChoiceMatxHigh(find(prevRwdMatxHigh(:,tInd)==0), tInd))/sum(prevRwdMatxHigh(:,tInd)==0);
+    sem_lS_high(tInd) = sem_bernoulli(sum(changeChoiceMatxHigh(find(prevRwdMatxHigh(:,tInd)==0), tInd)), sum(prevRwdMatxHigh(:,tInd)==0));
+
+    wS_low(tInd) = 1 - ((sum(changeChoiceMatxLow(find(prevRwdMatxLow(:,tInd)==1), tInd)))/sum(prevRwdMatxLow(:,tInd)==1));
+    sem_wS_low(tInd) = sem_bernoulli(sum(~changeChoiceMatxLow(find(prevRwdMatxLow(:,tInd)==1), tInd)), sum(prevRwdMatxLow(:,tInd)==1));
+    wS_high(tInd) = 1 - ((sum(changeChoiceMatxHigh(find(prevRwdMatxHigh(:,tInd)==1), tInd)))/sum(prevRwdMatxHigh(:,tInd)==1));
+    sem_wS_high(tInd) = sem_bernoulli(sum(~changeChoiceMatxHigh(find(prevRwdMatxHigh(:,tInd)==1), tInd)), sum(prevRwdMatxHigh(:,tInd)==1));
+end
+
+if figFlag
+    figure; 
+    subplot(1,3,1); hold on;
+    x = [-range+1:range];
+    plot(x,lowAvg, 'r', 'linewidth', 1.3)
+    plot(x,highAvg, 'b', 'linewidth', 1.3)
+    ylabel('Choice average')
+    xlabel('Trials from switch')
+    plot([0 0], [-1 1], '--k')
+    ylim([-1 1])
+    set(gca, 'tickdir', 'out')
+
+    subplot(1,3,2); hold on
+    errorbar(x, wS_low, sem_wS_low, 'r', 'linewidth', 1.3)
+    errorbar(x, wS_high, sem_wS_high, 'b', 'linewidth', 1.3)
+    ylabel('Win-stay')
+    xlabel('Trials from switch')
+    y = ylim;
+    plot([0 0], y, '--k')
+    set(gca, 'tickdir', 'out')
+
+    subplot(1,3,3); hold on
+    errorbar(x, lS_low, sem_lS_low, 'r', 'linewidth', 1.3)
+    errorbar(x, lS_high, sem_lS_high, 'b', 'linewidth', 1.3)
+    ylabel('Lose-shift')
+    xlabel('Trials from switch')
+    legend('medium -> low', 'high -> low')
+    y = ylim;
+    plot([0 0], y, '--k')
+    set(gca, 'tickdir', 'out')
+
+    set(gcf, 'position', [-1913 409 1910 428], 'renderer', 'painters')
+end
+
+    wsls.wS_low = wS_low;
+    wsls.sem_wS_low = sem_wS_low;
+    wsls.wS_high = wS_high;
+    wsls.sem_wS_high = sem_wS_low;
+    wsls.lS_low = lS_low;
+    wsls.sem_lS_low = sem_lS_low;
+    wsls.lS_high = lS_high;
+    wsls.sem_lS_high = sem_lS_high;
+
+
+end
+    

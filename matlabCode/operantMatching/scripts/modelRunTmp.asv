@@ -1,0 +1,35 @@
+%% O P T O   M I C E
+
+stan_qLearningFit_manip('goodBehDays.xlsx', 'CG93', 'blt', 'optot', 'iter', 10000, 'modelName', 'sixParam_absPePeAN_bi',...
+'paramNames', {'aNscale', 'aNmin', 'aP', 'aF', 'aPE', 'beta'})
+
+stan_qLearningFit_manip('goodBehDays.xlsx', 'CG95', 'blt', 'optot', 'iter', 10000, 'modelName', 'sixParam_absPePeAN_bi',...
+'paramNames', {'aNscale', 'aNmin', 'aP', 'aF', 'aPE', 'beta'})
+
+stan_qLearningFit_manip('goodBehDays.xlsx', 'CG95', 'blt', 'optot', 'iter', 10000, 'modelName', 'sixParam_absPePeAN_bi',...
+'paramNames', {'aNscale', 'aNmin', 'aP', 'aF', 'aPE', 'beta'})
+
+stan_qLearningFit_manip('goodBehDays.xlsx', 'TP02', 'blt', 'optot', 'iter', 10000, 'modelName', 'sixParam_absPePeAN_bi',...
+'paramNames', {'aNscale', 'aNmin', 'aP', 'aF', 'aPE', 'beta'})
+
+stan_qLearningFit_manip('goodBehDays.xlsx', 'TP03', 'blt', 'optot', 'iter', 10000, 'modelName', 'sixParam_absPePeAN_bi',...
+'paramNames', {'aNscale', 'aNmin', 'aP', 'aF', 'aPE', 'beta'})
+
+
+convertIntanToTT_multiple('date', 1214)
+
+
+%% A L L   N I N E T Y   M I C E
+
+fitStanModels('animals', 'meow', 'iter', 30000)
+
+%% F L I C K   p P   M I C E
+
+fitStanModels('animals', 'pP_3probs', 'modelName', 'eightParam_absPePeAN_bi_fLick', 'lickBeh', 'f', 'iter', 10000, ...
+    'params', {'aNscale', 'aNmin', 'aP', 'aPE'}, 'data', fullStruct)
+
+fitStanModels('animals', 'pP_5ht', 'modelName', 'eightParam_absPePeAN_bi_fLick', 'lickBeh', 'f', 'iter', 10000, ...
+    'params', {'aNscale', 'aNmin', 'aP', 'aPE'}, 'data', fullStruct)
+
+
+

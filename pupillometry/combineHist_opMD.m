@@ -46,7 +46,7 @@ for i = 1: length(dayList)
         [behSessionData, ~, ~, ~] = generateSessionData_operantMatchingDecoupled(sessionName);
     end
     
- %%
+ %% 
     [behSessionData, states, trans_fit, ~] = fitHmmOpt(sessionName);
     responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window
     omitInds = isnan([behSessionData.rewardTime]); 
