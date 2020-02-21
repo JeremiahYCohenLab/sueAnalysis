@@ -10,7 +10,7 @@ p.parse(varargin{:});
 
 [root, sep] = currComputer();
 
-[weights, dayList, ~] = xlsread(xlFile, animal);
+[weights, dayList, ~] = xlsread([root xlFile], animal);
 [~,col] = find(~cellfun(@isempty,strfind(dayList, category)) == 1);
 dayList = dayList(2:end,col);
 endInd = find(cellfun(@isempty,dayList),1);
@@ -67,7 +67,7 @@ for i = 1: length(dayList)
     allRewards = zeros(1,length(allChoices));
     allRewards(logical(allReward_R)) = 1;
     allRewards(logical(allReward_L)) = 1;
-    timeInSesh = ([behSessionData(responseInds).CSon] - behSessionData(1).CSon) / 1000;
+    timeInSesh = ([behSessionData(responseInds).CSon] - behSessionData(1).CSon) / (1000 * behSessionData(responseInds(end)).CSon - behSessionData(responseInds(1)).CSon);
     changeChoice = [0 abs(diff(allChoices)) > 0];
 
     %create binned outcome matrices
@@ -78,12 +78,12 @@ for i = 1: length(dayList)
         %find time between "current" choice and previous rewards, up to timeMax in the past 
         timeTmp = [];
         timeTmpNoRwd = [];
-        while j-k > 0 & behSessionData(responseInds(j)).rewardTime - behSessionData(responseInds(j-k)).rewardTime < timeMax
+        while j-k > 0 & behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(j-k)).respondTime < timeMax
             if behSessionData(responseInds(j-k)).rewardL == 1 || behSessionData(responseInds(j-k)).rewardR == 1
-                timeTmp = [timeTmp (behSessionData(responseInds(j)).rewardTime - behSessionData(responseInds(j-k)).rewardTime)];
+                timeTmp = [timeTmp (behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(j-k)).respondTime)];
             end
             if behSessionData(responseInds(j-k)).rewardL == 0 || behSessionData(responseInds(j-k)).rewardR == 0
-                timeTmpNoRwd = [timeTmpNoRwd (behSessionData(responseInds(j)).rewardTime - behSessionData(responseInds(j-k)).rewardTime)];
+                timeTmpNoRwd = [timeTmpNoRwd (behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(j-k)).respondTime)];
             end
             k = k + 1;
         end
@@ -108,8 +108,8 @@ for i = 1: length(dayList)
     
     %fill in NaNs at beginning of session
     j = 2;
-    while behSessionData(responseInds(j)).rewardTime - behSessionData(responseInds(1)).rewardTime < timeMax
-        tmpDiff = behSessionData(responseInds(j)).rewardTime - behSessionData(responseInds(1)).rewardTime;
+    while behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(1)).respondTime < timeMax
+        tmpDiff = behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(1)).respondTime;
         binnedDiff = discretize(tmpDiff, timeBinEdges);
         rwdTmpMatx(binnedDiff:tMax,j) = NaN;
         noRwdTmpMatx(binnedDiff:tMax,j) = NaN;
@@ -125,7 +125,7 @@ for i = 1: length(dayList)
     
     
     %% determine lick latency distributions for each spout
-    lickLat = [behSessionData(responseInds).rewardTime] - [behSessionData(responseInds).CSon];
+    lickLat = [behSessionData(responseInds).respondTime] - [behSessionData(responseInds).CSon];
     indsR = find(allChoices == 1);
     indsL = find(allChoices == -1);
     lickLat_R = zscore(lickLat(indsR));
@@ -189,7 +189,7 @@ if p.Results.plotFlag
     histogram(stayLickLat,20,'FaceColor', colors(2,:), 'Normalization', 'Probability')
     histogram(switchLickLat,20,'FaceColor', colors(5,:), 'Normalization', 'Probability')
     ylabel('probability')
-    xlabel('lick latency (ms)')
+    xlabel('z-scored lick latency')
     legend('stay', 'switch')
     set(gca, 'tickdir', 'out')
     
@@ -204,7 +204,7 @@ if p.Results.plotFlag
     errorbar([1:numBins], meanLat, semLat, 'Color', colors(3,:),'linewidth',2);
     xlim([0 numBins+1]);
     xticks([])
-    xlabel('time in session')
+    xlabel('normalized time in session')
     ylabel('z-scored lick latency')
     set(gca, 'tickdir', 'out')
     set(gcf, 'renderer', 'painters', 'position', [-1704 409 1552 420])

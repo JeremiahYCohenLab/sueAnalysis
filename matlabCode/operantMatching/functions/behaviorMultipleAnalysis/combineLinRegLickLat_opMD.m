@@ -3,12 +3,12 @@ function [glm_rwdLick, stayLickLat, switchLickLat, tMax, combinedITIlicks] = com
 p = inputParser;
 % default parameters if none given
 p.addParameter('revForFlag',0)
-p.addParameter('plotFlag', 0)
+p.addParameter('plotFlag', 1)
 p.parse(varargin{:});
 
 [root, sep] = currComputer();
 
-[weights, dayList, ~] = xlsread(xlFile, animal);
+[~, dayList, ~] = xlsread([root xlFile], animal);
 [~,col] = find(~cellfun(@isempty,strfind(dayList, category)) == 1);
 dayList = dayList(2:end,col);
 endInd = find(cellfun(@isempty,dayList),1);
@@ -31,9 +31,9 @@ for i = 1: length(dayList)
     sessionFolder = ['m' animalName date];
 
     if isstrprop(sessionName(end), 'alpha')
-        sessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep sessionName(end) sep sessionName '_sessionData.mat'];
+        sessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep sessionName(end) sep sessionName sep '_sessionData_behav.mat'];
     else
-        sessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sessionName '_sessionData.mat'];
+        sessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep sessionName '_sessionData_behav.mat'];
     end
 
     if exist(sessionDataPath,'file')
@@ -46,7 +46,7 @@ for i = 1: length(dayList)
     end
     
     %%generate reward matrix for tMax trials
-    responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window
+    responseInds = find(~isnan([behSessionData.respondTime])); % find CS+ trials with a response in the lick window
     allReward_R = [behSessionData(responseInds).rewardR]; 
     allReward_L = [behSessionData(responseInds).rewardL]; 
     allChoices = NaN(1,length(behSessionData(responseInds)));
@@ -68,7 +68,7 @@ for i = 1: length(dayList)
     
     
     %% determine and plot lick latency distributions for each spout
-    lickLat = [behSessionData(responseInds).rewardTime] - [behSessionData(responseInds).CSon];
+    lickLat = [behSessionData(responseInds).respondTime] - [behSessionData(responseInds).CSon];
     indsR = find(allChoices == 1);
     indsL = find(allChoices == -1);
     lickLat_R = zscore(lickLat(indsR));

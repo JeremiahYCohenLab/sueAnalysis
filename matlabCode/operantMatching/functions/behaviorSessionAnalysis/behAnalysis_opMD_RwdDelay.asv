@@ -238,7 +238,7 @@ ylabel('<-- L       R  -->')
 % time plot
 subplot(6,8,[9:16]); hold on
 xlabel('Time (min)')
-j = 1;
+
 for i = 1:length(behSessionData)
     currTime = (behSessionData(i).CSon - behSessionData(1).CSon)/1000/60; %convert to min
     if strcmp(behSessionData(i).trialType,'CSplus')
@@ -293,6 +293,7 @@ end
 glm_rwdANDnoRwd = fitglm([rwdMatx; noRwdMatx]', allChoice_R, 'distribution','binomial','link','logit'); rsq = num2str(round(glm_rwdANDnoRwd.Rsquared.Adjusted*100)/100);
 
 subplot(6,8,[39 40 47 48]); hold on
+
 relevInds = 2:tMax+1;
 coefVals = glm_rwdANDnoRwd.Coefficients.Estimate(relevInds);
 CIbands = coefCI(glm_rwdANDnoRwd);
@@ -308,6 +309,7 @@ errorU = abs(coefVals - CIbands(relevInds,2));
 errorbar((1:tMax)+0.2,coefVals,errorL,errorU,'Color','m','linewidth',2)
 xlabel('Outcome n Trials Back')
 ylabel('\beta Coefficient')
+
 legend('rwd', [sprintf('\n%s\n%s%s',['no rwd'], ['R^2' rsq ' | '], ['Int: ' num2str(round(100*glm_rwdANDnoRwd.Coefficients.Estimate(1))/100)])], ...
        'location','northeast')
 xlim([0.5 tMax+0.5])
