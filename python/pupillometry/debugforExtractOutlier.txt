@@ -1,0 +1,6 @@
+1. Install dlc in dlc environment
+2. Remove panda packages manaully away from packages(two of them)
+3. conda install pandas=0.25.1
+(downgrading directly doesn't work. )
+pandas
+pandas-1.0.1.dist-info

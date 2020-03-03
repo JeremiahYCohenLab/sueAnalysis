@@ -1,0 +1,158 @@
+function [error, startT, startFrame, ratioMax, pupilIdx] = timeAlign(session, plotFlag)
+%% calculate time projection of behavior time onto pupil time 
+session = 'mZS040d20200227';
+plotFlag = 1;
+unblockedError = false; 
+iterMaxReach = false;
+errorRate = 0.05;
+errorThresh = 2;
+iterMax = 20;
+iter = 0;
+%% training set
+[root,sep] = currComputer;
+   
+%% behavior
+[animalName, ~] = strtok(session, 'd'); 
+animalName = animalName(2:end);
+behSessionDataPath = [root animalName sep session sep 'sorted' sep 'session' sep session '_sessionData_behav.mat'];
+if exist(behSessionDataPath,'file')
+    load(behSessionDataPath)
+else
+    [behSessionData, ~, ~, ~] = generateSessionData_operantMatchingDecoupledRwdDelay(session);
+end
+
+%% load diameter and position
+videopath = [root animalName sep session sep 'pupil'];
+list = dir(videopath);
+position = list(~cellfun(@isempty, cellfun(@(x) regexp(x, '0.csv'), {list.name}, 'UniformOutput', false))).name;
+positionRaw = csvread([videopath sep position],3,0);
+%% Align time by finding maximum projection
+ratio = 20.5:0.01:21.5;
+ledLL = sign(positionRaw(:,16).*positionRaw(:,10) - 0.9999);
+ledQual = positionRaw(:,10);
+ledLL = ledLL .* (ledQual.^2);
+csT = [behSessionData(cellfun(@(x) strcmp(x,'CSplus'), {behSessionData.trialType})).CSon];
+csT = csT - csT(1);
+filter = ones(1,round(0.5 * mean(ratio)));
+accLL = conv(filter, 0.5 * (ledLL + 1));
+accLL = accLL(length(filter) : end);
+startFrameTemp = find(accLL > 0.6 * length(filter) & ledLL > 0 );
+startFrame = startFrameTemp(1);
+startTrial = 1;
+[ratioMax, ~, ~] = timeProjectionOpti2(ledLL, csT(1:50), startFrame, startTrial);
+%% check first error
+cskernel = ones(1, round(0.5 * ratioMax));
+[~, csF, csFT] = timeProjection(ledLL, csT, startFrame, startTrial, ratioMax);
+cs = zeros(1,length(csT));
+csQu = zeros(1,length(csT));
+for j = 1:length(csT)
+    if j < length(csFT)
+        cs(j) = csF(csFT(j):csFT(j) + round(0.5 * ratioMax))*ledLL(csFT(j):csFT(j) + round(0.5 * ratioMax));
+        csQu(j) = mean(ledQual(csFT(j):csFT(j) + round(0.5 * ratioMax)));
+    else
+        cs(j) = 0;
+        csQu(j) = 0;
+    end
+    
+end
+%%
+cs = length(cskernel) - csQu .* (length(cskernel) - cs);  
+error = find(cs < length(cskernel) - errorThresh);
+%% updating by adding start points
+while length(error) > errorRate*length(csT) && iter < iterMax
+    errorGaps = diff(error);
+    errorSeq = find(errorGaps(1:end-1) == 1 & errorGaps(2:end)== 1);
+    % break if errors are not blocked
+    if isempty(errorSeq)
+        unblockedError = true; 
+        break
+    end
+    % separating point
+    for a = 1:length(errorSeq)
+        if sum(ledLL(csFT(error(errorSeq(a))): csFT(error(errorSeq(a))) + 5)) > 0
+            errorSeq = error(errorSeq(a));
+            break;
+        end
+    end
+    
+    % adding starting points
+    startFramePlus = startFrameTemp(startFrameTemp > csFT(errorSeq) + 50);
+    startFramePlus = startFramePlus(1);
+    startFrame = sort([startFrame startFramePlus]);
+    startTrial = sort([startTrial errorSeq + 1]);
+    % optimizing with new startpoints
+    [ratioMax, ~, ~] = timeProjectionOpti2(ledLL, csT, startFrame, startTrial);   
+
+    % calculate error number
+    cskernel = ones(1, round(0.5 * ratioMax));
+    [~, csF, csFT] = timeProjection(ledLL, csT, startFrame, startTrial, ratioMax);
+    for j = 1:length(csT)
+        if j < length(csFT)
+            cs(j) = csF(csFT(j):csFT(j) + round(0.5 * ratioMax))*ledLL(csFT(j):csFT(j) + round(0.5 * ratioMax));
+            csQu(j) = mean(ledQual(csFT(j):csFT(j) + round(0.5 * ratioMax)));
+        else
+            cs(j) = 0;
+            csQu(j) = 0;
+        end
+    end
+    cs = length(cskernel) - csQu .* (length(cskernel) - cs); 
+    error = find(cs < length(cskernel) - errorThresh);
+    pupilIdx = ~(cs < length(cskernel) - errorThresh);
+    iter = iter + 1;
+end
+if length(error) > errorRate*length(csT) && iter == iterMax
+    iterMaxReach = true;
+end
+
+%% mapping cs+ to all trials
+csT = [behSessionData(cellfun(@(x) strcmp(x,'CSplus'), {behSessionData.trialType})).CSon];
+trialT = [behSessionData.CSon] - csT(1);
+csT = csT - csT(1);
+startT = zeros(size(startFrame));
+for j = 1:length(startFrame)
+    startT(j) = find(trialT == csT(startTrial(j)));
+end
+%% plotting everything
+[~, p] = timeProjectionOpti(ledLL, csT, startFrame, startTrial, ratio); 
+if plotFlag
+figure; hold on;
+screenSize = get(0,'Screensize');
+screenSize(4) = screenSize(4) - 100;
+set(gcf, 'Position', screenSize)
+suptitle(session)
+subplot(1,3,1)
+plot(ratio, p);
+line([ratioMax ratioMax], minmax(p), 'Color', 'red');
+text(21, 999, sprintf('errorRate %.2g', length(error)/length(csT)));
+if unblockedError
+    text(20.5, 999, 'unblockedErrors');
+end
+if iterMaxReach
+    text(20.5, 900, 'maxIter reached');
+end
+xlim([20.5 21.5])
+
+subplot(2,3,[2,3]); hold on;
+plot(csF, 'b');
+plot(ledLL, 'r');
+for j=1:length(csFT)
+    text(csFT(j), 1, num2str(j), 'FontSize', 10);
+end
+scatter(csFT(error) + 0.5*(length(cskernel)), 0.5*ones(size(error)), 30, 'filled')
+xlim([1 2000]);
+ylim([0 1.2]);
+
+subplot(2,3,[5,6]); hold on;
+plot(csF, 'b');
+plot(ledLL, 'r');
+for j=1:length(csFT)
+    text(csFT(j), 1, num2str(j), 'FontSize', 10);
+end
+scatter(csFT(error) + 0.5*(length(cskernel)), 0.5*ones(size(error)), 30, 'filled')
+xlim([csFT(end)-2000 csFT(end)]);
+ylim([0 1.2]);
+end
+
+
+
+
