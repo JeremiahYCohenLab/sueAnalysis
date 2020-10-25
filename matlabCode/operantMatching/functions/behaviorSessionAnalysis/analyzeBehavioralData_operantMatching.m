@@ -53,7 +53,7 @@ if any(~cellfun(@isempty,strfind({sortedFolder.name},'_behav.mat')))
         sessionData = behSessionData;
     end 
 else
-    [sessionData, blockSwitch, blockProbs] = generateSessionData_behav_operantMatching(sessionName);
+    [sessionData, blockSwitch, blockProbs] = generateSessionData_behav_operantMatching(fileOrFolder);
 end
 
 

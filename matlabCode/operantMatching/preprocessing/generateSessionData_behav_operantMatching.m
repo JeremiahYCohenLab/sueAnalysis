@@ -34,7 +34,7 @@ blockProbs = [blockProbs {sessionText{i}(end-4:end)}];
 
 for i = 1:length(sessionText)
     % determine beginning and end of trial
-    if regexp(sessionText{i},'Trial ') > 0 & regexp(sessionText{i},'Trial ') < 3 % trial begin 
+    if regexp(sessionText{i},'Trial ') > 0 && regexp(sessionText{i},'Trial ') < 3 % trial begin 
         temp1 = regexp(sessionText{i},'('); temp2 = regexp(sessionText{i},')');
         currTrial = str2double(sessionText{i}(temp1(1)+1:temp2(1)-1)); % current trial is in between parentheses
         
