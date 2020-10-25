@@ -1217,7 +1217,7 @@ public:
             current_statement_begin__ = 112;
             lp_accum__.add(normal_log<propto__>(aF_pr, 0, 1));
             current_statement_begin__ = 113;
-            lp_accum__.add(normal_log<propto__>(aPE_pr, 0, 10));
+            lp_accum__.add(normal_log<propto__>(aPE_pr, 0, 1));
             current_statement_begin__ = 115;
             lp_accum__.add(normal_log<propto__>(beta_pr, 0, 1));
             current_statement_begin__ = 117;
@@ -1229,7 +1229,7 @@ public:
             current_statement_begin__ = 120;
             lp_accum__.add(normal_log<propto__>(d_aF_pr, 0, 1));
             current_statement_begin__ = 121;
-            lp_accum__.add(normal_log<propto__>(d_aPE_pr, 0, 10));
+            lp_accum__.add(normal_log<propto__>(d_aPE_pr, 0, 1));
             current_statement_begin__ = 123;
             lp_accum__.add(normal_log<propto__>(d_beta_pr, 0, 1));
             current_statement_begin__ = 127;

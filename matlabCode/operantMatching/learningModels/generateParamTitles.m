@@ -12,7 +12,7 @@ for i = 1:length(paramNames)
         case 'aP'
             titles{i} = '\alpha_P_P_E';
         case 'aF'
-            titles{i} = '\alpha_F_o_r_g_e_t';
+            titles{i} = '\xi';
         case 'aPE'
             titles{i} = '\alpha_\sigma';
         case 'beta'
@@ -23,6 +23,8 @@ for i = 1:length(paramNames)
             titles{i} = '\beta minimum';
         case 'k'
             titles{i} = '\kappa';
+        case 'peBar'
+            titles{i} = '$\bar{\upsilon}$';
         otherwise
             titles{i} = paramNames{i};
     end

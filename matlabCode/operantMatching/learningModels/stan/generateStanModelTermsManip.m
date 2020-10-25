@@ -1,4 +1,4 @@
-function [t] = generateStanModelTermsManip(modelType, modelPath, sessionName, preFlag, sessionFlag, revForFlag)
+function [t, o] = generateStanModelTermsManip(modelType, modelPath, sessionName, preFlag, sessionFlag, revForFlag)
 
 if nargin < 5
     sessionFlag = 1;
@@ -35,7 +35,9 @@ if preFlag
     paramInds = paramInds(1,:);
 else
     paramInds = paramInds(2,:);
-    sessionInd = sessionInd - size(dayList,1);
+    if sessionFlag
+        sessionInd = sessionInd - size(dayList,1);
+    end
 end
 
 for j = 1:length(paramInds)
@@ -43,7 +45,7 @@ for j = 1:length(paramInds)
         tmp = eval(['samples.' mdlFields{paramInds(1,j)}]);
         startValues(j) = median(tmp(:,sessionInd(1)));
     else
-        startValues(j) = median(eval(['samples.mu_' mdlFields{paramInds(j)}]));
+        startValues(j) = median(eval(['samples.' mdlFields{paramInds(j)}]));
     end
 end 
 

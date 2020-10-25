@@ -26,5 +26,5 @@ end
 if nargin > 4
     subplot(figHandle)
 end
-hOut = plot(x, y, 'Color', color, 'linewidth', 2); hold on;
+hOut = plot(x, y, 'color', color, 'linewidth', 2); hold on;
 fill([x fliplr(x)], [yU fliplr(yL)], color, 'facealpha', 0.25, 'edgecolor', 'none')

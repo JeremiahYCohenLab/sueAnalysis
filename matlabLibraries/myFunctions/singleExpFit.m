@@ -27,7 +27,7 @@ end
 ft = fittype( 'a*exp(-(1/b)*(x))', 'independent', 'x', 'dependent', 'y' );
 opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
 opts.Display = 'Off';
-opts.StartPoint = [0.421761282626275 0.915735525189067];
+opts.StartPoint = [0.421761282626275 1];
 
 % Fit model to data.
 [fitresult, gof] = fit( xData, yData, ft, opts );

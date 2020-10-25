@@ -17,8 +17,8 @@ static int current_statement_begin__;
 
 stan::io::program_reader prog_reader__() {
     stan::io::program_reader reader;
-    reader.add_event(0, 0, "start", "C:/Users/cooper_PC/Desktop/githubRepositories/cooperAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_6params_opponency_rBarStart.stan");
-    reader.add_event(153, 151, "end", "C:/Users/cooper_PC/Desktop/githubRepositories/cooperAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_6params_opponency_rBarStart.stan");
+    reader.add_event(0, 0, "start", "C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_6params_opponency_rBarStart.stan");
+    reader.add_event(153, 151, "end", "C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_6params_opponency_rBarStart.stan");
     return reader;
 }
 
@@ -599,7 +599,7 @@ public:
             // model body
 
             current_statement_begin__ = 46;
-            lp_accum__.add(normal_log<propto__>(mu_p, 0, 1));
+            lp_accum__.add(normal_log<propto__>(mu_p, 0, 0.8));
             current_statement_begin__ = 47;
             lp_accum__.add(cauchy_log<propto__>(sigma, 0, 1));
             current_statement_begin__ = 50;

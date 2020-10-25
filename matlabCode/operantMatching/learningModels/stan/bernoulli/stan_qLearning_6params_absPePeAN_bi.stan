@@ -26,16 +26,16 @@ parameters {
 }
 transformed parameters {
   // session-level parameters
-  vector<lower=0, upper=2>[N] aNscale;
-  vector<lower=0, upper=2>[N] aNmin;
+  vector<lower=0, upper=1>[N] aNscale;
+  vector<lower=0, upper=1>[N] aNmin;
   vector<lower=0, upper=1>[N] aP;
   vector<lower=0, upper=1>[N] aF;
   vector<lower=0, upper=1>[N] aPE;
   vector<lower=0, upper=10>[N] beta;
 
   for (n in 1:N) {
-    aNscale[n] = Phi_approx(mu_p[1] + sigma[1] * aNscale_pr[n]) * 2;
-    aNmin[n]   = Phi_approx(mu_p[2] + sigma[2] * aNmin_pr[n]) * 2;
+    aNscale[n] = Phi_approx(mu_p[1] + sigma[1] * aNscale_pr[n]);
+    aNmin[n]   = Phi_approx(mu_p[2] + sigma[2] * aNmin_pr[n]);
     aP[n]      = Phi_approx(mu_p[3] + sigma[3] * aP_pr[n]);
     aF[n]      = Phi_approx(mu_p[4] + sigma[4] * aF_pr[n]);
     aPE[n]     = Phi_approx(mu_p[5] + sigma[5] * aPE_pr[n]);
@@ -44,7 +44,7 @@ transformed parameters {
 }
 model {
   // Hyperparameters
-  mu_p  ~ normal(0, 1);
+  mu_p  ~ normal(0, 0.8);
   sigma ~ cauchy(0, 1);
 
   // individual parameters
@@ -99,14 +99,14 @@ model {
         }
         Q[2] = Q[2] * aF[n];
       }
-      peBar += aPE[n] * (pePE);
+      peBar += aPE[n] * pePE;
     }
   }
 }
 generated quantities {
   // For group level parameters
-  real<lower=0, upper=2> mu_aNscale;
-  real<lower=0, upper=2> mu_aNmin;
+  real<lower=0, upper=1> mu_aNscale;
+  real<lower=0, upper=1> mu_aNmin;
   real<lower=0, upper=1> mu_aP;
   real<lower=0, upper=1> mu_aF;
   real<lower=0, upper=1> mu_aPE;
@@ -125,8 +125,8 @@ generated quantities {
     }
   }
 
-  mu_aNscale = Phi_approx(mu_p[1]) * 2;
-  mu_aNmin   = Phi_approx(mu_p[2]) * 2;
+  mu_aNscale = Phi_approx(mu_p[1]);
+  mu_aNmin   = Phi_approx(mu_p[2]);
   mu_aP      = Phi_approx(mu_p[3]);
   mu_aF      = Phi_approx(mu_p[4]);
   mu_aPE     = Phi_approx(mu_p[5]); 
@@ -182,7 +182,7 @@ generated quantities {
           }
           Q[2] = Q[2] * aF[n];
         }
-        peBar += aPE[n] * (pePE);
+        peBar += aPE[n] * pePE;
       }
     }
   }

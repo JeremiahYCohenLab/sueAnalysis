@@ -3,13 +3,20 @@ function compareLH(xlFile, sheet, beh, varargin)
 %task and model parameters
 p = inputParser;
 % default parameters if none given
-p.addParameter('modelNames', {'fourParam', 'sixParam_absPePeAN_bi'})
-p.addParameter('compareType', 'across');
-p.addParameter('modelBeh', 'preS');
+p.addParameter('modelNames', {'fourParam', 'sixParam_absPePeAN_bi', 'eightParam_absPePeAN_bi_bias_k', 'eightParam_absPePeAN_exp_bias_k'})
+p.addParameter('compareType', 'same');
+p.addParameter('modelBeh', 'clean');
 p.addParameter('revForFlag', 0);
 p.addParameter('plotFlag', 1);
-p.addParameter('bernFlag', [1 1]);
+p.addParameter('bernFlag', []);
+p.addParameter('sessionFlag', 1);
 p.parse(varargin{:});
+
+if isempty(p.Results.bernFlag)
+    bernFlag = ones(1,length(p.Results.modelNames));
+else
+    bernFlag = p.Results.bernFlag;
+end
 
 modelNames = p.Results.modelNames;
 [root, sep] = currComputer();
@@ -30,7 +37,7 @@ switch p.Results.compareType
     case 'all'
         animalName = 'all';
         for currMod = 1:length(p.Results.modelNames)
-            if p.Results.bernFlag(currMod)
+            if bernFlag(currMod)
                 modelPath = [root animalName sep animalName 'sorted' sep 'stan' sep 'bernoulli' sep modelNames{currMod} sep animalName...
                 beh '_' modelNames{currMod} '.mat'];
             else
@@ -39,7 +46,7 @@ switch p.Results.compareType
             end
             for currSesh = 1:length(dayList)
                 sessionName = dayList{currSesh};
-                t = generateStanModelTerms_opMD(modelNames{currMod}, modelPath, sessionName, 1, p.Results.revForFlag);
+                t = generateStanModelTerms_opMD(modelNames{currMod}, modelPath, sessionName, p.Results.sesionFlag, p.Results.revForFlag);
                 LH(currSesh, currMod) = t.LH;
                 [aic(currSesh, currMod), bic(currSesh, currMod)] = aicbic(-1*t.LH, length(t.params), length(t.probChoice));
             end
@@ -52,7 +59,7 @@ switch p.Results.compareType
             animalName = animalName(2:end);
             if strcmp(animalName, prevAnimal) == 0
                 for currMod = 1:length(p.Results.modelNames)
-                    if p.Results.bernFlag(currMod)
+                    if bernFlag(currMod)
                         modelPath = [root animalName sep animalName 'sorted' sep 'stan' sep 'bernoulli' sep modelNames{currMod} sep animalName...
                         p.Results.modelBeh '_' modelNames{currMod} '.mat'];
                     else
@@ -62,7 +69,7 @@ switch p.Results.compareType
                     for currS = 1:length(dayList)
                         if regexp(dayList{currS}, animalName)
                             sessionName = dayList{currS};
-                            t = generateStanModelTerms_opMD(modelNames{currMod}, modelPath, sessionName, 0, p.Results.revForFlag);
+                            t = generateStanModelTerms_opMD(modelNames{currMod}, modelPath, sessionName, p.Results.sesionFlag, p.Results.revForFlag);
                             LH(currS, currMod) = t.LH;
                             [aic(currS, currMod), bic(currS, currMod)] = aicbic(-1*t.LH, length(t.params), length(t.probChoice));
                         end
@@ -78,15 +85,16 @@ switch p.Results.compareType
             animalName = animalName(2:end);
 
             for currMod = 1:length(p.Results.modelNames)
-                if p.Results.bernFlag(currMod)
+                if bernFlag(currMod)
                     modelPath = [root animalName sep animalName 'sorted' sep 'stan' sep 'bernoulli' sep modelNames{currMod} sep animalName...
                     beh '_' modelNames{currMod} '.mat'];
                 else
                     modelPath = [root animalName sep animalName 'sorted' sep 'stan' sep modelNames{currMod} sep animalName...
                     beh '_' modelNames{currMod} '.mat'];
                 end
-                t = generateStanModelTerms_opMD(modelNames{currMod}, modelPath, sessionName, 1, p.Results.revForFlag);
+                t = generateStanModelTerms_opMD(modelNames{currMod}, modelPath, sessionName, p.Results.sessionFlag, p.Results.revForFlag);
                 LH(currSesh, currMod) = t.LH;
+                meow(currSesh, :) = t.params;
                 [aic(currSesh, currMod), bic(currSesh, currMod)] = aicbic(-1*t.LH, length(t.params), length(t.probChoice));
                 if currSesh == 1
                     numParams(currMod) = length(t.params);

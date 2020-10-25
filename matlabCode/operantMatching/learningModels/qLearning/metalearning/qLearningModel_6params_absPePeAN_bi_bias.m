@@ -1,0 +1,60 @@
+function [LH, probChoice, Q, pe, pePe, aN, peBar] = qLearningModel_6params_absPePeAN_bi_bias(startValues, choice, outcome)
+
+aNscale = startValues(1);
+aNmin = startValues(2);
+aP = startValues(3);
+aPE = startValues(4);
+beta = startValues(5);
+if length(startValues) == 6
+    bias = startValues(6);
+else
+    bias = 0;
+end
+
+trials = length(choice);
+Q = zeros(trials+1,2);
+aN = zeros(trials,1);
+pe = zeros(trials,1);
+pePe = zeros(trials,1);
+peBar = zeros(trials+1,1);
+
+% Call learning rule
+for t = 1 : trials
+    if choice(t, 1) == 1 % right choice
+        pe(t) = outcome(t, 1) - Q(t, 1);
+        pePe(t) = abs(pe(t)) - peBar(t);
+        aN(t) = pePe(t) * aNscale + aNmin;
+        if aN(t) < 0
+            aN(t) = 0;
+        end
+        if pe(t) < 0
+            Q(t+1, 1) = Q(t, 1) + aN(t) * pe(t);
+        else
+            Q(t+1, 1) = Q(t, 1) + aP * pe(t);
+        end
+        Q(t+1, 2) = Q(t, 2);
+    else % left choice
+        pe(t) = outcome(t, 2) - Q(t, 2);
+        pePe(t) = abs(pe(t)) - peBar(t);
+        aN(t) = pePe(t) * aNscale + aNmin;
+        if aN(t) < 0
+            aN(t) = 0;
+        end
+        if pe(t) < 0
+            Q(t+1, 2) = Q(t, 2) + aN(t) * pe(t);
+        else
+            Q(t+1, 2) = Q(t, 2) + aP * pe(t);
+        end
+        Q(t+1, 1) = Q(t, 1);
+    end
+    peBar(t+1) = peBar(t) + aPE * pePe(t);
+end
+
+
+% Call softmax  rule
+probChoice = logistic([beta.*(Q(:, 1)-Q(:, 2)) + bias, ...
+                       beta.*(Q(:, 2)-Q(:, 1)) - bias]);
+
+% To calculate likelihood:
+LH = likelihood(choice,probChoice(1:end-1,:));
+end

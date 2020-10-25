@@ -1,10 +1,10 @@
-function [glm_rwdLick] = combineLinRegLickLat_opM(xlFile, animal, category)
+function [combinedRewardsMatx,combinedLickLat] = combineLinRegLickLat_opM(xlFile, animal, category)
 
 %make flexible for M and MD, run on lesioned animals
 
 [root, sep] = currComputer();
 
-[weights, dayList, ~] = xlsread(xlFile, animal);
+[weights, dayList, ~] = xlsread([root xlFile], animal);
 [~,col] = find(~cellfun(@isempty,strfind(dayList, category)) == 1);
 dayList = dayList(2:end,col);
 endInd = find(cellfun(@isempty,dayList),1);
@@ -17,29 +17,35 @@ tMax = 10;
 
 
 for i = 1: length(dayList)
-    sessionName = dayList{i};
+    sessionName = dayList{i};                       %extract relevant info from session title
     [animalName, date] = strtok(sessionName, 'd'); 
     animalName = animalName(2:end);
     date = date(1:9);
     sessionFolder = ['m' animalName date];
 
-    if isstrprop(sessionName(end), 'alpha')
-        sessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep sessionName(end) sep sessionName '_sessionData_behav.mat'];
+    if isstrprop(sessionName(end), 'alpha')         %define appropriate data path
+        sessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session ' sessionName(end) sep sessionName '_sessionData_behav.mat'];
     else
-        sessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sessionName '_sessionData_behav.mat'];
+        sessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep sessionName '_sessionData_behav.mat'];
     end
 
-    if exist(sessionDataPath,'file')
+    if exist(sessionDataPath,'file')        %load preprocessed struct if there is one
         load(sessionDataPath)
+        if p.Results.revForFlag
+            behSessionData = sessionData;
+        end
+    elseif p.Results.revForFlag                                    %otherwise generate the struct
+        [behSessionData, ~] = generateSessionData_operantMatching(sessionName);
     else
-        [sessionData, ~] = generateSessionData_operantMatching(sessionName);
+        [behSessionData, ~, ~, ~] = generateSessionData_operantMatchingDecoupled(sessionName);
     end
+    behSessionData = behSessionData(1:min(length(behSessionData),200));
     
     %%generate reward matrix for tMax trials
-    responseInds = find(~isnan([sessionData.rewardTime])); % find CS+ trials with a response in the lick window
-    allReward_R = [sessionData(responseInds).rewardR]; 
-    allReward_L = [sessionData(responseInds).rewardL]; 
-    allChoices = NaN(1,length(sessionData(responseInds)));
+    responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window
+    allReward_R = [behSessionData(responseInds).rewardR]; 
+    allReward_L = [behSessionData(responseInds).rewardL]; 
+    allChoices = NaN(1,length(behSessionData(responseInds)));
     allChoices(~isnan(allReward_R)) = 1;
     allChoices(~isnan(allReward_L)) = -1;
     allReward_R(isnan(allReward_R)) = 0;
@@ -58,7 +64,7 @@ for i = 1: length(dayList)
     
     
     %% determine and plot lick latency distributions for each spout
-    lickLat = [sessionData(responseInds).rewardTime] - [sessionData(responseInds).CSon];
+    lickLat = [behSessionData(responseInds).rewardTime] - [behSessionData(responseInds).CSon];
     indsR = find(allChoices == 1);
     indsL = find(allChoices == -1);
     lickLat_R = zscore(lickLat(indsR));

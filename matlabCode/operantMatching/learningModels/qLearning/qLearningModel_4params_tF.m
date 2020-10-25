@@ -1,0 +1,43 @@
+function [LH, probChoice, Q, pe, cQ] = qLearningModel_4params_tF(startValues, choice, outcome,ITI)
+
+alphaNPE = startValues(1);
+alphaPPE = startValues(2);
+tForget = startValues(3);
+beta = startValues(4);
+
+trials = length(choice);
+Q = zeros(trials+1,2);
+pe = zeros(trials,1);
+cQ = zeros(trials+1,1);
+
+% Call learning rule
+for t = 1 : (trials)
+        Q(t,:) = Q(t,:)*(tForget^ITI(t));
+    if choice(t) == 1 % right choice
+        cQ(t) = Q(t,2);
+        Q(t+1, 1) = Q(t, 1);
+        pe(t) = outcome(t) - Q(t, 2);
+        if pe(t) < 0
+            Q(t+1, 2) = Q(t, 2) + alphaNPE * pe(t);
+        else
+            Q(t+1, 2) = Q(t, 2) + alphaPPE * pe(t);
+        end
+    else % left choice
+        cQ(t) = Q(t,1);
+        Q(t+1, 2) = Q(t, 2);
+        pe(t) = outcome(t) - Q(t, 1);
+        if pe(t) < 0
+            Q(t+1, 1) = Q(t, 1) + alphaNPE * pe(t);
+        else
+            Q(t+1, 1) = Q(t, 1) + alphaPPE * pe(t);
+        end
+    end
+end
+
+% Call softmax  rule
+
+probChoice = logistic(beta*(Q(:, 2)-Q(:, 1)));
+
+% To calculate likelihood:
+LH = likelihood(choice',probChoice(1:end-1,:));
+end

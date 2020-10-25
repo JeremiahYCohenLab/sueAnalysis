@@ -110,7 +110,7 @@ model {
   aNmin_pr   ~ normal(0, 1);
   aP_pr      ~ normal(0, 1);
   aF_pr      ~ normal(0, 1);
-  aPE_pr     ~ normal(0, 10);
+  aPE_pr     ~ normal(0, 1);
 //  aPE_pr     ~ gamma(2, 0);
   beta_pr    ~ normal(0, 1);
 
@@ -118,7 +118,7 @@ model {
   d_aNmin_pr   ~ normal(0, 1);
   d_aP_pr      ~ normal(0, 1);
   d_aF_pr      ~ normal(0, 1);
-  d_aPE_pr     ~ normal(0, 10);
+  d_aPE_pr     ~ normal(0, 1);
 //  d_aPE_pr     ~ gamma(2, 0);
   d_beta_pr    ~ normal(0, 1);
 

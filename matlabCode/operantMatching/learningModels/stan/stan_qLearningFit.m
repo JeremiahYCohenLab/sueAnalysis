@@ -1,23 +1,25 @@
-function [tbl, samples] = stan_qLearningFit(xlFile, animal, category, varargin)
+function [paramEsts] = stan_qLearningFit(xlFile, animal, category, varargin)
 
 p = inputParser;
 % default parameters if none given
 p.addParameter('revForFlag', 0);
 p.addParameter('bernFlag', 1);
-p.addParameter('fixedParams', 0);
-p.addParameter('params', ['fiveParamOfourStart_preS']);
-p.addParameter('paramInds', []);
-p.addParameter('paramNames', {'aN', 'aP', 'aF', 'beta', 'v'});
-p.addParameter('modelName', ['fourParam']);
-p.addParameter('iter', 2000);
+p.addParameter('nonfixedParams', 0);
+p.addParameter('fixedParams', []);
+p.addParameter('paramNames', {'aN', 'aP', 'aF', 'beta'});
+p.addParameter('modelName', '4params');
+p.addParameter('iter', 20000);
 p.addParameter('warmup', []);
-p.addParameter('saveFlag', 1)
+p.addParameter('saveFlag', 1);
+p.addParameter('maxTrial', 500);
 p.parse(varargin{:});
 
-if isempty(p.Results.paramInds)
-    paramInds = [1:length(p.Results.paramNames)];
+if ~p.Results.nonfixedParams
+    paramInds = 1:length(p.Results.paramNames);
+    fullName = ['stan_qLearning_' p.Results.modelName '.stan'];
 else
-    paramInds = p.Results.paramInds;
+    paramInds = find(~contains(p.Results.paramNames, p.Results.nonfixedParams));
+    fullName = ['stan_qLearning_' p.Results.modelName '_' p.Results.nonfixedParams '.stan'];
 end
 
 if isempty(p.Results.warmup)
@@ -36,8 +38,9 @@ if ~exist(savePath)
     mkdir(savePath);
 end
 
-[~, dayList, ~] = xlsread(xlFile, animal);
-[~,col] = find(~cellfun(@isempty,strfind(dayList, category)) == 1);
+[~, dayList, ~] = xlsread([root xlFile], animal);
+[~,col] = find(contains(dayList, category) == 1);
+% [~,col] = find(~cellfun(@isempty,strfind(dayList, category)) == 1);
 dayList = dayList(2:end,col);
 endInd = find(cellfun(@isempty,dayList),1);
 if ~isempty(endInd)
@@ -47,8 +50,8 @@ end
 for i = 1:length(dayList)
     sessionName = dayList{i};
     filename = [sessionName '.asc'];
-    [behSessionData, unCorrectedBlockSwitch, out] = loadBehavioralData(filename, p.Results.revForFlag);
-    behavStruct = parseBehavioralData(behSessionData, unCorrectedBlockSwitch);
+    behSessionData = loadBehavioralData(filename, p.Results.revForFlag);
+    behavStruct = parseBehavioralData(behSessionData, p.Results.maxTrial);
 
     choiceTmp{i} = behavStruct.allChoices;
     if p.Results.bernFlag
@@ -58,6 +61,7 @@ for i = 1:length(dayList)
         choiceTmp{i}(choiceTmp{i} == 0) = 1;
     end
     outcomeTmp{i} = abs(behavStruct.allRewards); 
+    ITItemp{i} = behavStruct.timeBtwn;
     Tsesh(i,1) = length(outcomeTmp{i});
 end
 
@@ -65,197 +69,34 @@ T = max(Tsesh);
 N = length(dayList);
 choice = zeros(N, T);
 outcome = zeros(N, T);
+ITI = zeros(N,T);
 
 for i = 1:N
     choice(i, 1:Tsesh(i)) = choiceTmp{i};
     outcome(i, 1:Tsesh(i)) = outcomeTmp{i};
+    ITI(i, 1:Tsesh(i)) = ITItemp{i};
 end
-
+choice = choice(:,1:min([T p.Results.maxTrial]));
+outcome = outcome(:,1:min([T p.Results.maxTrial]));
+ITI = ITI(:,1:min([T p.Results.maxTrial]));
+Tsesh(Tsesh>p.Results.maxTrial) = p.Results.maxTrial;
+T = min([T p.Results.maxTrial]);
 %create data structure to feed into stan model
-if p.Results.fixedParams
-    [allParams, modelNames, ~] = xlsread('stanParams.xlsx', animal);
-    [~,col] = find(~cellfun(@isempty,strfind(modelNames, p.Results.params)) == 1);
-    params = allParams(paramInds,col);
-    session_dat = struct('N',N,'T',T, 'Tsesh', Tsesh, 'choice', choice, 'outcome', outcome, 'params', params);
-else
-    session_dat = struct('N',N,'T',T, 'Tsesh', Tsesh, 'choice', choice, 'outcome', outcome);
+session_dat = struct('N',N,'T',T, 'Tsesh', Tsesh, 'choice', choice, 'outcome', outcome, 'ITI', ITI);
+if p.Results.nonfixedParams
+    for j = 1:length(paramInds)
+        session_dat.(p.Results.paramNames{paramInds(j)}) = p.Results.fixedParams(:,paramInds(j));
+    end
 end
 
 %run the stan model
 if p.Results.bernFlag
-    filePath = ['C:\Users\cooper\Documents\gitHubRepositories\cooperAnalysis\matlabCode\operantMatching\learningModels\stan\bernoulli\'];
+    filePath = 'C:\Users\zhixi\Documents\gitRepositories\sueAnalysis\matlabCode\operantMatching\learningModels\stan\bernoulli\';
 else
-    filePath = ['C:\Users\cooper\Documents\githubRepositories\cooperAnalysis\matlabCode\operantMatching\learningModels\stan\'];
+    filePath = 'C:\Users\zhixi\Documents\gitRepositories\sueAnalysis\matlabCode\operantMatching\learningModels\stan\';
 end
-switch p.Results.modelName
-    case 'twoParam'
-        fit = stan('file',[filePath 'stan_qLearning_2params.stan'],'data',session_dat,'verbose',true,...
+fit = stan('file',[filePath fullName],'data',session_dat,'verbose',true,...
             'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'threeParam'
-        fit = stan('file',[filePath 'stan_qLearning_3params.stan'],'data',session_dat,'verbose',true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fourParam'
-        fit = stan('file',[filePath 'stan_qLearning_4params.stan'],'data',session_dat,'verbose',true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-   case 'fourParam_manSoft'
-        fit = stan('file',[filePath 'stan_qLearning_4params_manSoft.stan'],'data',session_dat,'verbose',true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fiveParam_k'
-        fit = stan('file',[filePath 'stan_qLearning_5params_k.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fourParamFixed'
-        scriptName = ['stan_qLearning_4params_fixedParams_' ...
-            p.Results.paramNames{setdiff([1:4], paramInds)} '.stan'];
-        fit = stan('file',[filePath scriptName],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fourParamO'
-        fit = stan('file',[filePath 'stan_qLearning_4params_opponency.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fiveParamO'
-        fit = stan('file',[filePath 'stan_qLearning_5params_opponency.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParamO_rBarStart'
-        fit = stan('file',[filePath 'stan_qLearning_6params_opponency_rBarStart.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fiveParamO_peUpdate'
-        fit = stan('file',[filePath 'stan_qLearning_5params_opponency_peUpdate.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);    
-    case 'sixParamO_rBarStart_peUpdate'
-        fit = stan('file',[filePath 'stan_qLearning_6params_opponency_rBarStart_peUpdate.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath); 
-    case 'fiveParam_peBeta'
-        fit = stan('file',[filePath 'stan_qLearning_5params_peBeta.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fiveParam_peBeta_avg'
-        fit = stan('file',[filePath 'stan_qLearning_5params_peBeta_avg.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fiveParam_peBeta_fixedMax'
-        fit = stan('file',[filePath 'stan_qLearning_5params_peBeta_fixedMax.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParam_peBeta'
-        fit = stan('file',[filePath 'stan_qLearning_6params_peBeta.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParam_pePeBeta'
-        fit = stan('file',[filePath 'stan_qLearning_6params_pePeBeta.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParam_peBeta_diff'
-        fit = stan('file',[filePath 'stan_qLearning_6params_peBeta_diff.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParam_absPePeBeta'
-        fit = stan('file',[filePath 'stan_qLearning_6params_absPePeBeta.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sevenParam_peBeta_k'
-        fit = stan('file',[filePath 'stan_qLearning_7params_peBeta_k.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fourParam_rBeta_scale'
-        fit = stan('file',[filePath 'stan_qLearning_4params_rBeta_scale.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fourParam_rBeta_confQ'
-        fit = stan('file',[filePath 'stan_qLearning_4params_rBeta_confQ.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fiveParam_rBeta_confQ'
-        fit = stan('file',[filePath 'stan_qLearning_5params_rBeta_confQ.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fiveParam_rBeta_scale'
-        fit = stan('file',[filePath 'stan_qLearning_5params_rBeta_scale.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParam_rBeta_scale'
-        fit = stan('file',[filePath 'stan_qLearning_6params_rBeta_scale.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath );
-    case 'sixParam_rBeta_scale_min'
-        fit = stan('file',[filePath 'stan_qLearning_6params_rBeta_scale_min.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath );
-    case 'sixParam_rBeta_scale_max'
-        fit = stan('file',[filePath 'stan_qLearning_6params_rBeta_scale_max.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath );
-    case 'sixParam_rBeta_scale_initR'
-        fit = stan('file',[filePath 'stan_qLearning_6params_rBeta_scale_initR.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath );
-    case 'sixParam_rBeta_scale_kappa'
-        fit = stan('file',[filePath 'stan_qLearning_6params_rBeta_scale_kappa.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath );
-    case 'sixParam_rBeta_rRPE'
-        fit = stan('file',[filePath 'stan_qLearning_6params_rBeta_rRPE.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParam_rBeta_rRPE_noMin'
-        fit = stan('file',[filePath 'stan_qLearning_6params_rBeta_rRPE_noMin.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParam_rBeta_rV'
-        fit = stan('file',[filePath 'stan_qLearning_6params_rBeta_rV.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fourParam_pePeAN_noScale'
-        fit = stan('file',[filePath 'stan_qLearning_4params_pePeAN_noScale.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath); 
-    case 'fiveParam_pePeAN_noScale'
-        fit = stan('file',[filePath 'stan_qLearning_5params_pePeAN_noScale.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath); 
-    case 'sixParam_pePeAN'
-        fit = stan('file',[filePath 'stan_qLearning_6params_pePeAN.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fiveParam_pePeAN_lag'
-        fit = stan('file',[filePath 'stan_qLearning_5params_pePeAN_lag.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParam_pePeAN_lag'
-        fit = stan('file',[filePath 'stan_qLearning_6params_pePeAN_lag.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'fiveParam_absPePeAN'
-        fit = stan('file',[filePath 'stan_qLearning_5params_absPePeAN.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath); 
-    case 'sixParam_absPePeAN'
-        fit = stan('file',[filePath 'stan_qLearning_6params_absPePeAN.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParam_absPePeAN_bi'
-        fit = stan('file',[filePath 'stan_qLearning_6params_absPePeAN_bi.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParam_absPePeAN_biSep'
-        fit = stan('file',[filePath 'stan_qLearning_6params_absPePeAN_biSep.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sevenParam_absPePeAN_biSep_f'
-        fit = stan('file',[filePath 'stan_qLearning_7params_absPePeAN_biSep_f.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sevenParam_absPePeAN_bi_k'
-        fit = stan('file',[filePath 'stan_qLearning_7params_absPePeAN_bi_k.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sevenParam_absPePeLR'
-        fit = stan('file',[filePath 'stan_qLearning_7params_absPePeLR.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sevenParam_pePeAN_k'
-        fit = stan('file',[filePath 'stan_qLearning_7params_pePeAN_k.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sevenParam_peLR'
-        fit = stan('file',[filePath 'stan_qLearning_7params_peLR.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sevenParam_pePeLR'
-        fit = stan('file',[filePath 'stan_qLearning_7params_pePeLR.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'eightParam_absPePeLR_k'
-        fit = stan('file',[filePath 'stan_qLearning_8params_absPePeLR_k.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParam_rAN'
-        fit = stan('file',[filePath 'stan_qLearning_6params_rAN.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParam_rBeta_oppo'
-        fit = stan('file',[filePath 'stan_qLearning_6params_rBeta_oppo.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sevenParam_rBeta_oppo_rStart'
-        fit = stan('file',[filePath 'stan_qLearning_7params_rBeta_oppo_rStart.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'sixParam_rBeta_oppo_rCont'
-        fit = stan('file',[filePath 'stan_qLearning_6params_rBeta_oppo_rCont.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'eightParam_rBeta_pePeAN'
-        fit = stan('file',[filePath 'stan_qLearning_8params_rBeta_pePeAN.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'eightParam_rBeta_absPePeAN'
-        fit = stan('file',[filePath 'stan_qLearning_8params_rBeta_absPePeAN.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    case 'tenParam_rBeta_pePeAN_kb'
-        fit = stan('file',[filePath 'stan_qLearning_10params_rBeta_pePeAN_kb.stan'],'data',session_dat,'verbose', true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
-    otherwise
-        error([p.Results.modelName ' does not exist'])
-end
-
 %read command line output to stall matlab until stan is finished processing
 doneFlag = 0;
 diary([savePath 'diaryTmp.txt']); diary off;
@@ -276,7 +117,8 @@ while doneFlag == 0
     end
 end
 delete([savePath 'diaryTmp.txt'])
-
+fit.block();
+pause(30);
 %extract samples from the stan fit object
 samples = [];
 while isempty(samples)
@@ -289,21 +131,27 @@ end
 
 %generate best estimates of parameters
 paramEsts = [];
-if p.Results.fixedParams
-    paramEsts = median(eval(['samples.mu_' p.Results.paramNames{setdiff([1:5], paramInds)}]));
+if p.Results.nonfixedParams
+    tmp = eval(['samples.mu_' p.Results.nonfixedParams]);
+    [n,e] = histcounts(tmp, 50);
+    [~, maxInd] = max(n);
+    paramEsts = median(tmp(tmp > e(maxInd) & tmp < e(maxInd+1)));
 else
     for i = 1:length(paramInds)
-        paramEsts(i)  = median(eval(['samples.mu_' p.Results.paramNames{i}]));
+        tmp = eval(['samples.mu_' p.Results.paramNames{i}]);
+        [n,e] = histcounts(tmp, 50);
+        [~, maxInd] = max(n);
+        paramEsts(i) = median(tmp(tmp > e(maxInd) & tmp < e(maxInd+1)));
     end
 end
 
 %plot the distributions of the mouse-level parameters
-figure; 
-if p.Results.fixedParams
-    histogram(eval(['samples.mu_' p.Results.paramNames{setdiff([1:5], paramInds)}]), 100,...
+ figure2; 
+if p.Results.nonfixedParams
+    histogram(eval(['samples.mu_' p.Results.nonfixedParams]), 100,...
             'Normalization', 'Probability', 'FaceColor', 'k')
         set(gca,'tickdir', 'out')
-        xlabel( p.Results.paramNames{setdiff([1:5], paramInds)})
+        xlabel(p.Results.nonfixedParams)
 else
     numParams = length(paramInds);
     blue = [0 1 1];
@@ -323,8 +171,8 @@ set(gcf,'Renderer', 'Painters')
 
 if p.Results.saveFlag
     %save the full samples
-    if p.Results.fixedParams
-        sampFile = [animal category, '_', p.Results.modelName, '_', p.Results.paramNames{setdiff([1:5], paramInds)}];
+    if p.Results.nonfixedParams
+        sampFile = [animal category, '_', p.Results.modelName, '_', p.Results.nonfixedParams];
         saveFile = [sampFile '.mat'];
         eval([sampFile,  ' = samples;']);
     else

@@ -1,0 +1,18 @@
+1. Install dlc in dlc environment
+2. Remove panda packages manaully away from packages in dlc(two of them)
+two folders:
+pandas
+pandas-1.0.1.dist-info
+3. conda install pandas=0.25.1
+(downgrading directly doesn't work. )
+
+CUDA installation:
+Don't go to too high version
+Uncheck geforce experience 
+Disable disabling Visual Studio Integration
+Uncheck geforce drivers if have already installed
+
+In python, there's no 'end' everthing is by tab and spacing lines. 
+
+copy pupilExt into C:\Users\zhixi\Anaconda3\envs\dlc-windowsGPU\Lib\site-packages\deeplabcut
+subsitude the local _init_ with the _init_ in this folder
