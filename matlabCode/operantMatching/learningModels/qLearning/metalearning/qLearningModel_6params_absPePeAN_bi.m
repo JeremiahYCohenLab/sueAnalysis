@@ -8,14 +8,14 @@ aPE = startValues(5);
 beta = startValues(6);
 
 trials = length(choice);
-Q = zeros(trials,2);
+Q = zeros(trials+1,2);
 aN = zeros(trials,1);
 pe = zeros(trials,1);
 pePe = zeros(trials,1);
-peBar = zeros(trials,1);
+peBar = zeros(trials+1,1);
 
 % Call learning rule
-for t = 1 : (trials-1)
+for t = 1 : trials
     if choice(t, 1) == 1 % right choice
         Q(t+1, 2) = aF*Q(t, 2);
         pe(t) = outcome(t, 1) - Q(t, 1);
@@ -46,22 +46,11 @@ for t = 1 : (trials-1)
     peBar(t+1) = peBar(t) + aPE * pePe(t);
 end
 
-if choice(t, 1) == 1
-    pe(end) = outcome(end, 1) - Q(end, 1);
-else
-    pe(end) = outcome(end, 2) - Q(end, 2);
-end
-pePe(end) =  abs(pe(end)) - peBar(end);
-aN(end) = pePe(end) * aNscale + aNmin;
-if aN(end) < 0
-    aN(end) = 0;
-end
-
 
 % Call softmax  rule
 probChoice = logistic([beta.*(Q(:, 1)-Q(:, 2)), ...
                        beta.*(Q(:, 2)-Q(:, 1))]);
 
 % To calculate likelihood:
-LH = likelihood(choice,probChoice);
+LH = likelihood(choice,probChoice(1:end-1,:));
 end

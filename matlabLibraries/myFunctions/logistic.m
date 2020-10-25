@@ -1,4 +1,4 @@
-function output = logisticWithOffset(input)
+function output = logistic(input)
 %% Simple logistic function
 % offset is how far away from 0 and 1 the curves should saturate
 

@@ -61,17 +61,17 @@ model {
       if (choice[n,t] == 1) {
         PE = outcome[n, t] - Q[2];
         if (PE < 0){
-          Q[2] += aN[n] * PE;
+          Q[2] = Q[2] + aN[n] * PE;
         }else{
-          Q[2] += aP[n] * PE;
+          Q[2] = Q[2] + aP[n] * PE;
         }
         Q[1] = Q[1] * aF[n];
       }else{
         PE = outcome[n, t] - Q[1];
         if (PE < 0){
-          Q[1] += aN[n] * PE;
+          Q[1] = Q[1] + aN[n] * PE;
         }else{
-          Q[1] += aP[n] * PE;
+          Q[1] = Q[1] + aP[n] * PE;
         }
         Q[2] = Q[2] * aF[n];
       }
@@ -118,7 +118,7 @@ generated quantities {
         Qdiff[t] = Q[2] - Q[1];
 
         // compute log likelihood of current trial
-        log_lik[n] += bernoulli_logit_lpmf(choice[n, t] | beta[n] * Qdiff[t]);
+        log_lik[n] = log_lik[n] + bernoulli_logit_lpmf(choice[n, t] | beta[n] * Qdiff[t]);
 
         // generate posterior prediction for current trial
         y_pred[n, t] = categorical_rng(softmax(beta[n] * Q));
@@ -126,19 +126,19 @@ generated quantities {
         if (choice[n,t] == 1) {
           PE = outcome[n, t] - Q[2];
           if (PE < 0){
-            Q[2] += aN[n] * PE;
+            Q[2] = Q[2] + aN[n] * PE;
           }else{
-            Q[2] += aP[n] * PE;
+            Q[2] = Q[2] + aP[n] * PE;
           }
           Q[1] = Q[1] * aF[n];
         }else{
           PE = outcome[n, t] - Q[1];
           if (PE < 0){
-            Q[1] += aN[n] * PE;
+            Q[1] = Q[1] + aN[n] * PE;
           }else{
-            Q[1] += aP[n] * PE;
+            Q[1] = Q[1] + aP[n] * PE;
           }
-          Q[1] = Q[1] * aF[n];
+          Q[2] = Q[2] * aF[n];
         }
       }
     }

@@ -6,6 +6,7 @@ if ismac
     sep = '/';
 elseif ispc
   %  root = 'D:\';
-    root = 'Z:\';
+  %  root = 'Z:\';
+    root = 'C:\Users\zhixi\Documents\data\';
     sep = '\';
 end

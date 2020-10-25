@@ -7,6 +7,7 @@ p.addParameter('modelName', 'sixParam_absPePeAN_bi')
 p.addParameter('params', {'aNscale', 'aNmin', 'aP', 'aF', 'aPE', 'beta'})
 p.addParameter('lickBeh', 'c');
 p.addParameter('bernFlag', 1)
+p.addParameter('tWflag', 0)
 p.addParameter('data', [])
 p.addParameter('iter', 10000)
 p.addParameter('beh', 'clean')
@@ -20,17 +21,23 @@ if iscell(p.Results.animals)
 else
     switch p.Results.animals
         case 'ninety'
-            animals = [{'CG46' 'CG47' 'CG48' 'CG49' 'CG50' 'CG52' 'CG53' 'CG54' 'CG55' 'CG56' 'CG57' 'CG58' 'CG67'...
-                        'CG68' 'CG70' 'CG75' 'CG77' 'CG78' 'CG79' 'CG80' 'CG81' 'CG82' 'CG83' 'CG84' 'CG85' 'CG86'...
-                        'CG87' 'CG88' 'CG89'}];
-        case 'ninetyNoRec'
-            animals = [{'CG46' 'CG47' 'CG48' 'CG49' 'CG50' 'CG52' 'CG53' 'CG54' 'CG55' 'CG56' 'CG57' 'CG58' 'CG67'...
-                        'CG68' 'CG70' 'CG77' 'CG78' 'CG80' 'CG82' 'CG83' 'CG84' 'CG85' 'CG86'...
-                        'CG87' 'CG88' 'CG89'}];
+            animals = [{'CG45' 'CG46' 'CG47' 'CG48' 'CG49' 'CG50' 'CG51' 'CG52' 'CG53' 'CG54' ...
+                        'CG55' 'CG56' 'CG57' 'CG58' 'CG59' 'CG60' 'CG61' 'CG62' 'CG63' 'CG64' ...
+                        'CG65' 'CG66' 'CG67' 'CG68' 'CG70' 'CG75' 'CG77' 'CG78' 'CG79' 'CG80' ... 
+                        'CG81' 'CG82' 'CG83' 'CG84' 'CG85' 'CG86' 'CG87' 'CG88' 'CG89' 'CG90' ... 
+                        'CG91' 'CG92' 'CG93' 'CG94' 'CG95' 'TP02' 'TP03'}];
         case 'meow'
-            animals = [{'CG09' 'CG47' 'CG48' 'CG50' 'CG56' 'CG57' 'CG70' 'CG78'}];
+            animals = [{'CG78' 'CG79' 'CG80' ... 
+                        'CG81' 'CG82' 'CG83' 'CG84' 'CG85' 'CG86' 'CG87' 'CG88' 'CG89' 'CG90' ... 
+                        'CG91' 'CG92' 'CG93' 'CG94' 'CG95' 'TP02' 'TP03'}];
+        case 'ninetyNoRec'
+            animals = [{'CG45' 'CG46' 'CG47' 'CG48' 'CG49' 'CG50' 'CG52' 'CG53' 'CG54' 'CG55' ...
+                        'CG56' 'CG57' 'CG58' 'CG67' 'CG68' 'CG70' 'CG77' 'CG78' 'CG80' 'CG82' ... 
+                        'CG83' 'CG84' 'CG85' 'CG86' 'CG87' 'CG88' 'CG89'}];
         case 'recordings'
             animals = [{'CG09' 'CG16' 'CG75' 'CG79' 'CG81'}];
+        case 'opto'
+            animals = [{'CG93' 'CG94' 'CG95' 'TP02' 'TP03'}];
         case 'pP_5ht'
             animals = [{'BB025', 'BB031', 'BB033', 'BB035', 'BB036'}];
             pPflag = 1;
@@ -53,6 +60,13 @@ if pPflag
       tmpStr = ['stan_qLearningFit_pP(''%s'', ''iter'', %d, ''modelName'', ''%s'', ''data'', fullStruct, ''lickBeh'', ''%s'', ''paramNames'', {' ...
           [repmat(' ''%s'', ', 1, length(p.Results.params))] '});'];
       tmp = sprintf(tmpStr, animals{i}, p.Results.iter, p.Results.modelName, p.Results.lickBeh, p.Results.params{:});
+      mdlTxt = [mdlTxt tmp];
+    end
+elseif p.Results.tWflag
+    for i = 1:length(animals)
+      tmpStr = ['stan_qLearningFit_tranWeight(''goodBehDays.xlsx'', ''%s'', ''%s'', ''iter'', %d, ''bernFlag'', %d, ''modelName'', ''%s'', ''paramNames'', {' ...
+          [repmat(' ''%s'', ', 1, length(p.Results.params))] '});'];
+      tmp = sprintf(tmpStr, animals{i}, p.Results.beh, p.Results.iter, p.Results.bernFlag, p.Results.modelName, p.Results.params{:});
       mdlTxt = [mdlTxt tmp];
     end
 else

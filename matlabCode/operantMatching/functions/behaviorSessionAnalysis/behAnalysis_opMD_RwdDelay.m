@@ -1,16 +1,10 @@
-function behAnalysis_opMD_RwdDelay(sessionName, coupledFlag, saveFigFlag, lickFlag)
-
-if nargin < 4
-    lickFlag = 1;
-end
-
-if nargin < 3
-    saveFigFlag = 1;
-end
-
-if nargin < 2
-    coupledFlag = 0;
-end
+function behAnalysis_opMD_RwdDelay(sessionName, varargin)
+p = inputParser;
+p.addParameter('maxTrials', 300)
+p.addParameter('lickFlag',1)
+p.addParameter('saveFigFlag',1)
+p.addParameter('coupledFlag',0)
+p.parse(varargin{:})
 
 [root, sep] = currComputer();
 
@@ -32,7 +26,8 @@ else
     [behSessionData, blockSwitch, ~, ~] = generateSessionData_operantMatchingDecoupledRwdDelay(sessionName);
 end
 
-
+behSessionData = behSessionData(1:min(p.Results.maxTrials, length(behSessionData)));
+blockSwitch = blockSwitch(blockSwitch <= p.Results.maxTrials);
 %% Break session down into CS+ trials where animal responded
 
 responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window
@@ -61,7 +56,7 @@ allRewards(logical(allReward_R)) = 1;
 allRewards(logical(allReward_L)) = -1;
 
 allITIs = [behSessionData(responseInds).trialEnd] - [behSessionData(responseInds).CSon];
-if ~coupledFlag
+if ~p.Results.coupledFlag
     allProbsL = [behSessionData(responseInds).rewardProbL];
     allProbsR = [behSessionData(responseInds).rewardProbR];
 end
@@ -122,11 +117,10 @@ plot(xVals, conv(allChoices,normKern)/max(abs(conv(allChoices,normKern))),'k','l
 plot(xVals, conv(allRewards,normKern)/max(abs(conv(allRewards,normKern))),'--','Color',[100 100 100]./255,'linewidth',2)
 xlabel('Trials')
 ylabel('<-- Left       Right -->')
-legend('Choices','Rewards')
 xlim([1 length(allChoice_R)])
 ylim([-1 1])
 
-if coupledFlag
+if p.Results.coupledFlag
     for i = 1:length(blockSwitch)
         bs_loc = blockSwitch(i);
         plot([bs_loc bs_loc],[-1 1],'--','linewidth',1,'Color',[30 144 255]./255)
@@ -151,7 +145,7 @@ else
     end
 end
 text(0,1.12,'L/R');
-
+legend('Choices','Rewards')
 
 %% plot lick latency distributions for each spout
 
@@ -208,11 +202,11 @@ for i = 1:length(behSessionData)
 %     end
 end
 
-if coupledFlag
+if p.Results.coupledFlag
     for i = 1:length(blockSwitch)
         bs_loc = origBlockSwitch(i);
         plot([bs_loc bs_loc],[-1 1],'--','linewidth',1,'Color',[30 144 255]./255)
-        text(bs_loc,1.12,blockProbs{i});
+   %     text(bs_loc,1.12,blockProbs{i});
         set(text,'FontSize',3);
     end
 else
@@ -228,7 +222,7 @@ else
         b = '/';
         c = num2str(allProbsR(blockSwitch(i)+1));
         label = strcat(a,b,c);
-        text(bs_loc,labelOffset,label);
+    %    text(bs_loc,labelOffset,label);
         set(text,'FontSize',3);
     end
 end
@@ -321,7 +315,7 @@ expFit = singleExpFit(glm_rwdANDnoRwd.Coefficients.Estimate(2:end));
 expConv = expFit.a*exp(-(1/expFit.b)*(1:10));
 expConv = expConv./sum(expConv);
                       
-allRewardsBinary = allRewards;                       %make all rewards have the same value
+allRewardsBinary = allRewards;                       %makewe all rewards have the same value
 allRewardsBinary(find(allRewards == -1)) = 1;
 rwdHx = conv(allRewardsBinary,expConv);              %convolve with exponential decay to give weighted moving average
 rwdHx = rwdHx(1:end-(length(expConv)-1));                   %to account for convolution padding
@@ -466,13 +460,13 @@ if isempty(dir(savePath))
     mkdir(savePath)
 end
 
-if saveFigFlag == 1
+if p.Results.saveFigFlag == 1
     saveFigurePDF(gcf,[savePath sessionName '_behavior'])
 end
 
 
 %%
-if lickFlag == 1
+if p.Results.lickFlag == 1
     figure   %make new lick behavior analysis figure
     set(gcf, 'Position', screenSize)
     suptitle(sessionName)
@@ -702,7 +696,7 @@ if lickFlag == 1
     ylabel('Peak Lick Rate Z-Score')
     xlabel('Rewarded Trials')
 
-    if saveFigFlag == 1
+    if p.Results.saveFigFlag == 1
         saveFigurePDF(gcf,[savePath sep sessionName '_lickBehavior'])
     end
 end

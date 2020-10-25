@@ -6,7 +6,7 @@ end
 
 [root, sep] = currComputer();
 
-if ~isempty(strfind(fileOrFolder,'.asc')) % input is .asc file
+if contains(fileOrFolder,'.asc') % input is .asc file
     filename = fileOrFolder;
     [animalName, date] = strtok(filename, 'd'); 
     animalName = animalName(2:end);
@@ -33,7 +33,7 @@ else
     sortedFolderLocation = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep];
 end
 sortedFolder = dir(sortedFolderLocation);
-sessionDataInd = ~cellfun(@isempty,strfind({sortedFolder.name},'_behav.mat')) & ~cellfun(@isempty,strfind({sortedFolder.name},suptitleName)); 
+sessionDataInd = contains({sortedFolder.name},'_behav.mat') & contains({sortedFolder.name},suptitleName); 
 if any(sessionDataInd) % check if there is a file with suptitleName prefix and _behav.mat suffix
     load([sortedFolderLocation sortedFolder(sessionDataInd).name])
     if exist('sessionData') & ~exist('behSessionData')
@@ -43,7 +43,7 @@ else
     if revForFlag
         [behSessionData, blockSwitch, ~] = generateSessionData_behav_operantMatching(suptitleName);
     else
-        [behSessionData, blockSwitch] = generateSessionData_operantMatchingDecoupled(suptitleName);
+        [behSessionData, blockSwitch] = generateSessionData_operantMatchingDecoupledRwdDelay(suptitleName);
     end
 end
 

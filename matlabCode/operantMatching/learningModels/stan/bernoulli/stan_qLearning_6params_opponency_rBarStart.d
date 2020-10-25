@@ -1,6 +1,6 @@
-C:/Users/cooper_PC/Desktop/githubRepositories/cooperAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_6params_opponency_rBarStart.o \
- C:/Users/cooper_PC/Desktop/githubRepositories/cooperAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_6params_opponency_rBarStart.exe: \
- C:/Users/cooper_PC/Desktop/githubRepositories/cooperAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_6params_opponency_rBarStart.hpp \
+C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_6params_opponency_rBarStart.o \
+ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_6params_opponency_rBarStart.exe: \
+ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_6params_opponency_rBarStart.hpp \
  stan/src/stan/model/model_header.hpp stan/lib/stan_math/stan/math.hpp \
  stan/lib/stan_math/stan/math/rev/mat.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/Eigen.hpp \

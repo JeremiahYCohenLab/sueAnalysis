@@ -1,4 +1,4 @@
-function [glm_rwdNoRwd, tMax] = combineLogReg_opMD(xlFile, animal, category, varargin)
+function [glm_rwdNoRwd ,combinedRewardsMatx, combinedNoRewardsMatx, fitresult] = combineLogReg_opMD(xlFile, animal, category, varargin)
 
 %task and model parameters
 p = inputParser;
@@ -6,6 +6,7 @@ p = inputParser;
 p.addParameter('revForFlag', 0)
 p.addParameter('numBins', 10)
 p.addParameter('plotFlag', 1);
+p.addParameter('maxTrials', 200);
 p.parse(varargin{:});
 
 
@@ -40,6 +41,7 @@ for i = 1: length(dayList)
     else
         sessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep sessionName '_sessionData_behav.mat'];
     end
+    
 
     if exist(sessionDataPath,'file')
         load(sessionDataPath);
@@ -51,7 +53,7 @@ for i = 1: length(dayList)
     else
         [behSessionData, ~, ~, ~] = generateSessionData_operantMatchingDecoupled(sessionName);
     end
-    
+    behSessionData = behSessionData(1:min(length(behSessionData), p.Results.maxTrials));
     responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window
     omitInds = isnan([behSessionData.rewardTime]); 
     allReward_R = [behSessionData(responseInds).rewardR]; 
@@ -125,30 +127,39 @@ end
 %glm_rwdANDtime = fitglm([combinedRewardsMatx' combinedTimesMatx'], combinedAllChoice_R,'distribution','binomial','link','logit'); rsq{5} = num2str(round(glm_rwdANDtime.Rsquared.Adjusted*100)/100);
 %glm_rwdRate = fitglm([rwdRateMatx]', combinedAllChoice_R,'distribution','binomial','link','logit'); rsq{6} = num2str(round(glm_rwd.Rsquared.Adjusted*100)/100);
 glm_rwdNoRwd = fitglm([combinedRewardsMatx' combinedNoRewardsMatx'], combinedAllChoice_R,'distribution','binomial','link','logit'); rsq{7} = num2str(round(glm_rwdNoRwd.Rsquared.Adjusted*100)/100);
+glm_auto = fitglm([combinedRewardsMatx'+combinedNoRewardsMatx'], combinedAllChoice_R,'distribution','binomial','link','logit');
 glm_seshInd = fitglm([combinedRewardsMatx' combinedNoRewardsMatx' seshInd], combinedAllChoice_R,'distribution','binomial','link','logit');
 %glm_all = fitglm([combinedRewardsMatx' combinedNoRewardsMatx' combinedChoicesMatx'], combinedAllChoice_R, 'distribution','binomial','link','logit');
-
+[fitresult, gof] = singleExpFit(glm_rwdNoRwd.Coefficients.Estimate(2:tMax+1), (1:tMax)');
 
 if p.Results.plotFlag
-    figure; hold on;
+    figure2; hold on;
     relevInds = 2:tMax+1;
     coefVals = glm_rwdNoRwd.Coefficients.Estimate(relevInds);
     CIbands = coefCI(glm_rwdNoRwd);
     errorL = abs(coefVals - CIbands(relevInds,1));
     errorU = abs(coefVals - CIbands(relevInds,2));
-    errorbar((1:tMax)+0.2,coefVals,errorL,errorU,'Color', [0.7 0 1],'linewidth',2)
+    errorbar((1:tMax),coefVals,errorL,errorU,'Color', [0.7 0 1],'linewidth',2)
 
     relevInds = tMax+2:length(glm_rwdNoRwd.Coefficients.Estimate);
     coefVals = glm_rwdNoRwd.Coefficients.Estimate(relevInds);
     CIbands = coefCI(glm_rwdNoRwd);
     errorL = abs(coefVals - CIbands(relevInds,1));
     errorU = abs(coefVals - CIbands(relevInds,2));
-    errorbar((1:tMax)+0.2,coefVals,errorL,errorU,'b','linewidth',2)
+    errorbar((1:tMax),coefVals,errorL,errorU,'b','linewidth',2)
+    
+    plot(0:0.1:tMax, fitresult.a*exp(-(1/fitresult.b)*(0:0.1:tMax)), 'Color', [0.9 0.5 0.5],'LineStyle','--', 'lineWidth', 2);
+    
+    text(tMax-2,2,sprintf('R^2 = %.2f',gof.adjrsquare))
+    text(tMax-2,1.8,sprintf('a = %.2f',fitresult.a))
+    text(tMax-2,1.6,sprintf('b = %.2f',fitresult.b))
+    
+    line([0.5 tMax+0.5], [0 0], 'Color',[0.5 0.5 0.5],'LineStyle','--')
 
     xlabel('Reward n Trials Back')
     ylabel('\beta Coefficient')
     xlim([0.5 tMax+0.5])
-    legend('rwd', 'no rwd')
+    legend('rwd', 'no rwd', 'fit')
     title([animal ' ' category])
     set(gca, 'tickdir', 'out')
     set(gcf, 'renderer', 'painters')

@@ -33,17 +33,17 @@ transformed parameters {
   vector<lower=0, upper=1>[N] rBarStart;
 
   for (n in 1:N) {
-    aN[n]        = Phi_approx(mu_p[1]  + sigma[1]  * aN_pr[n]);
-    aP[n]        = Phi_approx(mu_p[2]  + sigma[2]  * aP_pr[n]);
-    aF[n]        = Phi_approx(mu_p[3]  + sigma[3]  * aF_pr[n]);
+    aN[n]        = Phi_approx(mu_p[1] + sigma[1] * aN_pr[n]);
+    aP[n]        = Phi_approx(mu_p[2] + sigma[2] * aP_pr[n]);
+    aF[n]        = Phi_approx(mu_p[3] + sigma[3] * aF_pr[n]);
     beta[n]      = Phi_approx(mu_p[4] + sigma[4] * beta_pr[n]) * 10;
-    v[n]         = Phi_approx(mu_p[5]  + sigma[5]  * v_pr[n]);
-    rBarStart[n] = Phi_approx(mu_p[6]  + sigma[6]  * v_pr[n]);
+    v[n]         = Phi_approx(mu_p[5] + sigma[5] * v_pr[n]);
+    rBarStart[n] = Phi_approx(mu_p[6] + sigma[6] * v_pr[n]);
   }
 }
 model {
   // Hyperparameters
-  mu_p  ~ normal(0, 1);
+  mu_p  ~ normal(0, 0.8);
   sigma ~ cauchy(0, 1);
 
   // individual parameters

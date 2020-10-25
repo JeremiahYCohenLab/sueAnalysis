@@ -1,11 +1,13 @@
-C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_4params.o \
- C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_4params.exe: \
- C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_4params.hpp \
+C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_4params.o \
+ C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_4params.exe: \
+ C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_4params.hpp \
  stan/src/stan/model/model_header.hpp stan/lib/stan_math/stan/math.hpp \
  stan/lib/stan_math/stan/math/rev/mat.hpp \
- stan/lib/stan_math/stan/math/prim/mat/fun/Eigen.hpp \
- stan/lib/stan_math/lib/opencl_1.2.8/CL/cl.hpp \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/malloc.h \
+ stan/lib/stan_math/stan/math/rev/core.hpp \
+ stan/lib/stan_math/stan/math/rev/core/autodiffstackstorage.hpp \
+ stan/lib/stan_math/stan/math/memory/stack_alloc.hpp \
+ C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/stdint.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stdint.h \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/crtdefs.h \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw.h \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_mac.h \
@@ -13,23 +15,163 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/vadefs.h \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sdks/_mingw_directx.h \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
- stan/lib/stan_math/lib/opencl_1.2.8/CL/opencl.h \
- stan/lib/stan_math/lib/opencl_1.2.8/CL/cl.h \
- stan/lib/stan_math/lib/opencl_1.2.8/CL/cl_platform.h \
- C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/stdint.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stdint.h \
  C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/stddef.h \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stddef.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/intrin.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/setjmp.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/psdk_inc/intrin-impl.h \
- C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/x86intrin.h \
- C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/ia32intrin.h \
+ stan/lib/stan_math/stan/math/prim/scal/meta/likely.hpp \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstdlib \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++config.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/os_defines.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/cpu_defines.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stdlib.h \
+ C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include-fixed/limits.h \
+ C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include-fixed/syslimits.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/limits.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/malloc.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstddef \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/sstream \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/istream \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ios \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/iosfwd \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stringfwd.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/memoryfwd.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/postypes.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cwchar \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/wchar.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_print_push.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_off_t.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_stat64.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/swprintf.inl \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/wchar_s.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_print_pop.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/exception \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/atomic_lockfree_defines.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/exception_ptr.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/exception_defines.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/nested_exception.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/char_traits.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_algobase.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/functexcept.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/cpp_type_traits.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/type_traits.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/numeric_traits.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_pair.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/move.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/concept_check.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/type_traits \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_iterator_base_types.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_iterator_base_funcs.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/debug/debug.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_iterator.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ptr_traits.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/predefined_ops.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstdint \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/localefwd.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++locale.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/clocale \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/locale.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stdio.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/stdio_s.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cctype \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/ctype.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ios_base.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/atomicity.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/gthr.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/gthr-default.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/errno.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sys/types.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/process.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/signal.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread_signal.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sys/timeb.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread_compat.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread_unistd.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/atomic_word.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_classes.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/string \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/allocator.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++allocator.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/new_allocator.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/new \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ostream_insert.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/cxxabi_forced.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_function.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/backward/binders.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/range_access.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_string.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/initializer_list \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/string_conversions.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstdio \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cerrno \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/functional_hash.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/hash_bytes.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_string.tcc \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_classes.tcc \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/streambuf \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/streambuf.tcc \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_ios.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_facets.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cwctype \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/wctype.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/ctype_base.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/streambuf_iterator.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/ctype_inline.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_facets.tcc \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_ios.tcc \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ostream \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ostream.tcc \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/istream.tcc \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/sstream.tcc \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/stdexcept \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/vector \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_construct.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/alloc_traits.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/alloc_traits.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_uninitialized.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_vector.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_bvector.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/vector.tcc \
+ stan/lib/stan_math/stan/math/rev/core/build_vari_array.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/fun/Eigen.hpp \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Dense \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Core \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/util/DisableStupidWarnings.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/util/Macros.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/complex \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cmath \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/math.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/util/MKL_support.h \
  C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/mmintrin.h \
+ C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/emmintrin.h \
  C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/xmmintrin.h \
  C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/mm_malloc.h \
- C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/emmintrin.h \
  C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/pmmintrin.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cassert \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/assert.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/functional \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/typeinfo \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/tuple \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/utility \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_relops.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/array \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/uses_allocator.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstring \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/string.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/string_s.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/limits \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/climits \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/algorithm \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_algo.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/algorithmfwd.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_heap.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_tempbuf.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/random \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/random.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/opt_random.h \
+ C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/x86intrin.h \
+ C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/ia32intrin.h \
  C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/tmmintrin.h \
  C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/ammintrin.h \
  C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/smmintrin.h \
@@ -61,158 +203,6 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/xsaveintrin.h \
  C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/xsaveoptintrin.h \
  C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/adxintrin.h \
- stan/lib/stan_math/lib/opencl_1.2.8/CL/cl_gl.h \
- stan/lib/stan_math/lib/opencl_1.2.8/CL/cl_gl_ext.h \
- stan/lib/stan_math/lib/opencl_1.2.8/CL/cl_ext.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/atomic \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/atomic_base.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++config.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/os_defines.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/cpu_defines.h \
- C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/stdbool.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/atomic_lockfree_defines.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/utility \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_relops.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_pair.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/move.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/concept_check.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/type_traits \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/initializer_list \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/limits \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/iterator \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_iterator_base_types.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_iterator_base_funcs.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/debug/debug.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_iterator.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/cpp_type_traits.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/type_traits.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ptr_traits.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ostream \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ios \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/iosfwd \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stringfwd.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/memoryfwd.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/postypes.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cwchar \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/wchar.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_print_push.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_off_t.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_stat64.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/swprintf.inl \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/wchar_s.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_print_pop.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/exception \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/exception_ptr.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/exception_defines.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/nested_exception.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/char_traits.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_algobase.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/functexcept.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/numeric_traits.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/predefined_ops.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstdint \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/localefwd.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++locale.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/clocale \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/locale.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stdio.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/stdio_s.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cctype \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/ctype.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ios_base.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/atomicity.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/gthr.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/gthr-default.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/errno.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sys/types.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/process.h \
- C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include-fixed/limits.h \
- C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include-fixed/syslimits.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/limits.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/signal.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread_signal.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sys/timeb.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread_compat.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread_unistd.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/atomic_word.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_classes.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/string \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/allocator.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++allocator.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/new_allocator.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/new \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ostream_insert.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/cxxabi_forced.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_function.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/backward/binders.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/range_access.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_string.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/string_conversions.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstdlib \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stdlib.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstdio \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cerrno \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/functional_hash.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/hash_bytes.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_string.tcc \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_classes.tcc \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/streambuf \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/streambuf.tcc \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_ios.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_facets.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cwctype \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/wctype.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/ctype_base.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/streambuf_iterator.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/ctype_inline.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_facets.tcc \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_ios.tcc \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ostream.tcc \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/istream \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/istream.tcc \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stream_iterator.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/vector \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_construct.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/alloc_traits.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/alloc_traits.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_uninitialized.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_vector.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_bvector.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/vector.tcc \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstring \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/string.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/string_s.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Dense \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Core \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/util/DisableStupidWarnings.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/util/Macros.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/complex \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cmath \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/math.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/sstream \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/sstream.tcc \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/util/MKL_support.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstddef \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cassert \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/assert.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/functional \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/typeinfo \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/tuple \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/array \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/stdexcept \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/uses_allocator.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/climits \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/algorithm \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_algo.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/algorithmfwd.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_heap.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_tempbuf.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/random \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/random.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/opt_random.h \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/random.tcc \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/numeric \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_numeric.h \
@@ -250,7 +240,6 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/../plugins/CommonCwiseBinaryOps.h \
  stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/../plugins/MatrixCwiseUnaryOps.h \
  stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/../plugins/MatrixCwiseBinaryOps.h \
- stan/lib/stan_math/stan/math/prim/mat/eigen_plugins.h \
  stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/EigenBase.h \
  stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/Product.h \
  stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/CoreEvaluators.h \
@@ -386,106 +375,15 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
  stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Eigenvalues/./RealQZ.h \
  stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Sparse \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseCore \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/map \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_tree.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/aligned_buffer.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_map.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_multimap.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseUtil.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseMatrixBase.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/CommonCwiseUnaryOps.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/CommonCwiseBinaryOps.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/MatrixCwiseUnaryOps.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/MatrixCwiseBinaryOps.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/BlockMethods.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseAssign.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/CompressedStorage.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/AmbiVector.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseCompressedBase.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseMatrix.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseMap.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/MappedSparseMatrix.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseVector.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseRef.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseCwiseUnaryOp.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseCwiseBinaryOp.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseTranspose.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseBlock.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseDot.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseRedux.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseView.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseDiagonalProduct.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/ConservativeSparseSparseProduct.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseSparseProductWithPruning.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseProduct.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseDenseProduct.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseSelfAdjointView.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseTriangularView.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/TriangularSolver.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparsePermutation.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseFuzzy.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseSolverBase.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/OrderingMethods \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/Amd.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/../Core/util/NonMPL2.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/Ordering.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/Eigen_Colamd.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseCholesky \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCholesky/SimplicialCholesky.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCholesky/../Core/util/NonMPL2.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseLU \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_gemm_kernel.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_Structs.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_SupernodalMatrix.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLUImpl.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseColEtree.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_Memory.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_heap_relax_snode.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_relax_snode.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_pivotL.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_panel_dfs.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_kernel_bmod.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_panel_bmod.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_column_dfs.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_column_bmod.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_copy_to_ucol.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_pruneL.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_Utils.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseQR \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseQR/SparseQR.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/IterativeLinearSolvers \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/SolveWithGuess.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/IterativeSolverBase.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/BasicPreconditioners.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/ConjugateGradient.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/LeastSquareConjugateGradient.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/IncompleteCholesky.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/list \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_list.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/list.tcc \
  stan/lib/stan_math/lib/eigen_3.3.3/Eigen/QR \
  stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/NumTraits.h \
- stan/lib/stan_math/stan/math/rev/core.hpp \
- stan/lib/stan_math/stan/math/rev/core/autodiffstackstorage.hpp \
- stan/lib/stan_math/stan/math/memory/stack_alloc.hpp \
- stan/lib/stan_math/stan/math/prim/meta.hpp \
- stan/lib/stan_math/stan/math/prim/arr/meta/get.hpp \
- stan/lib/stan_math/stan/math/prim/arr/meta/index_type.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/index_type.hpp \
- stan/lib/stan_math/stan/math/prim/arr/meta/is_vector.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/is_vector.hpp \
- stan/lib/stan_math/stan/math/prim/arr/meta/length.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/append_return_type.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/return_type.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/scalar_type.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/value_type.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/math/tools/promotion.hpp \
+ stan/lib/stan_math/stan/math/rev/core/var.hpp \
+ stan/lib/stan_math/stan/math/rev/core/vari.hpp \
+ stan/lib/stan_math/stan/math/rev/core/chainable_alloc.hpp \
+ stan/lib/stan_math/stan/math/rev/core/chainablestack.hpp \
+ stan/lib/stan_math/stan/math/rev/core/grad.hpp \
+ stan/lib/stan_math/stan/math/rev/core/empty_nested.hpp \
+ stan/lib/stan_math/stan/math/rev/core/nested_size.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/math/tools/config.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/config.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/config/user.hpp \
@@ -645,65 +543,90 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/float.h \
  stan/lib/stan_math/lib/boost_1.69.0/boost/math/tools/user.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_floating_point.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_convertible.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/intrinsics.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/config.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/version.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_complete.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/declval.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/add_rvalue_reference.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_void.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_reference.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_lvalue_reference.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_rvalue_reference.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/remove_reference.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_function.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/is_function_cxx_11.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/yes_no_type.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_array.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/static_assert.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_arithmetic.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_abstract.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/add_lvalue_reference.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/add_reference.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_same.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/remove_cv.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/if.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/value_wknd.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/static_cast.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/workaround.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/integral.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/msvc.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/eti.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/na_spec.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/lambda_fwd.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/void_fwd.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/adl_barrier.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/adl.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/intel.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/gcc.hpp \
+ stan/lib/stan_math/stan/math/rev/core/ddv_vari.hpp \
+ stan/lib/stan_math/stan/math/rev/core/dv_vari.hpp \
+ stan/lib/stan_math/stan/math/rev/core/dvd_vari.hpp \
+ stan/lib/stan_math/stan/math/rev/core/dvv_vari.hpp \
+ stan/lib/stan_math/stan/math/rev/core/gevv_vvv_vari.hpp \
+ stan/lib/stan_math/stan/math/rev/core/matrix_vari.hpp \
+ stan/lib/stan_math/stan/math/rev/mat/fun/Eigen_NumTraits.hpp \
+ stan/lib/stan_math/stan/math/rev/core/std_numeric_limits.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_addition.hpp \
+ stan/lib/stan_math/stan/math/rev/core/vv_vari.hpp \
+ stan/lib/stan_math/stan/math/rev/core/vd_vari.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/fun/is_nan.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_divide_equal.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_division.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_equal.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_greater_than.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_greater_than_or_equal.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_less_than.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_less_than_or_equal.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_logical_and.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_logical_or.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_minus_equal.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_subtraction.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_multiplication.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_multiply_equal.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_not_equal.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_plus_equal.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_unary_decrement.hpp \
+ stan/lib/stan_math/stan/math/rev/core/v_vari.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_unary_increment.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_unary_negative.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_unary_not.hpp \
+ stan/lib/stan_math/stan/math/rev/core/operator_unary_plus.hpp \
+ stan/lib/stan_math/stan/math/rev/core/precomp_v_vari.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/fun/constants.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/math/constants/constants.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/math/policies/policy.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/limits/list.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/na.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/bool.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/bool_fwd.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/adl_barrier.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/adl.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/msvc.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/intel.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/gcc.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/workaround.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/integral_c_tag.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/static_constant.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/na_fwd.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/ctps.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/preprocessor.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/inc.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/arithmetic/inc.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/config/config.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/cat.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/stringize.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/list20.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/list10.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/list0.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/long.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/long_fwd.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/nttp_decl.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/nttp.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/integral_wrapper.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/static_cast.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/push_front.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/push_front_fwd.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/next.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/next_prior.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/common_name_wknd.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/na_spec.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/lambda_fwd.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/void_fwd.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/lambda.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/ttp.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/int.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/int_fwd.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/nttp_decl.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/nttp.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/integral_wrapper.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/cat.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/config/config.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/lambda_arity_param.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/template_arity_fwd.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/arity.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/dtp.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessor/params.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/preprocessor.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/comma_if.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/punctuation/comma_if.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/control/if.hpp \
@@ -716,8 +639,6 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/debug/error.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/detail/auto_rec.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/tuple/eat.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/inc.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/arithmetic/inc.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessor/enum.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessor/def_params_tail.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/limits/arity.hpp \
@@ -748,151 +669,9 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/tuple/detail/is_single_return.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/variadic/elem.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/arithmetic/sub.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/eti.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/overload_resolution.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/lambda_support.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/and.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/use_preprocessed.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/nested_type_wknd.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/include_preprocessed.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/compiler.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/stringize.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/and.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/or.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/or.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/not.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/as_array_or_scalar.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/as_scalar.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/broadcast_array.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/broadcast_array.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/get.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/index_type.hpp \
- stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Core \
- stan/lib/stan_math/stan/math/prim/mat/meta/is_constant.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/is_constant.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/conjunction.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/is_vector.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/is_vector_like.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/is_vector_like.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/length.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/length_mvt.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/length_mvt.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/operands_and_partials.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/operands_and_partials.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/scalar_type.hpp \
- stan/lib/stan_math/stan/math/prim/arr/meta/scalar_type.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/seq_view.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/value_type.hpp \
- stan/lib/stan_math/stan/math/prim/arr/meta/value_type.hpp \
- stan/lib/stan_math/stan/math/prim/mat/meta/vector_seq_view.hpp \
- stan/lib/stan_math/stan/math/prim/arr/meta/as_scalar.hpp \
- stan/lib/stan_math/stan/math/prim/arr/meta/contains_std_vector.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/contains_std_vector.hpp \
- stan/lib/stan_math/stan/math/prim/arr/meta/is_constant.hpp \
- stan/lib/stan_math/stan/math/prim/arr/meta/VectorBuilderHelper.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/VectorBuilderHelper.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/ad_promotable.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/as_array_or_scalar.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/as_column_vector_or_scalar.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/as_scalar.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/child_type.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/contains_fvar.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/is_fvar.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/disjunction.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/contains_vector.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/error_index.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/enable_if_arithmetic.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/enable_if_floating_point.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/enable_if_same.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/enable_if_scalar.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/enable_if_var.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/is_var.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/enable_if_var_or_arithmetic.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/is_var_or_arithmetic.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/get.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/include_summand.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/length.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/likely.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/max_size.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/max_size_mvt.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/partials_return_type.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/partials_type.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/scalar_seq_view.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/scalar_type_pre.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/size_of.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/StdVectorBuilder.hpp \
- stan/lib/stan_math/stan/math/prim/scal/meta/VectorBuilder.hpp \
- stan/lib/stan_math/stan/math/rev/core/build_vari_array.hpp \
- stan/lib/stan_math/stan/math/rev/core/var.hpp \
- stan/lib/stan_math/stan/math/rev/core/vari.hpp \
- stan/lib/stan_math/stan/math/rev/core/chainable_alloc.hpp \
- stan/lib/stan_math/stan/math/rev/core/chainablestack.hpp \
- stan/lib/stan_math/stan/math/rev/core/grad.hpp \
- stan/lib/stan_math/stan/math/rev/core/empty_nested.hpp \
- stan/lib/stan_math/stan/math/rev/core/nested_size.hpp \
- stan/lib/stan_math/stan/math/rev/core/init_chainablestack.hpp \
- stan/lib/stan_math/stan/math/rev/core/ddv_vari.hpp \
- stan/lib/stan_math/stan/math/rev/core/dv_vari.hpp \
- stan/lib/stan_math/stan/math/rev/core/dvd_vari.hpp \
- stan/lib/stan_math/stan/math/rev/core/dvv_vari.hpp \
- stan/lib/stan_math/stan/math/rev/core/gevv_vvv_vari.hpp \
- stan/lib/stan_math/stan/math/rev/core/matrix_vari.hpp \
- stan/lib/stan_math/stan/math/rev/mat/fun/Eigen_NumTraits.hpp \
- stan/lib/stan_math/stan/math/rev/meta.hpp \
- stan/lib/stan_math/stan/math/rev/scal/meta/is_var.hpp \
- stan/lib/stan_math/stan/math/rev/scal/meta/partials_type.hpp \
- stan/lib/stan_math/stan/math/rev/mat/meta/operands_and_partials.hpp \
- stan/lib/stan_math/stan/math/rev/mat/fun/typedefs.hpp \
- stan/lib/stan_math/stan/math/rev/scal/meta/operands_and_partials.hpp \
- stan/lib/stan_math/stan/math/rev/core/precomputed_gradients.hpp \
- stan/lib/stan_math/stan/math/prim/scal/err/check_consistent_sizes.hpp \
- stan/lib/stan_math/stan/math/prim/scal/err/check_consistent_size.hpp \
- stan/lib/stan_math/stan/math/prim/scal/err/invalid_argument.hpp \
- stan/lib/stan_math/stan/math/rev/scal/meta/ad_promotable.hpp \
- stan/lib/stan_math/stan/math/rev/core/std_numeric_limits.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_addition.hpp \
- stan/lib/stan_math/stan/math/rev/core/vv_vari.hpp \
- stan/lib/stan_math/stan/math/rev/core/vd_vari.hpp \
- stan/lib/stan_math/stan/math/prim/scal/fun/is_any_nan.hpp \
- stan/lib/stan_math/stan/math/prim/scal/fun/is_nan.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_divide_equal.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_division.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_equal.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_greater_than.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_greater_than_or_equal.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_less_than.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_less_than_or_equal.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_logical_and.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_logical_or.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_minus_equal.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_subtraction.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_multiplication.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_multiply_equal.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_not_equal.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_plus_equal.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_unary_decrement.hpp \
- stan/lib/stan_math/stan/math/rev/core/v_vari.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_unary_increment.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_unary_negative.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_unary_not.hpp \
- stan/lib/stan_math/stan/math/rev/core/operator_unary_plus.hpp \
- stan/lib/stan_math/stan/math/rev/core/precomp_v_vari.hpp \
- stan/lib/stan_math/stan/math/prim/scal/fun/constants.hpp \
- stan/lib/stan_math/stan/math/prim/scal/fun/inv.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/math/constants/constants.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/math/policies/policy.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/limits/list.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/list20.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/list10.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/list0.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/long.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/long_fwd.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/push_front.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/push_front_fwd.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/next.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/next_prior.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/common_name_wknd.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/item.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/tag.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/pop_front.hpp \
@@ -909,6 +688,8 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/size_fwd.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/empty.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/empty_fwd.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/not.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/nested_type_wknd.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/begin_end.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/begin_end_fwd.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/iterator.hpp \
@@ -920,9 +701,12 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/arrays.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/lambda_spec.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/void.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/use_preprocessed.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/include_preprocessed.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/preprocessed/plain/list10.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/preprocessed/plain/list20.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/include_preprocessed.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/compiler.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/list.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/contains.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/contains_fwd.hpp \
@@ -943,6 +727,9 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/begin_end.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/begin_end_impl.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/eval_if.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/if.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/value_wknd.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/integral.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/traits_lambda_spec.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/find.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/find_if.hpp \
@@ -985,6 +772,10 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/apply.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/iter_fold_if.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/logical.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/or.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/or.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/and.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/and.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/always.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessor/default_params.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/pair.hpp \
@@ -993,6 +784,7 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/identity.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/iter_fold_if_impl.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/forwarding.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_same.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/same_as.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/remove_if.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/fold.hpp \
@@ -1087,19 +879,42 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/less_equal.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/greater_equal.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/greater_equal.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/static_assert.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/assert.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/math/tools/precision.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/limits.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/math/tools/convert_from_string.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_constructible.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_destructible.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_complete.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/declval.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/add_rvalue_reference.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_void.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_reference.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_lvalue_reference.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_rvalue_reference.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/remove_reference.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_function.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/config.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/version.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/is_function_cxx_11.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/yes_no_type.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_default_constructible.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/conditional.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/lexical_cast.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/range/iterator_range_core.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/iterator/iterator_traits.hpp \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/iterator \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stream_iterator.h \
  stan/lib/stan_math/lib/boost_1.69.0/boost/iterator/iterator_facade.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/iterator/interoperable.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_convertible.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/intrinsics.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_array.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_arithmetic.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_abstract.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/add_lvalue_reference.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/add_reference.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/iterator/detail/config_def.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/iterator/detail/config_undef.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/iterator/iterator_categories.hpp \
@@ -1112,6 +927,7 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_member_function_pointer.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/is_member_function_pointer_cxx_11.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_member_pointer.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/remove_cv.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/remove_pointer.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/detail/select_type.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/iterator/detail/enable_if.hpp \
@@ -1271,6 +1087,7 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/boost_1.69.0/boost/math/special_functions/sign.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/math/special_functions/math_fwd.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/math/special_functions/detail/round_fwd.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/math/tools/promotion.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/config/no_tr1/complex.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/math/special_functions/detail/fp_traits.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/math/special_functions/fpclassify.hpp \
@@ -1286,6 +1103,12 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/rev/core/precomp_vv_vari.hpp \
  stan/lib/stan_math/stan/math/rev/core/precomp_vvv_vari.hpp \
  stan/lib/stan_math/stan/math/rev/core/vvv_vari.hpp \
+ stan/lib/stan_math/stan/math/rev/core/precomputed_gradients.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/err/check_consistent_sizes.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/err/check_consistent_size.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/err/invalid_argument.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/size_of.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/is_vector.hpp \
  stan/lib/stan_math/stan/math/rev/core/print_stack.hpp \
  stan/lib/stan_math/stan/math/rev/core/recover_memory.hpp \
  stan/lib/stan_math/stan/math/rev/core/recover_memory_nested.hpp \
@@ -1300,14 +1123,59 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/rev/core/vdv_vari.hpp \
  stan/lib/stan_math/stan/math/rev/core/vector_vari.hpp \
  stan/lib/stan_math/stan/math/rev/core/vvd_vari.hpp \
+ stan/lib/stan_math/stan/math/rev/scal/meta/is_var.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/is_var.hpp \
+ stan/lib/stan_math/stan/math/rev/scal/meta/partials_type.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/partials_type.hpp \
+ stan/lib/stan_math/stan/math/rev/mat/meta/operands_and_partials.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/broadcast_array.hpp \
+ stan/lib/stan_math/stan/math/rev/mat/fun/typedefs.hpp \
+ stan/lib/stan_math/stan/math/rev/scal/meta/operands_and_partials.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/operands_and_partials.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/return_type.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/scalar_type.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/value_type.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/is_vector_like.hpp \
+ stan/lib/stan_math/stan/math/prim/arr/meta/length.hpp \
  stan/lib/stan_math/stan/math/rev/mat/vectorize/apply_scalar_unary.hpp \
  stan/lib/stan_math/stan/math/prim/mat/vectorize/apply_scalar_unary.hpp \
  stan/lib/stan_math/stan/math/prim/mat.hpp \
+ stan/lib/stan_math/stan/math/prim/arr/meta/get.hpp \
+ stan/lib/stan_math/stan/math/prim/arr/meta/index_type.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/index_type.hpp \
+ stan/lib/stan_math/stan/math/prim/arr/meta/is_vector.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/as_array_or_scalar.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/as_scalar.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/broadcast_array.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/get.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/index_type.hpp \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Core \
+ stan/lib/stan_math/stan/math/prim/mat/meta/is_constant_struct.hpp \
+ stan/lib/stan_math/stan/math/prim/arr/meta/is_constant_struct.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/is_constant.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/is_constant_struct.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/is_vector.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/is_vector_like.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/length.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/length_mvt.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/length_mvt.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/operands_and_partials.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/scalar_type.hpp \
+ stan/lib/stan_math/stan/math/prim/arr/meta/scalar_type.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/seq_view.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/value_type.hpp \
+ stan/lib/stan_math/stan/math/prim/arr/meta/value_type.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/meta/vector_seq_view.hpp \
  stan/lib/stan_math/stan/math/prim/mat/err/check_cholesky_factor.hpp \
  stan/lib/stan_math/stan/math/prim/scal/err/check_positive.hpp \
  stan/lib/stan_math/stan/math/prim/scal/err/domain_error.hpp \
  stan/lib/stan_math/stan/math/prim/scal/err/domain_error_vec.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/error_index.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/get.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/length.hpp \
  stan/lib/stan_math/stan/math/prim/scal/err/check_less_or_equal.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/scalar_seq_view.hpp \
  stan/lib/stan_math/stan/math/prim/mat/err/check_lower_triangular.hpp \
  stan/lib/stan_math/stan/math/prim/mat/err/check_cholesky_factor_corr.hpp \
  stan/lib/stan_math/stan/math/prim/mat/err/check_square.hpp \
@@ -1326,6 +1194,7 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/mat/err/check_symmetric.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/value_of.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/value_of.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/child_type.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/value_of_rec.hpp \
  stan/lib/stan_math/stan/math/prim/mat/err/check_cov_matrix.hpp \
  stan/lib/stan_math/stan/math/prim/mat/err/check_finite.hpp \
@@ -1341,6 +1210,7 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/unique_ptr.h \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/shared_ptr.h \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/shared_ptr_base.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/aligned_buffer.h \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/backward/auto_ptr.h \
  stan/lib/stan_math/lib/boost_1.69.0/boost/checked_delete.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/smart_ptr/detail/shared_count.hpp \
@@ -1353,6 +1223,9 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/boost_1.69.0/boost/core/demangle.hpp \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cxxabi.h \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/cxxabi_tweaks.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/atomic \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/atomic_base.h \
+ C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/stdbool.h \
  stan/lib/stan_math/lib/boost_1.69.0/boost/smart_ptr/detail/sp_counted_impl.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/smart_ptr/detail/sp_disable_deprecated.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/smart_ptr/detail/sp_convertible.hpp \
@@ -1416,6 +1289,7 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/mat/fun/assign.hpp \
  stan/lib/stan_math/stan/math/prim/arr/err/check_matching_sizes.hpp \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/iostream \
+ stan/lib/stan_math/stan/math/prim/mat/meta/append_return_type.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/append_col.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/append_row.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/asin.hpp \
@@ -1425,9 +1299,14 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/mat/fun/atanh.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/atanh.hpp \
  stan/lib/stan_math/stan/math/prim/scal/err/check_bounded.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/max_size.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/autocorrelation.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/mean.hpp \
  stan/lib/stan_math/lib/eigen_3.3.3/unsupported/Eigen/FFT \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/map \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_tree.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_map.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_multimap.h \
  stan/lib/stan_math/lib/eigen_3.3.3/unsupported/Eigen/src/FFT/ei_kissfft_impl.h \
  stan/lib/stan_math/stan/math/prim/mat/fun/autocovariance.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/variance.hpp \
@@ -1447,71 +1326,11 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/mat/fun/promote_elements.hpp \
  stan/lib/stan_math/stan/math/prim/arr/fun/promote_elements.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/promote_elements.hpp \
- stan/lib/stan_math/stan/math/opencl/opencl.hpp \
- stan/lib/stan_math/stan/math/opencl/opencl_context.hpp \
- stan/lib/stan_math/stan/math/opencl/matrix_cl_view.hpp \
- stan/lib/stan_math/stan/math/opencl/stringify.hpp \
- stan/lib/stan_math/stan/math/opencl/err/check_opencl.hpp \
- stan/lib/stan_math/stan/math/prim/scal/err/system_error.hpp \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/system_error \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/error_constants.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/fstream \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/basic_file.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++io.h \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/fstream.tcc \
- stan/lib/stan_math/stan/math/opencl/matrix_cl.hpp \
- stan/lib/stan_math/stan/math/prim/arr/fun/vec_concat.hpp \
- stan/lib/stan_math/stan/math/opencl/add.hpp \
- stan/lib/stan_math/stan/math/opencl/err/check_matching_dims.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/add.hpp \
- stan/lib/stan_math/stan/math/opencl/kernel_cl.hpp \
- stan/lib/stan_math/stan/math/opencl/buffer_types.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/helpers.hpp \
- stan/lib/stan_math/stan/math/opencl/copy.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/copy.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/pack.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/unpack.hpp \
- stan/lib/stan_math/stan/math/opencl/err/check_triangular.hpp \
- stan/lib/stan_math/stan/math/opencl/copy_triangular.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/copy_triangular.hpp \
- stan/lib/stan_math/stan/math/opencl/cholesky_decompose.hpp \
- stan/lib/stan_math/stan/math/opencl/multiply.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/scalar_mul.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/matrix_multiply.hpp \
- stan/lib/stan_math/stan/math/opencl/sub_block.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/sub_block.hpp \
- stan/lib/stan_math/stan/math/opencl/zeros.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/zeros.hpp \
- stan/lib/stan_math/stan/math/opencl/multiply_transpose.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/multiply_transpose.hpp \
- stan/lib/stan_math/stan/math/opencl/err/check_square.hpp \
- stan/lib/stan_math/stan/math/opencl/tri_inverse.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/diag_inv.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/inv_lower_tri_multiply.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/neg_rect_lower_tri_multiply.hpp \
- stan/lib/stan_math/stan/math/opencl/transpose.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/transpose.hpp \
- stan/lib/stan_math/stan/math/opencl/identity.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/identity.hpp \
- stan/lib/stan_math/stan/math/opencl/subtract.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/subtract.hpp \
- stan/lib/stan_math/stan/math/opencl/err/check_diagonal_zeros.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/check_diagonal_zeros.hpp \
- stan/lib/stan_math/stan/math/opencl/err/check_nan.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/check_nan.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/cholesky_decompose.hpp \
- stan/lib/stan_math/stan/math/opencl/diagonal_multiply.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/scalar_mul_diagonal.hpp \
- stan/lib/stan_math/stan/math/opencl/triangular_transpose.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/triangular_transpose.hpp \
- stan/lib/stan_math/stan/math/opencl/err/check_symmetric.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/check_symmetric.hpp \
- stan/lib/stan_math/stan/math/opencl/err/check_vector.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/inv_square.hpp \
- stan/lib/stan_math/stan/math/prim/scal/fun/square.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/cholesky_corr_constrain.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/log1m.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/log1p.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/fun/square.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/corr_constrain.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/cholesky_corr_free.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/corr_free.hpp \
@@ -1540,10 +1359,6 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/scal/fun/squared_distance.hpp \
  stan/lib/stan_math/stan/math/prim/scal/err/check_positive_finite.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/exp.hpp \
- stan/lib/stan_math/stan/math/opencl/gp_exp_quad_cov.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/gp_exp_quad_cov.hpp \
- stan/lib/stan_math/stan/math/opencl/divide_columns.hpp \
- stan/lib/stan_math/stan/math/opencl/kernels/divide_columns.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/cov_matrix_constrain.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/cov_matrix_constrain_lkj.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/positive_constrain.hpp \
@@ -1554,6 +1369,84 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/mat/fun/crossprod.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/tcrossprod.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/csr_extract_u.hpp \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Sparse \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseCore \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseUtil.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseMatrixBase.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/CommonCwiseUnaryOps.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/CommonCwiseBinaryOps.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/MatrixCwiseUnaryOps.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/MatrixCwiseBinaryOps.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/BlockMethods.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseAssign.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/CompressedStorage.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/AmbiVector.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseCompressedBase.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseMatrix.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseMap.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/MappedSparseMatrix.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseVector.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseRef.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseCwiseUnaryOp.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseCwiseBinaryOp.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseTranspose.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseBlock.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseDot.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseRedux.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseView.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseDiagonalProduct.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/ConservativeSparseSparseProduct.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseSparseProductWithPruning.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseProduct.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseDenseProduct.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseSelfAdjointView.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseTriangularView.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/TriangularSolver.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparsePermutation.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseFuzzy.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseSolverBase.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/OrderingMethods \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/Amd.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/../Core/util/NonMPL2.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/Ordering.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/Eigen_Colamd.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseCholesky \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCholesky/SimplicialCholesky.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCholesky/../Core/util/NonMPL2.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseLU \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_gemm_kernel.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_Structs.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_SupernodalMatrix.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLUImpl.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseColEtree.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_Memory.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_heap_relax_snode.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_relax_snode.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_pivotL.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_panel_dfs.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_kernel_bmod.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_panel_bmod.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_column_dfs.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_column_bmod.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_copy_to_ucol.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_pruneL.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_Utils.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseQR \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseQR/SparseQR.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/IterativeLinearSolvers \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/SolveWithGuess.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/IterativeSolverBase.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/BasicPreconditioners.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/ConjugateGradient.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/LeastSquareConjugateGradient.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h \
+ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/IncompleteCholesky.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/list \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_list.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/list.tcc \
  stan/lib/stan_math/stan/math/prim/mat/fun/csr_extract_v.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/csr_extract_w.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/csr_matrix_times_vector.hpp \
@@ -1600,6 +1493,7 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/mat/fun/gp_matern52_cov.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/sqrt.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/gp_periodic_cov.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/fun/inv.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/head.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/initialize.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/inv.hpp \
@@ -1635,6 +1529,7 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/scal/fun/log_inv_logit.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/log_mix.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/log_sum_exp.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/partials_return_type.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/log_softmax.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/logit.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/logit.hpp \
@@ -1731,24 +1626,35 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/mat/fun/welford_covar_estimator.hpp \
  stan/lib/stan_math/stan/math/prim/mat/fun/welford_var_estimator.hpp \
  stan/lib/stan_math/stan/math/prim/mat/functor/finite_diff_gradient.hpp \
- stan/lib/stan_math/stan/math/prim/mat/functor/finite_diff_gradient_auto.hpp \
- stan/lib/stan_math/stan/math/prim/scal/fun/finite_diff_stepsize.hpp \
  stan/lib/stan_math/stan/math/prim/mat/functor/finite_diff_hessian.hpp \
- stan/lib/stan_math/stan/math/prim/mat/functor/finite_diff_hessian_helper.hpp \
- stan/lib/stan_math/stan/math/prim/mat/functor/finite_diff_hessian_auto.hpp \
  stan/lib/stan_math/stan/math/prim/mat/functor/map_rect.hpp \
  stan/lib/stan_math/stan/math/prim/mat/functor/map_rect_concurrent.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/functor/map_rect_reduce.hpp \
+ stan/lib/stan_math/stan/math/prim/mat/functor/map_rect_combine.hpp \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/thread \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/chrono \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ratio \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/parse_numbers.h \
- stan/lib/stan_math/stan/math/prim/mat/functor/map_rect_combine.hpp \
- stan/lib/stan_math/stan/math/prim/mat/functor/map_rect_reduce.hpp \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/future \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/mutex \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/system_error \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/error_constants.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/condition_variable \
  stan/lib/stan_math/stan/math/prim/mat/prob/bernoulli_logit_glm_log.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/bernoulli_logit_glm_lpmf.hpp \
  stan/lib/stan_math/stan/math/prim/arr/fun/value_of_rec.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/as_array_or_scalar.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/as_scalar.hpp \
+ stan/lib/stan_math/stan/math/prim/arr/meta/as_scalar.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/as_column_vector_or_scalar.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/include_summand.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/size_zero.hpp \
+ stan/lib/stan_math/stan/math/opencl/kernels/bernoulli_logit_glm_lpmf.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/bernoulli_logit_glm_rng.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/VectorBuilder.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/VectorBuilderHelper.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/contains_vector.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/disjunction.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/random/bernoulli_distribution.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/config.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/operators.hpp \
@@ -1758,7 +1664,6 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/enable_warnings.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/categorical_log.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/categorical_lpmf.hpp \
- stan/lib/stan_math/stan/math/prim/mat/prob/categorical_logit_glm_lpmf.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/categorical_logit_log.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/categorical_logit_lpmf.hpp \
  stan/lib/stan_math/stan/math/prim/arr/fun/log_sum_exp.hpp \
@@ -1816,6 +1721,8 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/mat/prob/gaussian_dlm_obs_log.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/gaussian_dlm_obs_lpdf.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/gaussian_dlm_obs_rng.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/StdVectorBuilder.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/contains_std_vector.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/random/normal_distribution.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/inv_wishart_log.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/inv_wishart_lpdf.hpp \
@@ -1836,6 +1743,8 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/mat/prob/lkj_cov_log.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/lkj_cov_lpdf.hpp \
  stan/lib/stan_math/stan/math/prim/scal/prob/lognormal_lpdf.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/contains_nonconstant_struct.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/is_nonconstant_struct.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/matrix_normal_prec_log.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/matrix_normal_prec_lpdf.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/matrix_normal_prec_rng.hpp \
@@ -1845,6 +1754,7 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/mat/prob/multi_gp_lpdf.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/multi_normal_cholesky_log.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/multi_normal_cholesky_lpdf.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/max_size_mvt.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/multi_normal_cholesky_rng.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/multi_normal_log.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/multi_normal_lpdf.hpp \
@@ -1866,8 +1776,12 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/scal/fun/digamma.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/boost_policy.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/sum.hpp \
+ stan/lib/stan_math/stan/math/opencl/kernels/neg_binomial_2_log_glm_lpmf.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/normal_id_glm_log.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/normal_id_glm_lpdf.hpp \
+ stan/lib/stan_math/stan/math/opencl/kernels/normal_id_glm_lpdf.hpp \
+ stan/lib/stan_math/stan/math/opencl/matrix_cl.hpp \
+ stan/lib/stan_math/stan/math/opencl/multiply.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/ordered_logistic_log.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp \
  stan/lib/stan_math/stan/math/prim/scal/fun/log_inv_logit_diff.hpp \
@@ -1879,9 +1793,12 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/mat/prob/ordered_probit_rng.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/poisson_log_glm_log.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/poisson_log_glm_lpmf.hpp \
+ stan/lib/stan_math/stan/math/opencl/kernels/poisson_log_glm_lpmf.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/wishart_log.hpp \
  stan/lib/stan_math/stan/math/prim/mat/prob/wishart_lpdf.hpp \
  stan/lib/stan_math/stan/math/prim/arr.hpp \
+ stan/lib/stan_math/stan/math/prim/arr/meta/contains_std_vector.hpp \
+ stan/lib/stan_math/stan/math/prim/arr/meta/VectorBuilderHelper.hpp \
  stan/lib/stan_math/stan/math/prim/arr/err/is_matching_size.hpp \
  stan/lib/stan_math/stan/math/prim/arr/err/is_ordered.hpp \
  stan/lib/stan_math/stan/math/prim/arr/fun/array_builder.hpp \
@@ -2705,6 +2622,12 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/arr/functor/mpi_cluster.hpp \
  stan/lib/stan_math/stan/math/prim/scal.hpp \
  stan/lib/stan_math/stan/math/version.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/ad_promotable.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/contains_fvar.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/is_fvar.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/is_var_or_arithmetic.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/conjunction.hpp \
+ stan/lib/stan_math/stan/math/prim/scal/meta/scalar_type_pre.hpp \
  stan/lib/stan_math/stan/math/prim/scal/err/check_2F1_converges.hpp \
  stan/lib/stan_math/stan/math/prim/scal/err/check_3F2_converges.hpp \
  stan/lib/stan_math/stan/math/prim/scal/err/invalid_argument_vec.hpp \
@@ -3067,6 +2990,7 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/stan/math/prim/scal/prob/wiener_lpdf.hpp \
  stan/lib/stan_math/stan/math/rev/arr.hpp \
  stan/lib/stan_math/stan/math/rev/scal.hpp \
+ stan/lib/stan_math/stan/math/rev/scal/meta/ad_promotable.hpp \
  stan/lib/stan_math/stan/math/rev/scal/fun/abs.hpp \
  stan/lib/stan_math/stan/math/rev/scal/fun/fabs.hpp \
  stan/lib/stan_math/stan/math/rev/scal/fun/acos.hpp \
@@ -3257,10 +3181,6 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/lib/stan_math/lib/sundials_4.1.0/include/idas/idas.h \
  stan/lib/stan_math/lib/sundials_4.1.0/include/idas/idas_ls.h \
  stan/lib/stan_math/stan/math/rev/mat/functor/idas_integrator.hpp \
- stan/lib/stan_math/stan/math/rev/mat/functor/map_rect_concurrent.hpp \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/future \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/mutex \
- C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/condition_variable \
  stan/lib/stan_math/stan/math/rev/mat/functor/map_rect_reduce.hpp \
  stan/src/stan/io/cmd_line.hpp \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/set \
@@ -3272,15 +3192,11 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/src/stan/io/program_reader.hpp stan/src/stan/io/ends_with.hpp \
  stan/src/stan/io/read_line.hpp stan/src/stan/io/starts_with.hpp \
  stan/src/stan/io/trim_spaces.hpp stan/src/stan/io/is_whitespace.hpp \
- stan/src/stan/model/model_base.hpp stan/src/stan/model/prob_grad.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/random/additive_combine.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/seed.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/random/linear_congruential.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/integer/static_log2.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/const_mod.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/large_arithmetic.hpp \
- stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/seed_impl.hpp \
- stan/src/stan/model/model_base_crtp.hpp stan/src/stan/model/indexing.hpp \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/fstream \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/basic_file.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++io.h \
+ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/fstream.tcc \
+ stan/src/stan/model/prob_grad.hpp stan/src/stan/model/indexing.hpp \
  stan/src/stan/model/indexing/deep_copy.hpp \
  stan/src/stan/model/indexing/index.hpp \
  stan/src/stan/model/indexing/index_list.hpp \
@@ -3290,6 +3206,13 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  stan/src/stan/model/indexing/rvalue.hpp \
  stan/src/stan/model/indexing/rvalue_return.hpp \
  stan/src/stan/services/util/create_rng.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/random/additive_combine.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/seed.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/random/linear_congruential.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/integer/static_log2.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/const_mod.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/large_arithmetic.hpp \
+ stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/seed_impl.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/exception/all.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/exception/diagnostic_information.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/exception/get_error_info.hpp \
@@ -3571,6 +3494,7 @@ C:/Users/cooper/Documents/gitHubRepositories/cooperAnalysis/matlabCode/operantMa
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/queue \
  C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_queue.h \
  stan/src/stan/services/experimental/advi/meanfield.hpp \
+ stan/lib/stan_math/stan/math/opencl/opencl_context.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/date_time/posix_time/posix_time_types.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/date_time/time_clock.hpp \
  stan/lib/stan_math/lib/boost_1.69.0/boost/date_time/c_time.hpp \
@@ -3632,11 +3556,15 @@ stan/lib/stan_math/stan/math.hpp:
 
 stan/lib/stan_math/stan/math/rev/mat.hpp:
 
-stan/lib/stan_math/stan/math/prim/mat/fun/Eigen.hpp:
+stan/lib/stan_math/stan/math/rev/core.hpp:
 
-stan/lib/stan_math/lib/opencl_1.2.8/CL/cl.hpp:
+stan/lib/stan_math/stan/math/rev/core/autodiffstackstorage.hpp:
 
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/malloc.h:
+stan/lib/stan_math/stan/math/memory/stack_alloc.hpp:
+
+C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/stdint.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stdint.h:
 
 C:/Rtools/mingw_64/x86_64-w64-mingw32/include/crtdefs.h:
 
@@ -3652,39 +3580,319 @@ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sdks/_mingw_directx.h:
 
 C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h:
 
-stan/lib/stan_math/lib/opencl_1.2.8/CL/opencl.h:
-
-stan/lib/stan_math/lib/opencl_1.2.8/CL/cl.h:
-
-stan/lib/stan_math/lib/opencl_1.2.8/CL/cl_platform.h:
-
-C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/stdint.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stdint.h:
-
 C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/stddef.h:
 
 C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stddef.h:
 
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/intrin.h:
+stan/lib/stan_math/stan/math/prim/scal/meta/likely.hpp:
 
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/setjmp.h:
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstdlib:
 
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/psdk_inc/intrin-impl.h:
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++config.h:
 
-C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/x86intrin.h:
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/os_defines.h:
 
-C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/ia32intrin.h:
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/cpu_defines.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stdlib.h:
+
+C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include-fixed/limits.h:
+
+C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include-fixed/syslimits.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/limits.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/stdlib_s.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/malloc.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstddef:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/sstream:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/istream:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ios:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/iosfwd:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stringfwd.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/memoryfwd.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/postypes.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cwchar:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/wchar.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_print_push.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_off_t.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_stat64.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/swprintf.inl:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/wchar_s.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_print_pop.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/exception:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/atomic_lockfree_defines.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/exception_ptr.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/exception_defines.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/nested_exception.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/char_traits.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_algobase.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/functexcept.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/cpp_type_traits.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/type_traits.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/numeric_traits.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_pair.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/move.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/concept_check.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/type_traits:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_iterator_base_types.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_iterator_base_funcs.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/debug/debug.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_iterator.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ptr_traits.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/predefined_ops.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstdint:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/localefwd.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++locale.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/clocale:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/locale.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stdio.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/stdio_s.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cctype:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/ctype.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ios_base.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/atomicity.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/gthr.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/gthr-default.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/errno.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sys/types.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/process.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/signal.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread_signal.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sys/timeb.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread_compat.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread_unistd.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/atomic_word.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_classes.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/string:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/allocator.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++allocator.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/new_allocator.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/new:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ostream_insert.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/cxxabi_forced.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_function.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/backward/binders.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/range_access.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_string.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/initializer_list:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/string_conversions.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstdio:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cerrno:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/functional_hash.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/hash_bytes.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_string.tcc:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_classes.tcc:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/streambuf:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/streambuf.tcc:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_ios.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_facets.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cwctype:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/wctype.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/ctype_base.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/streambuf_iterator.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/ctype_inline.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_facets.tcc:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_ios.tcc:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ostream:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ostream.tcc:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/istream.tcc:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/sstream.tcc:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/stdexcept:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/vector:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_construct.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/alloc_traits.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/alloc_traits.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_uninitialized.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_vector.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_bvector.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/vector.tcc:
+
+stan/lib/stan_math/stan/math/rev/core/build_vari_array.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/fun/Eigen.hpp:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Dense:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Core:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/util/DisableStupidWarnings.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/util/Macros.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/complex:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cmath:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/math.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/util/MKL_support.h:
 
 C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/mmintrin.h:
+
+C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/emmintrin.h:
 
 C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/xmmintrin.h:
 
 C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/mm_malloc.h:
 
-C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/emmintrin.h:
-
 C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/pmmintrin.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cassert:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/assert.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/functional:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/typeinfo:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/tuple:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/utility:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_relops.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/array:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/uses_allocator.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstring:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/string.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/string_s.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/limits:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/climits:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/algorithm:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_algo.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/algorithmfwd.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_heap.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_tempbuf.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/random:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/random.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/opt_random.h:
+
+C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/x86intrin.h:
+
+C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/ia32intrin.h:
 
 C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/tmmintrin.h:
 
@@ -3747,310 +3955,6 @@ C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/xsaveintrin.h:
 C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/xsaveoptintrin.h:
 
 C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/adxintrin.h:
-
-stan/lib/stan_math/lib/opencl_1.2.8/CL/cl_gl.h:
-
-stan/lib/stan_math/lib/opencl_1.2.8/CL/cl_gl_ext.h:
-
-stan/lib/stan_math/lib/opencl_1.2.8/CL/cl_ext.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/atomic:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/atomic_base.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++config.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/os_defines.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/cpu_defines.h:
-
-C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/stdbool.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/atomic_lockfree_defines.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/utility:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_relops.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_pair.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/move.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/concept_check.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/type_traits:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/initializer_list:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/limits:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/iterator:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_iterator_base_types.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_iterator_base_funcs.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/debug/debug.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_iterator.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/cpp_type_traits.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/type_traits.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ptr_traits.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ostream:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ios:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/iosfwd:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stringfwd.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/memoryfwd.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/postypes.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cwchar:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/wchar.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_print_push.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_off_t.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_stat64.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/swprintf.inl:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/wchar_s.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/_mingw_print_pop.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/exception:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/exception_ptr.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/exception_defines.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/nested_exception.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/char_traits.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_algobase.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/functexcept.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/numeric_traits.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/predefined_ops.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstdint:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/localefwd.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++locale.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/clocale:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/locale.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stdio.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/stdio_s.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cctype:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/ctype.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ios_base.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/atomicity.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/gthr.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/gthr-default.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/errno.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sys/types.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/process.h:
-
-C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include-fixed/limits.h:
-
-C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include-fixed/syslimits.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/limits.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/signal.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread_signal.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sys/timeb.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread_compat.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/pthread_unistd.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/atomic_word.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_classes.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/string:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/allocator.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++allocator.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/new_allocator.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/new:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ostream_insert.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/cxxabi_forced.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_function.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/backward/binders.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/range_access.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_string.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/string_conversions.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstdlib:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/stdlib.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/stdlib_s.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstdio:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cerrno:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/functional_hash.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/hash_bytes.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_string.tcc:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_classes.tcc:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/streambuf:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/streambuf.tcc:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_ios.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_facets.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cwctype:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/wctype.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/ctype_base.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/streambuf_iterator.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/ctype_inline.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/locale_facets.tcc:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/basic_ios.tcc:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/ostream.tcc:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/istream:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/istream.tcc:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stream_iterator.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/vector:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_construct.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/alloc_traits.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/alloc_traits.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_uninitialized.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_vector.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_bvector.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/vector.tcc:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstring:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/string.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/sec_api/string_s.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Dense:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Core:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/util/DisableStupidWarnings.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/util/Macros.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/complex:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cmath:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/math.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/sstream:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/sstream.tcc:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/util/MKL_support.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cstddef:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cassert:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/assert.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/functional:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/typeinfo:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/tuple:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/array:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/stdexcept:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/uses_allocator.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/climits:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/algorithm:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_algo.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/algorithmfwd.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_heap.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_tempbuf.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/random:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/random.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/opt_random.h:
 
 C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/random.tcc:
 
@@ -4125,8 +4029,6 @@ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/../plugins/CommonCwiseBinaryOp
 stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/../plugins/MatrixCwiseUnaryOps.h:
 
 stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/../plugins/MatrixCwiseBinaryOps.h:
-
-stan/lib/stan_math/stan/math/prim/mat/eigen_plugins.h:
 
 stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/EigenBase.h:
 
@@ -4398,205 +4300,23 @@ stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Eigenvalues/./RealQZ.h:
 
 stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h:
 
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Sparse:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseCore:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/map:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_tree.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/aligned_buffer.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_map.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_multimap.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseUtil.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseMatrixBase.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/CommonCwiseUnaryOps.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/CommonCwiseBinaryOps.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/MatrixCwiseUnaryOps.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/MatrixCwiseBinaryOps.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/BlockMethods.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseAssign.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/CompressedStorage.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/AmbiVector.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseCompressedBase.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseMatrix.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseMap.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/MappedSparseMatrix.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseVector.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseRef.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseCwiseUnaryOp.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseCwiseBinaryOp.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseTranspose.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseBlock.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseDot.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseRedux.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseView.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseDiagonalProduct.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/ConservativeSparseSparseProduct.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseSparseProductWithPruning.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseProduct.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseDenseProduct.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseSelfAdjointView.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseTriangularView.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/TriangularSolver.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparsePermutation.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseFuzzy.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseSolverBase.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/OrderingMethods:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/Amd.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/../Core/util/NonMPL2.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/Ordering.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/Eigen_Colamd.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseCholesky:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCholesky/SimplicialCholesky.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCholesky/../Core/util/NonMPL2.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseLU:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_gemm_kernel.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_Structs.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_SupernodalMatrix.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLUImpl.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseColEtree.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_Memory.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_heap_relax_snode.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_relax_snode.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_pivotL.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_panel_dfs.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_kernel_bmod.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_panel_bmod.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_column_dfs.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_column_bmod.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_copy_to_ucol.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_pruneL.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_Utils.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseQR:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseQR/SparseQR.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/IterativeLinearSolvers:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/SolveWithGuess.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/IterativeSolverBase.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/BasicPreconditioners.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/ConjugateGradient.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/LeastSquareConjugateGradient.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/IncompleteCholesky.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/list:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_list.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/list.tcc:
-
 stan/lib/stan_math/lib/eigen_3.3.3/Eigen/QR:
 
 stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/Core/NumTraits.h:
 
-stan/lib/stan_math/stan/math/rev/core.hpp:
+stan/lib/stan_math/stan/math/rev/core/var.hpp:
 
-stan/lib/stan_math/stan/math/rev/core/autodiffstackstorage.hpp:
+stan/lib/stan_math/stan/math/rev/core/vari.hpp:
 
-stan/lib/stan_math/stan/math/memory/stack_alloc.hpp:
+stan/lib/stan_math/stan/math/rev/core/chainable_alloc.hpp:
 
-stan/lib/stan_math/stan/math/prim/meta.hpp:
+stan/lib/stan_math/stan/math/rev/core/chainablestack.hpp:
 
-stan/lib/stan_math/stan/math/prim/arr/meta/get.hpp:
+stan/lib/stan_math/stan/math/rev/core/grad.hpp:
 
-stan/lib/stan_math/stan/math/prim/arr/meta/index_type.hpp:
+stan/lib/stan_math/stan/math/rev/core/empty_nested.hpp:
 
-stan/lib/stan_math/stan/math/prim/scal/meta/index_type.hpp:
-
-stan/lib/stan_math/stan/math/prim/arr/meta/is_vector.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/is_vector.hpp:
-
-stan/lib/stan_math/stan/math/prim/arr/meta/length.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/append_return_type.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/return_type.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/scalar_type.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/value_type.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/math/tools/promotion.hpp:
+stan/lib/stan_math/stan/math/rev/core/nested_size.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/math/tools/config.hpp:
 
@@ -4916,85 +4636,101 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/math/tools/user.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_floating_point.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_convertible.hpp:
+stan/lib/stan_math/stan/math/rev/core/ddv_vari.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/intrinsics.hpp:
+stan/lib/stan_math/stan/math/rev/core/dv_vari.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/config.hpp:
+stan/lib/stan_math/stan/math/rev/core/dvd_vari.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/version.hpp:
+stan/lib/stan_math/stan/math/rev/core/dvv_vari.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_complete.hpp:
+stan/lib/stan_math/stan/math/rev/core/gevv_vvv_vari.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/declval.hpp:
+stan/lib/stan_math/stan/math/rev/core/matrix_vari.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/add_rvalue_reference.hpp:
+stan/lib/stan_math/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_void.hpp:
+stan/lib/stan_math/stan/math/rev/core/std_numeric_limits.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_reference.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_addition.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_lvalue_reference.hpp:
+stan/lib/stan_math/stan/math/rev/core/vv_vari.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_rvalue_reference.hpp:
+stan/lib/stan_math/stan/math/rev/core/vd_vari.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/remove_reference.hpp:
+stan/lib/stan_math/stan/math/prim/scal/fun/is_nan.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_function.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_divide_equal.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/is_function_cxx_11.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_division.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/yes_no_type.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_equal.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_array.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_greater_than.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/static_assert.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_greater_than_or_equal.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_arithmetic.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_less_than.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_abstract.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_less_than_or_equal.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/add_lvalue_reference.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_logical_and.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/add_reference.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_logical_or.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_same.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_minus_equal.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/remove_cv.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_subtraction.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/if.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_multiplication.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/value_wknd.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_multiply_equal.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/static_cast.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_not_equal.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/workaround.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_plus_equal.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/integral.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_unary_decrement.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/msvc.hpp:
+stan/lib/stan_math/stan/math/rev/core/v_vari.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/eti.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_unary_increment.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/na_spec.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_unary_negative.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/lambda_fwd.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_unary_not.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/void_fwd.hpp:
+stan/lib/stan_math/stan/math/rev/core/operator_unary_plus.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/adl_barrier.hpp:
+stan/lib/stan_math/stan/math/rev/core/precomp_v_vari.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/adl.hpp:
+stan/lib/stan_math/stan/math/prim/scal/fun/constants.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/intel.hpp:
+stan/lib/stan_math/lib/boost_1.69.0/boost/math/constants/constants.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/gcc.hpp:
+stan/lib/stan_math/lib/boost_1.69.0/boost/math/policies/policy.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/limits/list.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/na.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/bool.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/bool_fwd.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/adl_barrier.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/adl.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/msvc.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/intel.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/gcc.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/workaround.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/integral_c_tag.hpp:
 
@@ -5004,13 +4740,27 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/na_fwd.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/ctps.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/lambda.hpp:
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/preprocessor.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/ttp.hpp:
+stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/inc.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/int.hpp:
+stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/arithmetic/inc.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/int_fwd.hpp:
+stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/config/config.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/cat.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/stringize.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/list20.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/list10.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/list0.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/long.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/long_fwd.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/nttp_decl.hpp:
 
@@ -5018,9 +4768,31 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/nttp.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/integral_wrapper.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/cat.hpp:
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/static_cast.hpp:
 
-stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/config/config.hpp:
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/push_front.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/push_front_fwd.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/next.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/next_prior.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/common_name_wknd.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/na_spec.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/lambda_fwd.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/void_fwd.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/lambda.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/ttp.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/int.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/int_fwd.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/lambda_arity_param.hpp:
 
@@ -5031,8 +4803,6 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/arity.hpp:
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/dtp.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessor/params.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/preprocessor.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/comma_if.hpp:
 
@@ -5057,10 +4827,6 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/debug/error.hpp:
 stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/detail/auto_rec.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/tuple/eat.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/inc.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/arithmetic/inc.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessor/enum.hpp:
 
@@ -5122,295 +4888,11 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/variadic/elem.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/arithmetic/sub.hpp:
 
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/eti.hpp:
+
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/overload_resolution.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/lambda_support.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/and.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/use_preprocessed.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/nested_type_wknd.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/include_preprocessed.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/compiler.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/preprocessor/stringize.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/and.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/or.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/or.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/not.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/as_array_or_scalar.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/as_scalar.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/broadcast_array.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/broadcast_array.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/get.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/index_type.hpp:
-
-stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Core:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/is_constant.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/is_constant.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/conjunction.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/is_vector.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/is_vector_like.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/is_vector_like.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/length.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/length_mvt.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/length_mvt.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/operands_and_partials.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/operands_and_partials.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/scalar_type.hpp:
-
-stan/lib/stan_math/stan/math/prim/arr/meta/scalar_type.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/seq_view.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/value_type.hpp:
-
-stan/lib/stan_math/stan/math/prim/arr/meta/value_type.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/meta/vector_seq_view.hpp:
-
-stan/lib/stan_math/stan/math/prim/arr/meta/as_scalar.hpp:
-
-stan/lib/stan_math/stan/math/prim/arr/meta/contains_std_vector.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/contains_std_vector.hpp:
-
-stan/lib/stan_math/stan/math/prim/arr/meta/is_constant.hpp:
-
-stan/lib/stan_math/stan/math/prim/arr/meta/VectorBuilderHelper.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/VectorBuilderHelper.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/ad_promotable.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/as_array_or_scalar.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/as_column_vector_or_scalar.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/as_scalar.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/child_type.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/contains_fvar.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/is_fvar.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/disjunction.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/contains_vector.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/error_index.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/enable_if_arithmetic.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/enable_if_floating_point.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/enable_if_same.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/enable_if_scalar.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/enable_if_var.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/is_var.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/enable_if_var_or_arithmetic.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/is_var_or_arithmetic.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/get.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/include_summand.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/length.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/likely.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/max_size.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/max_size_mvt.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/partials_return_type.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/partials_type.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/scalar_seq_view.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/scalar_type_pre.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/size_of.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/StdVectorBuilder.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/meta/VectorBuilder.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/build_vari_array.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/var.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/vari.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/chainable_alloc.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/chainablestack.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/grad.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/empty_nested.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/nested_size.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/init_chainablestack.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/ddv_vari.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/dv_vari.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/dvd_vari.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/dvv_vari.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/gevv_vvv_vari.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/matrix_vari.hpp:
-
-stan/lib/stan_math/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:
-
-stan/lib/stan_math/stan/math/rev/meta.hpp:
-
-stan/lib/stan_math/stan/math/rev/scal/meta/is_var.hpp:
-
-stan/lib/stan_math/stan/math/rev/scal/meta/partials_type.hpp:
-
-stan/lib/stan_math/stan/math/rev/mat/meta/operands_and_partials.hpp:
-
-stan/lib/stan_math/stan/math/rev/mat/fun/typedefs.hpp:
-
-stan/lib/stan_math/stan/math/rev/scal/meta/operands_and_partials.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/precomputed_gradients.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/err/check_consistent_sizes.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/err/check_consistent_size.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/err/invalid_argument.hpp:
-
-stan/lib/stan_math/stan/math/rev/scal/meta/ad_promotable.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/std_numeric_limits.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_addition.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/vv_vari.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/vd_vari.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/fun/is_any_nan.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/fun/is_nan.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_divide_equal.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_division.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_equal.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_greater_than.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_greater_than_or_equal.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_less_than.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_less_than_or_equal.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_logical_and.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_logical_or.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_minus_equal.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_subtraction.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_multiplication.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_multiply_equal.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_not_equal.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_plus_equal.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_unary_decrement.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/v_vari.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_unary_increment.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_unary_negative.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_unary_not.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/operator_unary_plus.hpp:
-
-stan/lib/stan_math/stan/math/rev/core/precomp_v_vari.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/fun/constants.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/fun/inv.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/math/constants/constants.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/math/policies/policy.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/limits/list.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/list20.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/list10.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/list0.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/long.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/long_fwd.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/push_front.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/push_front_fwd.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/next.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/next_prior.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/common_name_wknd.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/item.hpp:
 
@@ -5444,6 +4926,10 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/empty.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/empty_fwd.hpp:
 
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/not.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/nested_type_wknd.hpp:
+
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/begin_end.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/begin_end_fwd.hpp:
@@ -5466,11 +4952,17 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/lambda_spec.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/void.hpp:
 
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/use_preprocessed.hpp:
+
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/include_preprocessed.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/preprocessed/plain/list10.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/list/aux_/preprocessed/plain/list20.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/include_preprocessed.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/compiler.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/list.hpp:
 
@@ -5511,6 +5003,12 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/begin_end.hpp:
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/begin_end_impl.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/eval_if.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/if.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/value_wknd.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/integral.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/traits_lambda_spec.hpp:
 
@@ -5596,6 +5094,14 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/iter_fold_if.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/logical.hpp:
 
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/or.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/or.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/and.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/and.hpp:
+
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/always.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessor/default_params.hpp:
@@ -5611,6 +5117,8 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/identity.hpp:
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/iter_fold_if_impl.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/config/forwarding.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_same.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/same_as.hpp:
 
@@ -5800,6 +5308,8 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/greater_equal.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/mpl/aux_/preprocessed/gcc/greater_equal.hpp:
 
+stan/lib/stan_math/lib/boost_1.69.0/boost/static_assert.hpp:
+
 stan/lib/stan_math/lib/boost_1.69.0/boost/assert.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/math/tools/precision.hpp:
@@ -5812,6 +5322,32 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_constructible.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_destructible.hpp:
 
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_complete.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/declval.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/add_rvalue_reference.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_void.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_reference.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_lvalue_reference.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_rvalue_reference.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/remove_reference.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_function.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/config.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/version.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/is_function_cxx_11.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/yes_no_type.hpp:
+
 stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_default_constructible.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/conditional.hpp:
@@ -5822,9 +5358,27 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/range/iterator_range_core.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/iterator/iterator_traits.hpp:
 
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/iterator:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stream_iterator.h:
+
 stan/lib/stan_math/lib/boost_1.69.0/boost/iterator/iterator_facade.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/iterator/interoperable.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_convertible.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/intrinsics.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_array.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_arithmetic.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_abstract.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/add_lvalue_reference.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/add_reference.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/iterator/detail/config_def.hpp:
 
@@ -5849,6 +5403,8 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_member_function_pointer
 stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/detail/is_member_function_pointer_cxx_11.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/is_member_pointer.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/remove_cv.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/type_traits/remove_pointer.hpp:
 
@@ -6168,6 +5724,8 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/math/special_functions/math_fwd.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/math/special_functions/detail/round_fwd.hpp:
 
+stan/lib/stan_math/lib/boost_1.69.0/boost/math/tools/promotion.hpp:
+
 stan/lib/stan_math/lib/boost_1.69.0/boost/config/no_tr1/complex.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/math/special_functions/detail/fp_traits.hpp:
@@ -6198,6 +5756,18 @@ stan/lib/stan_math/stan/math/rev/core/precomp_vvv_vari.hpp:
 
 stan/lib/stan_math/stan/math/rev/core/vvv_vari.hpp:
 
+stan/lib/stan_math/stan/math/rev/core/precomputed_gradients.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/err/check_consistent_sizes.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/err/check_consistent_size.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/err/invalid_argument.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/size_of.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/is_vector.hpp:
+
 stan/lib/stan_math/stan/math/rev/core/print_stack.hpp:
 
 stan/lib/stan_math/stan/math/rev/core/recover_memory.hpp:
@@ -6226,11 +5796,93 @@ stan/lib/stan_math/stan/math/rev/core/vector_vari.hpp:
 
 stan/lib/stan_math/stan/math/rev/core/vvd_vari.hpp:
 
+stan/lib/stan_math/stan/math/rev/scal/meta/is_var.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/is_var.hpp:
+
+stan/lib/stan_math/stan/math/rev/scal/meta/partials_type.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/partials_type.hpp:
+
+stan/lib/stan_math/stan/math/rev/mat/meta/operands_and_partials.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/broadcast_array.hpp:
+
+stan/lib/stan_math/stan/math/rev/mat/fun/typedefs.hpp:
+
+stan/lib/stan_math/stan/math/rev/scal/meta/operands_and_partials.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/operands_and_partials.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/return_type.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/scalar_type.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/value_type.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/is_vector_like.hpp:
+
+stan/lib/stan_math/stan/math/prim/arr/meta/length.hpp:
+
 stan/lib/stan_math/stan/math/rev/mat/vectorize/apply_scalar_unary.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/vectorize/apply_scalar_unary.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat.hpp:
+
+stan/lib/stan_math/stan/math/prim/arr/meta/get.hpp:
+
+stan/lib/stan_math/stan/math/prim/arr/meta/index_type.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/index_type.hpp:
+
+stan/lib/stan_math/stan/math/prim/arr/meta/is_vector.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/as_array_or_scalar.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/as_scalar.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/broadcast_array.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/get.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/index_type.hpp:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Core:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/is_constant_struct.hpp:
+
+stan/lib/stan_math/stan/math/prim/arr/meta/is_constant_struct.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/is_constant.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/is_constant_struct.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/is_vector.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/is_vector_like.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/length.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/length_mvt.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/length_mvt.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/operands_and_partials.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/scalar_type.hpp:
+
+stan/lib/stan_math/stan/math/prim/arr/meta/scalar_type.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/seq_view.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/value_type.hpp:
+
+stan/lib/stan_math/stan/math/prim/arr/meta/value_type.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/meta/vector_seq_view.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/err/check_cholesky_factor.hpp:
 
@@ -6240,7 +5892,15 @@ stan/lib/stan_math/stan/math/prim/scal/err/domain_error.hpp:
 
 stan/lib/stan_math/stan/math/prim/scal/err/domain_error_vec.hpp:
 
+stan/lib/stan_math/stan/math/prim/scal/meta/error_index.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/get.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/length.hpp:
+
 stan/lib/stan_math/stan/math/prim/scal/err/check_less_or_equal.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/scalar_seq_view.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/err/check_lower_triangular.hpp:
 
@@ -6278,6 +5938,8 @@ stan/lib/stan_math/stan/math/prim/mat/fun/value_of.hpp:
 
 stan/lib/stan_math/stan/math/prim/scal/fun/value_of.hpp:
 
+stan/lib/stan_math/stan/math/prim/scal/meta/child_type.hpp:
+
 stan/lib/stan_math/stan/math/prim/mat/fun/value_of_rec.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/err/check_cov_matrix.hpp:
@@ -6308,6 +5970,8 @@ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/shared_ptr.h:
 
 C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/shared_ptr_base.h:
 
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ext/aligned_buffer.h:
+
 C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/backward/auto_ptr.h:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/checked_delete.hpp:
@@ -6331,6 +5995,12 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/core/demangle.hpp:
 C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/cxxabi.h:
 
 C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/cxxabi_tweaks.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/atomic:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/atomic_base.h:
+
+C:/Rtools/mingw_64/lib/gcc/x86_64-w64-mingw32/4.9.3/include/stdbool.h:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/smart_ptr/detail/sp_counted_impl.hpp:
 
@@ -6458,6 +6128,8 @@ stan/lib/stan_math/stan/math/prim/arr/err/check_matching_sizes.hpp:
 
 C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/iostream:
 
+stan/lib/stan_math/stan/math/prim/mat/meta/append_return_type.hpp:
+
 stan/lib/stan_math/stan/math/prim/mat/fun/append_col.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/fun/append_row.hpp:
@@ -6476,11 +6148,21 @@ stan/lib/stan_math/stan/math/prim/scal/fun/atanh.hpp:
 
 stan/lib/stan_math/stan/math/prim/scal/err/check_bounded.hpp:
 
+stan/lib/stan_math/stan/math/prim/scal/meta/max_size.hpp:
+
 stan/lib/stan_math/stan/math/prim/mat/fun/autocorrelation.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/fun/mean.hpp:
 
 stan/lib/stan_math/lib/eigen_3.3.3/unsupported/Eigen/FFT:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/map:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_tree.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_map.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_multimap.h:
 
 stan/lib/stan_math/lib/eigen_3.3.3/unsupported/Eigen/src/FFT/ei_kissfft_impl.h:
 
@@ -6520,135 +6202,15 @@ stan/lib/stan_math/stan/math/prim/arr/fun/promote_elements.hpp:
 
 stan/lib/stan_math/stan/math/prim/scal/fun/promote_elements.hpp:
 
-stan/lib/stan_math/stan/math/opencl/opencl.hpp:
-
-stan/lib/stan_math/stan/math/opencl/opencl_context.hpp:
-
-stan/lib/stan_math/stan/math/opencl/matrix_cl_view.hpp:
-
-stan/lib/stan_math/stan/math/opencl/stringify.hpp:
-
-stan/lib/stan_math/stan/math/opencl/err/check_opencl.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/err/system_error.hpp:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/system_error:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/error_constants.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/fstream:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/basic_file.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++io.h:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/fstream.tcc:
-
-stan/lib/stan_math/stan/math/opencl/matrix_cl.hpp:
-
-stan/lib/stan_math/stan/math/prim/arr/fun/vec_concat.hpp:
-
-stan/lib/stan_math/stan/math/opencl/add.hpp:
-
-stan/lib/stan_math/stan/math/opencl/err/check_matching_dims.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/add.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernel_cl.hpp:
-
-stan/lib/stan_math/stan/math/opencl/buffer_types.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/helpers.hpp:
-
-stan/lib/stan_math/stan/math/opencl/copy.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/copy.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/pack.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/unpack.hpp:
-
-stan/lib/stan_math/stan/math/opencl/err/check_triangular.hpp:
-
-stan/lib/stan_math/stan/math/opencl/copy_triangular.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/copy_triangular.hpp:
-
-stan/lib/stan_math/stan/math/opencl/cholesky_decompose.hpp:
-
-stan/lib/stan_math/stan/math/opencl/multiply.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/scalar_mul.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/matrix_multiply.hpp:
-
-stan/lib/stan_math/stan/math/opencl/sub_block.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/sub_block.hpp:
-
-stan/lib/stan_math/stan/math/opencl/zeros.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/zeros.hpp:
-
-stan/lib/stan_math/stan/math/opencl/multiply_transpose.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/multiply_transpose.hpp:
-
-stan/lib/stan_math/stan/math/opencl/err/check_square.hpp:
-
-stan/lib/stan_math/stan/math/opencl/tri_inverse.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/diag_inv.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/inv_lower_tri_multiply.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/neg_rect_lower_tri_multiply.hpp:
-
-stan/lib/stan_math/stan/math/opencl/transpose.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/transpose.hpp:
-
-stan/lib/stan_math/stan/math/opencl/identity.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/identity.hpp:
-
-stan/lib/stan_math/stan/math/opencl/subtract.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/subtract.hpp:
-
-stan/lib/stan_math/stan/math/opencl/err/check_diagonal_zeros.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/check_diagonal_zeros.hpp:
-
-stan/lib/stan_math/stan/math/opencl/err/check_nan.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/check_nan.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/cholesky_decompose.hpp:
-
-stan/lib/stan_math/stan/math/opencl/diagonal_multiply.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/scalar_mul_diagonal.hpp:
-
-stan/lib/stan_math/stan/math/opencl/triangular_transpose.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/triangular_transpose.hpp:
-
-stan/lib/stan_math/stan/math/opencl/err/check_symmetric.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/check_symmetric.hpp:
-
-stan/lib/stan_math/stan/math/opencl/err/check_vector.hpp:
-
 stan/lib/stan_math/stan/math/prim/scal/fun/inv_square.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/fun/square.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/fun/cholesky_corr_constrain.hpp:
 
 stan/lib/stan_math/stan/math/prim/scal/fun/log1m.hpp:
 
 stan/lib/stan_math/stan/math/prim/scal/fun/log1p.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/fun/square.hpp:
 
 stan/lib/stan_math/stan/math/prim/scal/fun/corr_constrain.hpp:
 
@@ -6706,14 +6268,6 @@ stan/lib/stan_math/stan/math/prim/scal/err/check_positive_finite.hpp:
 
 stan/lib/stan_math/stan/math/prim/scal/fun/exp.hpp:
 
-stan/lib/stan_math/stan/math/opencl/gp_exp_quad_cov.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/gp_exp_quad_cov.hpp:
-
-stan/lib/stan_math/stan/math/opencl/divide_columns.hpp:
-
-stan/lib/stan_math/stan/math/opencl/kernels/divide_columns.hpp:
-
 stan/lib/stan_math/stan/math/prim/mat/fun/cov_matrix_constrain.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/fun/cov_matrix_constrain_lkj.hpp:
@@ -6733,6 +6287,162 @@ stan/lib/stan_math/stan/math/prim/mat/fun/crossprod.hpp:
 stan/lib/stan_math/stan/math/prim/mat/fun/tcrossprod.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/fun/csr_extract_u.hpp:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/Sparse:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseCore:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseUtil.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseMatrixBase.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/CommonCwiseUnaryOps.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/CommonCwiseBinaryOps.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/MatrixCwiseUnaryOps.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/MatrixCwiseBinaryOps.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/../plugins/BlockMethods.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseAssign.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/CompressedStorage.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/AmbiVector.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseCompressedBase.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseMatrix.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseMap.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/MappedSparseMatrix.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseVector.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseRef.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseCwiseUnaryOp.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseCwiseBinaryOp.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseTranspose.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseBlock.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseDot.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseRedux.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseView.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseDiagonalProduct.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/ConservativeSparseSparseProduct.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseSparseProductWithPruning.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseProduct.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseDenseProduct.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseSelfAdjointView.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseTriangularView.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/TriangularSolver.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparsePermutation.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseFuzzy.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseSolverBase.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/OrderingMethods:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/Amd.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/../Core/util/NonMPL2.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/Ordering.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/OrderingMethods/Eigen_Colamd.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseCholesky:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCholesky/SimplicialCholesky.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCholesky/../Core/util/NonMPL2.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseLU:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_gemm_kernel.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_Structs.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_SupernodalMatrix.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLUImpl.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseCore/SparseColEtree.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_Memory.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_heap_relax_snode.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_relax_snode.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_pivotL.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_panel_dfs.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_kernel_bmod.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_panel_bmod.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_column_dfs.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_column_bmod.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_copy_to_ucol.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_pruneL.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU_Utils.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseLU/SparseLU.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/SparseQR:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/SparseQR/SparseQR.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/IterativeLinearSolvers:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/SolveWithGuess.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/IterativeSolverBase.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/BasicPreconditioners.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/ConjugateGradient.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/LeastSquareConjugateGradient.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h:
+
+stan/lib/stan_math/lib/eigen_3.3.3/Eigen/src/IterativeLinearSolvers/IncompleteCholesky.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/list:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_list.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/list.tcc:
 
 stan/lib/stan_math/stan/math/prim/mat/fun/csr_extract_v.hpp:
 
@@ -6826,6 +6536,8 @@ stan/lib/stan_math/stan/math/prim/mat/fun/sqrt.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/fun/gp_periodic_cov.hpp:
 
+stan/lib/stan_math/stan/math/prim/scal/fun/inv.hpp:
+
 stan/lib/stan_math/stan/math/prim/mat/fun/head.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/fun/initialize.hpp:
@@ -6895,6 +6607,8 @@ stan/lib/stan_math/stan/math/prim/scal/fun/log_inv_logit.hpp:
 stan/lib/stan_math/stan/math/prim/mat/fun/log_mix.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/fun/log_sum_exp.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/partials_return_type.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/fun/log_softmax.hpp:
 
@@ -7088,19 +6802,15 @@ stan/lib/stan_math/stan/math/prim/mat/fun/welford_var_estimator.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/functor/finite_diff_gradient.hpp:
 
-stan/lib/stan_math/stan/math/prim/mat/functor/finite_diff_gradient_auto.hpp:
-
-stan/lib/stan_math/stan/math/prim/scal/fun/finite_diff_stepsize.hpp:
-
 stan/lib/stan_math/stan/math/prim/mat/functor/finite_diff_hessian.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/functor/finite_diff_hessian_helper.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/functor/finite_diff_hessian_auto.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/functor/map_rect.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/functor/map_rect_concurrent.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/functor/map_rect_reduce.hpp:
+
+stan/lib/stan_math/stan/math/prim/mat/functor/map_rect_combine.hpp:
 
 C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/thread:
 
@@ -7110,9 +6820,15 @@ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/ratio:
 
 C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/parse_numbers.h:
 
-stan/lib/stan_math/stan/math/prim/mat/functor/map_rect_combine.hpp:
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/future:
 
-stan/lib/stan_math/stan/math/prim/mat/functor/map_rect_reduce.hpp:
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/mutex:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/system_error:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/error_constants.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/condition_variable:
 
 stan/lib/stan_math/stan/math/prim/mat/prob/bernoulli_logit_glm_log.hpp:
 
@@ -7120,9 +6836,29 @@ stan/lib/stan_math/stan/math/prim/mat/prob/bernoulli_logit_glm_lpmf.hpp:
 
 stan/lib/stan_math/stan/math/prim/arr/fun/value_of_rec.hpp:
 
+stan/lib/stan_math/stan/math/prim/scal/meta/as_array_or_scalar.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/as_scalar.hpp:
+
+stan/lib/stan_math/stan/math/prim/arr/meta/as_scalar.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/as_column_vector_or_scalar.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/include_summand.hpp:
+
 stan/lib/stan_math/stan/math/prim/scal/fun/size_zero.hpp:
 
+stan/lib/stan_math/stan/math/opencl/kernels/bernoulli_logit_glm_lpmf.hpp:
+
 stan/lib/stan_math/stan/math/prim/mat/prob/bernoulli_logit_glm_rng.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/VectorBuilder.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/VectorBuilderHelper.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/contains_vector.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/disjunction.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/random/bernoulli_distribution.hpp:
 
@@ -7141,8 +6877,6 @@ stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/enable_warnings.hpp:
 stan/lib/stan_math/stan/math/prim/mat/prob/categorical_log.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/prob/categorical_lpmf.hpp:
-
-stan/lib/stan_math/stan/math/prim/mat/prob/categorical_logit_glm_lpmf.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/prob/categorical_logit_log.hpp:
 
@@ -7258,6 +6992,10 @@ stan/lib/stan_math/stan/math/prim/mat/prob/gaussian_dlm_obs_lpdf.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/prob/gaussian_dlm_obs_rng.hpp:
 
+stan/lib/stan_math/stan/math/prim/scal/meta/StdVectorBuilder.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/contains_std_vector.hpp:
+
 stan/lib/stan_math/lib/boost_1.69.0/boost/random/normal_distribution.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/prob/inv_wishart_log.hpp:
@@ -7298,6 +7036,10 @@ stan/lib/stan_math/stan/math/prim/mat/prob/lkj_cov_lpdf.hpp:
 
 stan/lib/stan_math/stan/math/prim/scal/prob/lognormal_lpdf.hpp:
 
+stan/lib/stan_math/stan/math/prim/scal/meta/contains_nonconstant_struct.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/is_nonconstant_struct.hpp:
+
 stan/lib/stan_math/stan/math/prim/mat/prob/matrix_normal_prec_log.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/prob/matrix_normal_prec_lpdf.hpp:
@@ -7315,6 +7057,8 @@ stan/lib/stan_math/stan/math/prim/mat/prob/multi_gp_lpdf.hpp:
 stan/lib/stan_math/stan/math/prim/mat/prob/multi_normal_cholesky_log.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/prob/multi_normal_cholesky_lpdf.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/max_size_mvt.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/prob/multi_normal_cholesky_rng.hpp:
 
@@ -7358,9 +7102,17 @@ stan/lib/stan_math/stan/math/prim/scal/fun/boost_policy.hpp:
 
 stan/lib/stan_math/stan/math/prim/scal/fun/sum.hpp:
 
+stan/lib/stan_math/stan/math/opencl/kernels/neg_binomial_2_log_glm_lpmf.hpp:
+
 stan/lib/stan_math/stan/math/prim/mat/prob/normal_id_glm_log.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/prob/normal_id_glm_lpdf.hpp:
+
+stan/lib/stan_math/stan/math/opencl/kernels/normal_id_glm_lpdf.hpp:
+
+stan/lib/stan_math/stan/math/opencl/matrix_cl.hpp:
+
+stan/lib/stan_math/stan/math/opencl/multiply.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/prob/ordered_logistic_log.hpp:
 
@@ -7384,11 +7136,17 @@ stan/lib/stan_math/stan/math/prim/mat/prob/poisson_log_glm_log.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/prob/poisson_log_glm_lpmf.hpp:
 
+stan/lib/stan_math/stan/math/opencl/kernels/poisson_log_glm_lpmf.hpp:
+
 stan/lib/stan_math/stan/math/prim/mat/prob/wishart_log.hpp:
 
 stan/lib/stan_math/stan/math/prim/mat/prob/wishart_lpdf.hpp:
 
 stan/lib/stan_math/stan/math/prim/arr.hpp:
+
+stan/lib/stan_math/stan/math/prim/arr/meta/contains_std_vector.hpp:
+
+stan/lib/stan_math/stan/math/prim/arr/meta/VectorBuilderHelper.hpp:
 
 stan/lib/stan_math/stan/math/prim/arr/err/is_matching_size.hpp:
 
@@ -9036,6 +8794,18 @@ stan/lib/stan_math/stan/math/prim/scal.hpp:
 
 stan/lib/stan_math/stan/math/version.hpp:
 
+stan/lib/stan_math/stan/math/prim/scal/meta/ad_promotable.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/contains_fvar.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/is_fvar.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/is_var_or_arithmetic.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/conjunction.hpp:
+
+stan/lib/stan_math/stan/math/prim/scal/meta/scalar_type_pre.hpp:
+
 stan/lib/stan_math/stan/math/prim/scal/err/check_2F1_converges.hpp:
 
 stan/lib/stan_math/stan/math/prim/scal/err/check_3F2_converges.hpp:
@@ -9760,6 +9530,8 @@ stan/lib/stan_math/stan/math/rev/arr.hpp:
 
 stan/lib/stan_math/stan/math/rev/scal.hpp:
 
+stan/lib/stan_math/stan/math/rev/scal/meta/ad_promotable.hpp:
+
 stan/lib/stan_math/stan/math/rev/scal/fun/abs.hpp:
 
 stan/lib/stan_math/stan/math/rev/scal/fun/fabs.hpp:
@@ -10140,14 +9912,6 @@ stan/lib/stan_math/lib/sundials_4.1.0/include/idas/idas_ls.h:
 
 stan/lib/stan_math/stan/math/rev/mat/functor/idas_integrator.hpp:
 
-stan/lib/stan_math/stan/math/rev/mat/functor/map_rect_concurrent.hpp:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/future:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/mutex:
-
-C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/condition_variable:
-
 stan/lib/stan_math/stan/math/rev/mat/functor/map_rect_reduce.hpp:
 
 stan/src/stan/io/cmd_line.hpp:
@@ -10182,25 +9946,15 @@ stan/src/stan/io/trim_spaces.hpp:
 
 stan/src/stan/io/is_whitespace.hpp:
 
-stan/src/stan/model/model_base.hpp:
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/fstream:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/basic_file.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32/bits/c++io.h:
+
+C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/fstream.tcc:
 
 stan/src/stan/model/prob_grad.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/random/additive_combine.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/seed.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/random/linear_congruential.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/integer/static_log2.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/const_mod.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/large_arithmetic.hpp:
-
-stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/seed_impl.hpp:
-
-stan/src/stan/model/model_base_crtp.hpp:
 
 stan/src/stan/model/indexing.hpp:
 
@@ -10221,6 +9975,20 @@ stan/src/stan/model/indexing/rvalue.hpp:
 stan/src/stan/model/indexing/rvalue_return.hpp:
 
 stan/src/stan/services/util/create_rng.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/random/additive_combine.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/seed.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/random/linear_congruential.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/integer/static_log2.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/const_mod.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/large_arithmetic.hpp:
+
+stan/lib/stan_math/lib/boost_1.69.0/boost/random/detail/seed_impl.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/exception/all.hpp:
 
@@ -10809,6 +10577,8 @@ C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/queue:
 C:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/bits/stl_queue.h:
 
 stan/src/stan/services/experimental/advi/meanfield.hpp:
+
+stan/lib/stan_math/stan/math/opencl/opencl_context.hpp:
 
 stan/lib/stan_math/lib/boost_1.69.0/boost/date_time/posix_time/posix_time_types.hpp:
 

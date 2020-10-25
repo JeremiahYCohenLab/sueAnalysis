@@ -1,19 +1,20 @@
-function [glm_seshInd, t] = combineLogRegTime_opMD(xlFile, animal, category, varargin)
+function [t,fitresult] = combineLogRegTime_opMD(xlFile, animal, category, varargin)
 
 %task and model parameters
 p = inputParser;
 % default parameters if none given
 p.addParameter('revForFlag', 0)
-p.addParameter('binSize', 6000)
+p.addParameter('binSize', 5000)
 p.addParameter('numBins', 10)
-p.addParameter('plotFlag', 0);
+p.addParameter('plotFlag', 1);
+p.addParameter('maxTrials', 350);
 p.parse(varargin{:});
 
 %determine root for file location
 [root, sep] = currComputer();
 
 %import behavior session titles for desired category
-[weights, dayList, ~] = xlsread(xlFile, animal);
+[~, dayList, ~] = xlsread([root xlFile], animal);
 [~,col] = find(~cellfun(@isempty,strfind(dayList, category)) == 1);
 dayList = dayList(2:end,col);
 endInd = find(cellfun(@isempty,dayList),1);
@@ -55,7 +56,7 @@ for i = 1: length(dayList)
     else
         [behSessionData, ~, ~, ~] = generateSessionData_operantMatchingDecoupled(sessionName);
     end
-    
+    behSessionData = behSessionData(1:min(length(behSessionData),p.Results.maxTrials));
     %create arrays for choices and rewards
     responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window
     allReward_R = [behSessionData(responseInds).rewardR]; 
@@ -71,26 +72,29 @@ for i = 1: length(dayList)
     allRewards = zeros(1,length(allChoices));
     allRewards(logical(allReward_R)) = 1;
     allRewards(logical(allReward_L)) = 1;
+    
+    
 
     %create binned outcome matrices
     rwdTmpMatx = NaN(tMax, length(responseInds));     %initialize matrices for number of response trials x number of time bins
     noRwdTmpMatx = NaN(tMax, length(responseInds));
+    
     for j = 2:length(responseInds)          
         k = 1;
         %find time between "current" choice and previous rewards, up to timeMax in the past 
         timeTmpL = []; timeTmpR = []; nTimeTmpL = []; nTimeTmpR = [];
-        while j-k > 0 & behSessionData(responseInds(j)).rewardTime - behSessionData(responseInds(j-k)).rewardTime < timeMax
+        while j-k > 0 && behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(j-k)).rewardTime < timeMax
             if behSessionData(responseInds(j-k)).rewardL == 1
-                timeTmpL = [timeTmpL (behSessionData(responseInds(j)).rewardTime - behSessionData(responseInds(j-k)).rewardTime)];
+                timeTmpL = [timeTmpL (behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(j-k)).rewardTime)];
             end
             if behSessionData(responseInds(j-k)).rewardR == 1
-                timeTmpR = [timeTmpR (behSessionData(responseInds(j)).rewardTime - behSessionData(responseInds(j-k)).rewardTime)];
+                timeTmpR = [timeTmpR (behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(j-k)).rewardTime)];
             end
             if behSessionData(responseInds(j-k)).rewardL == 0
-                nTimeTmpL = [nTimeTmpL (behSessionData(responseInds(j)).rewardTime - behSessionData(responseInds(j-k)).rewardTime)];
+                nTimeTmpL = [nTimeTmpL (behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(j-k)).rewardTime)];
             end
             if behSessionData(responseInds(j-k)).rewardR == 0
-                nTtimeTmpR = [nTimeTmpR (behSessionData(responseInds(j)).rewardTime - behSessionData(responseInds(j-k)).rewardTime)];
+                nTtimeTmpR = [nTimeTmpR (behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(j-k)).rewardTime)];
             end
             k = k + 1;
         end
@@ -169,6 +173,9 @@ glm_rwd = fitglm([rwdMatx]', combinedAllChoice_R,'distribution','binomial','link
 glm_noRwd = fitglm([noRwdMatx]', combinedAllChoice_R,'distribution','binomial','link','logit');
 glm_all = fitglm([rwdMatx' noRwdMatx'], combinedAllChoice_R,'distribution','binomial','link','logit');
 glm_seshInd = fitglm([rwdMatx' noRwdMatx', seshInd], combinedAllChoice_R,'distribution','binomial','link','logit');
+glm_auto = fitglm([rwdMatx+noRwdMatx]', combinedAllChoice_R,'distribution','binomial','link','logit');
+[fitresult, gof] = singleExpFit(glm_all.Coefficients.Estimate(2:tMax+1), (1:tMax)'*binSize/1000);
+ci = confint(fitresult);
 
 t = struct;
 t.binSize = binSize;
@@ -177,7 +184,7 @@ t.tMax = tMax;
 t.timeBinEdges = timeBinEdges;
 
 if p.Results.plotFlag
-    figure; hold on;
+    figure2; hold on;
     relevInds = 2:tMax+1;
     coefVals = glm_all.Coefficients.Estimate(relevInds);
     CIbands = coefCI(glm_all);
@@ -191,6 +198,14 @@ if p.Results.plotFlag
     errorL = abs(coefVals - CIbands(relevInds,1));
     errorU = abs(coefVals - CIbands(relevInds,2));
     errorbar(((1:tMax)*binSize/1000),coefVals,errorL,errorU,'b','linewidth',2)
+    
+    plot(0:tMax*binSize/1000, fitresult.a*exp(-(1/fitresult.b)*(0:tMax*binSize/1000)), 'Color', [0.9 0.5 0.5],'LineStyle','--', 'lineWidth', 2);
+    
+    text(0.6*tMax*binSize/1000,max(glm_all.Coefficients.Estimate(2:tMax+1)),sprintf('R^2 = %.2f',gof.adjrsquare));
+    text(0.6*tMax*binSize/1000,max(glm_all.Coefficients.Estimate(2:tMax+1)) - 0.4,sprintf('a = %.2f [%.2f %.2f]',fitresult.a, ci(1,1), ci(2,1)));
+    text(0.6*tMax*binSize/1000,max(glm_all.Coefficients.Estimate(2:tMax+1)) - 0.8,sprintf('b = %.2f [%.2f %.2f]',fitresult.b, ci(1,2), ci(2,2)));
+    
+    line([0 tMax*binSize/1000 + binSize/1000], [0 0], 'Color',[0.5 0.5 0.5],'LineStyle','--')
 
     legend('Reward', 'No Reward')
     xlabel('Outcome n seconds back')

@@ -4,14 +4,12 @@ Created on Sat Feb 22 00:25:39 2020
 
 @author: zhixi
 """
-file = r'Z:\combineRwdDelay.xlsx'
+file = r'C:\Users\zhixi\Documents\data\combineAnimalsOptoInhi.xlsx'
 sheet  = 'combine'
-col = 'OK'
-cdnn =  cdnn = 'rwdDelay-combine-2020-02-20'
+col = 'early'
+cdnn = 'combine-withHiddenPoints-2020-03-27'
 
 
-from pandas import DataFrame, read_csv
-import matplotlib.pyplot as plt
 import pandas as pd
 import deeplabcut
 
@@ -19,7 +17,7 @@ import deeplabcut
 df = pd.read_excel(file, sheet_name = sheet, usecols = [col])
 
 
-for i in range(0, len(df)-1):
+for i in range(0, len(df)):
     session = df[col][i]
     deeplabcut.extractPupil(session, cdnn)
     

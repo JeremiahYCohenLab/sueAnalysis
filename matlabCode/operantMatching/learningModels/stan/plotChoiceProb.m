@@ -1,14 +1,20 @@
-function [model] = plotChoiceProb(sessionName, beh, varargin)
+function [model, LH] = plotChoiceProb(sessionName, beh, varargin)
 
 %task and model parameters
 p = inputParser;
 % default parameters if none given
 p.addParameter('revForFlag', 0);
-p.addParameter('modelNames', {'sixParam_absPePeAN_bi'})
+p.addParameter('modelNames', {'fourParam', 'sixParam_absPePeAN_bi', 'eightParam_absPePeAN_bi_bias_k', 'eightParam_absPePeAN_exp_bias_k'})
 p.addParameter('plotFlag', 1);
-p.addParameter('bernFlag', [1]);
+p.addParameter('bernFlag', []);
 p.addParameter('sessionFlag', 0);
 p.parse(varargin{:});
+
+if isempty(p.Results.bernFlag)
+    bernFlag = ones(1,length(p.Results.modelNames));
+else
+    bernFlag = p.Results.bernFlag;
+end
 
 [root, sep] = currComputer();
 modelNames = p.Results.modelNames;
@@ -44,7 +50,7 @@ animalName = animalName(2:end);
 
 for currMod = 1:length(modelNames)
     
-    if p.Results.bernFlag(currMod)
+    if bernFlag(currMod)
         modelPath = [root animalName sep animalName 'sorted' sep 'stan' sep 'bernoulli' sep modelNames{currMod} sep animalName...
         beh '_' modelNames{currMod} '.mat'];
     else
@@ -53,6 +59,7 @@ for currMod = 1:length(modelNames)
     end
     
     t = generateStanModelTerms_opMD(modelNames{currMod}, modelPath, sessionName, p.Results.sessionFlag, p.Results.revForFlag);
+    LH(currMod) = t.LH;
     
     model.(modelNames{currMod}) = t;
     

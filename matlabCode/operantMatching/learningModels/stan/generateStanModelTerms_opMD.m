@@ -1,4 +1,4 @@
-function [t] = generateStanModelTerms_opMD(modelType, modelPath, sessionName, sessionFlag, revForFlag)
+function [t, o] = generateStanModelTerms_opMD(modelType, modelPath, sessionName, sessionFlag, revForFlag)
 
 if nargin < 4
     sessionFlag = 1;
@@ -18,27 +18,30 @@ tmp = whos;
 samples = eval(tmp(1).name);
 mdlFields = fields(samples);
 
-if any(~cellfun(@isempty,strfind(mdlFields,'bias')))
-    paramInds = find(~cellfun(@isempty,strfind(mdlFields,'mu_')));
-    paramInds = paramInds(2:end);
-    paramInds = paramInds - length(paramInds) - 1;
-else
-    paramInds = find(~cellfun(@isempty,strfind(mdlFields,'mu_')));
-    paramInds = paramInds(2:end);
-    paramInds = paramInds - length(paramInds);
-end
 
-for j = 1:length(paramInds)
+paramInds = find(~cellfun(@isempty,strfind(mdlFields,'mu_')));
+paramInds = paramInds(2:end);
+    
+for currP = 1:length(paramInds)
+    pName = char(strrep(mdlFields(paramInds(currP)), 'mu_', ''));
     if sessionFlag
-        tmp = eval(['samples.' mdlFields{paramInds(j)}]);
-        startValues(j) = median(tmp(:,sessionInd));
+        tmp = eval(['samples.' pName]);
+        tmp = tmp(:,sessionInd);
+        %startValues(j) = median(tmp);
     else
-        startValues(j) = median(eval(['samples.mu_' mdlFields{paramInds(j)}]));
+        %startValues(j) = median(eval(['samples.mu_' mdlFields{paramInds(j)}]));
+        tmp = eval(['samples.mu_' pName]);
     end
+    [n,e] = histcounts(tmp, 50);
+    [~, maxInd] = max(n);
+    startValues(currP) = median(tmp(tmp > e(maxInd) & tmp < e(maxInd+1)));
 end 
 
 if sessionFlag && isfield(samples, 'bias')
-    startValues = [startValues median(samples.bias(:,sessionInd))];
+    tmp = samples.bias(:,sessionInd);
+    [n,e] = histcounts(tmp, 50);
+    [~, maxInd] = max(n);
+    startValues = [startValues median(tmp(tmp > e(maxInd) & tmp < e(maxInd+1)))];
 end
     
 t = struct;
@@ -89,6 +92,8 @@ if ~isempty(sessionName)
             [t.LH, t.probChoice, t.Q, t.pe, t.peBar, t.aN] = qLearningModel_6params_peAN(startValues, choice, outcome);
         case 'sixParam_pePeAN'
             [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_6params_pePeAN(startValues, choice, outcome);
+        case 'sixParam_pePeAN_bi'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_6params_pePeAN_bi(startValues, choice, outcome);
         case 'sixParam_pePeAN_lag'
             [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_6params_pePeAN_lag(startValues, choice, outcome);
         case 'fiveParam_absPePeAN'
@@ -97,12 +102,44 @@ if ~isempty(sessionName)
             [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_6params_absPePeAN(startValues, choice, outcome);
         case 'sixParam_absPePeAN_bi'
             [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_6params_absPePeAN_bi(startValues, choice, outcome);
+        case 'sixParam_absPePeAN_bi_tW'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_6params_absPePeAN_bi(startValues, choice, outcome);
+        case 'sixParam_absPePeAN_bi_bias'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_6params_absPePeAN_bi_bias(startValues, choice, outcome);
+        case 'sevenParam_absPePeAN_bi_bias'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_7params_absPePeAN_bi_bias(startValues, choice, outcome);
+        case 'eightParam_absPePeAN_bi_bias_k'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_8params_absPePeAN_bi_bias_k(startValues, choice, outcome);
+        case 'eightParam_absPePeAN_bi_int_bias'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_8params_absPePeAN_bi_int_bias(startValues, choice, outcome);
+        case 'sevenParam_absPePeAN_bi_bias_bothF'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_7params_absPePeAN_bi_bias_bothF(startValues, choice, outcome);
+        case 'sevenParam_absPePeAN_bi_bias_tW'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_7params_absPePeAN_bi_bias(startValues, choice, outcome);
         case 'sixParam_absPePeAN_biSep'
             [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar, t.peBar_L, t.peBar_R] = qLearningModel_6params_absPePeAN_biSep(startValues, choice, outcome);
         case 'sevenParam_absPePeAN_biSep_f'
             [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar, t.peBar_L, t.peBar_R] = qLearningModel_7params_absPePeAN_biSep_f(startValues, choice, outcome);
         case 'sevenParam_absPePeAN_bi_k'
             [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_7params_absPePeAN_bi_k(startValues, choice, outcome);
+        case 'sixParam_absPePeAN_exp'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_6params_absPePeAN_exp(startValues, choice, outcome);
+        case 'sixParam_absPePeAN_exp_tW'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_6params_absPePeAN_exp(startValues, choice, outcome);
+        case 'sixParam_absPePeAN_exp_bias'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_6params_absPePeAN_exp_bias(startValues, choice, outcome);
+        case 'sevenParam_absPePeAN_exp_bias'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_7params_absPePeAN_exp_bias(startValues, choice, outcome);
+        case 'eightParam_absPePeAN_exp_bias_k'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_8params_absPePeAN_exp_bias_k(startValues, choice, outcome);
+        case 'sevenParam_absPePeAN_exp_bias_tW'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_7params_absPePeAN_exp_bias(startValues, choice, outcome);
+        case 'sixParam_absPePeAN_log'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_6params_absPePeAN_log(startValues, choice, outcome);
+        case 'sevenParam_absPePeAN_log'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.aN, t.peBar] = qLearningModel_7params_absPePeAN_log(startValues, choice, outcome); 
+        case 'eightParam_absPePeAN_thresh_bias'
+            [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.peBar] = qLearningModel_8params_absPePeAN_thresh_bias(startValues, choice, outcome);
         case 'sevenParam_absPePeLR'
             [t.LH, t.probChoice, t.Q, t.pe, t.pePe, t.peBar] = qLearningModel_7params_absPePeLR(startValues, choice, outcome);
         case 'sevenParam_peLR'

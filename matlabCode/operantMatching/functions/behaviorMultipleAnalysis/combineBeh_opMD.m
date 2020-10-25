@@ -47,9 +47,6 @@ for i = 1: length(dayList)
     allRewards(logical(allReward_R)) = 1;
     allRewards(logical(allReward_L)) = 1;
     
-    allProbsL = [behSessionData(responseInds).rewardProbL];
-    allProbsR = [behSessionData(responseInds).rewardProbR];
-    
     combinedChoices = [combinedChoices allChoices];
     combinedRewards = [combinedRewards allRewards];
     
@@ -66,18 +63,7 @@ for i = 1: length(dayList)
     
 end
 
-% figure; hold on;
-% 
-% normKern = normpdf(-300:300,0,100);
-% normKern = normKern / sum(normKern);
-% xVals = (1:(length(normKern) + length(combinedChoices) - 1)) - round(length(normKern)/2);
-% plot(xVals, conv(combinedChoices,normKern)/max(conv(combinedChoices,normKern)),'k','linewidth',2);
-% plot(xVals, conv(combinedRewards,normKern)/max(conv(combinedRewards,normKern)),'--','Color',[100 100 100]./255,'linewidth',2)
-% xlabel('Trials')
-% ylabel('<-- Left       Right -->')
-% legend('Choices','Rewards')
-% xlim([1 length(combinedChoices)])
-% ylim([-1 1])
+
 
 
 
