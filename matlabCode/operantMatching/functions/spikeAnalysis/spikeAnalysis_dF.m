@@ -5,7 +5,7 @@ p = inputParser;
 % default parameters if none given
 p.addParameter('intanFlag', 0);
 p.addParameter('revForFlag', 0);
-p.addParameter('modelsFlag', 1);
+p.addParameter('modelsFlag', 0);
 p.addParameter('biasFlag',0);
 p.addParameter('cellName', ['all']);
 p.addParameter('trialList', []);

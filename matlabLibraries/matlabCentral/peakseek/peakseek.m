@@ -31,7 +31,7 @@ if minpeakdist>1
 
         pks=x(locs);
 
-        [garb mins]=min([pks(del) ; pks([false del])]); %#ok<ASGLU>
+        [garb, mins]=min([pks(del) ; pks([false del])]); %#ok<ASGLU>
 
         deln=find(del);
 
@@ -42,7 +42,7 @@ if minpeakdist>1
     end
 end
 
-if nargout>1,
+if nargout>1
     pks=x(locs);
 end
 

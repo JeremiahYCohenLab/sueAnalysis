@@ -16,20 +16,20 @@ function [sessionData] = generateSessionData_nL_operantMatching(sessionName)
 [animalName] = strtok(sessionName, 'd');
 animalName = animalName(2:end);
 if isstrprop(sessionName(end), 'alpha')
-    filepath = [root animalName sep sessionName(1:end-1) sep 'ephys' sep 'session ' sessionName(end) sep];
+    filepath = [root animalName sep sessionName(1:end-1) sep 'neuralynx' sep 'session ' sessionName(end) sep];
     sortedDir = [root animalName sep sessionName(1:end-1) sep 'sorted' sep 'session ' sessionName(end) sep];
 else
-    filepath = [root animalName sep sessionName sep 'ephys' sep 'session' sep];
+    filepath = [root animalName sep sessionName sep 'neuralynx' sep 'session' sep];
     sortedDir = [root animalName sep sessionName sep 'sorted' sep 'session' sep];
 end
 
 % TTL values
 CSplus = 136;
 CSminus = 160;
-waterR = 1; % pin 10
-waterL = 2; % pin 11
-lickR = 32; % pin 15
-lickL = 16; % pin 14
+waterR = 6; % pin 10
+waterL = 12; % pin 11
+lickR = 2; % pin 15
+lickL = 8; % pin 14
 offset = 0;
 
 % Notes
@@ -40,7 +40,7 @@ offset = 0;
 
 %% Import event TTLs, TTL timestamps, and cluster data (if it exists)
 % TTLs
-[timestamps, TTL] = Nlx2MatEV([filepath 'Events.nev'],[1 0 1 0 0], 0, 1);
+[timestamps, eventID, TTL, Evstring] = Nlx2MatEV([filepath 'Events.nev'],[1 1 1 0 1], 0, 1);
 ttlEvents = [timestamps; TTL];
 
 % Clustered data
@@ -75,9 +75,9 @@ lickWindowDuration = 2000;
 % Find tetrode data (files with SS and TT in the name)
 allVar = who;
 allClust = find(~cellfun(@isempty,strfind(allVar,'SS')) & ~cellfun(@isempty,strfind(allVar,'TT')))';
-for m = allClust
-    eval(sprintf('%s = round(%s/1000);', allVar{m}, allVar{m})) % convert from us to ms
-    sessionData(m-2).allSpikes = transpose(eval(allVar{m}));
+for m = 1:length(allClust)
+    eval(sprintf('%s = round(%s/1000);', allVar{allClust(m)}, allVar{allClust(m)})) % convert from us to ms
+    sessionData(m).allSpikes = transpose(eval(allVar{allClust(m)}));
 end
 
 

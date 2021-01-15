@@ -19,7 +19,6 @@ else
     behSessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep sessionName '_sessionData_behav.mat'];
 end
 
-
 if exist(behSessionDataPath,'file')
     load(behSessionDataPath)
 else

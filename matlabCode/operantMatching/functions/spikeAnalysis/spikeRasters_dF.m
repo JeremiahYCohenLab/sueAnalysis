@@ -36,7 +36,7 @@ if p.Results.intanFlag == 1
     if exist([sortedFolderLocation sessionName '_sessionData_intan.mat'],'file')
         load([sortedFolderLocation sessionName '_sessionData_intan.mat'])
     else
-        [sessionData] = generateSessionData_intan_operantMatching(sessionName);
+        [sessionData] = generateSessionData_nL_operantMatching(sessionName);
     end
 else
     if exist([sortedFolderLocation sessionName '_sessionData_nL.mat'],'file')
@@ -474,6 +474,10 @@ for i = 1:length(clust)
     
     scatters = figure; hold on
     
+    screenSize = get(0,'Screensize');
+    screenSize(4) = screenSize(4) - 100;
+    set(scatters, 'Position', screenSize)
+    
     mdl = fitlm(maxFRtrialRsp, s.responseLat);
     rSqr = mdl.Rsquared(1).Ordinary(1);
     subplot(2,3,1)
@@ -574,7 +578,6 @@ for i = 1:length(clust)
    ylabel('counts')
    
    
-    set(scatters, 'Position', get(0,'Screensize'))
     cellName = erase(spikeFields{clust(i)}, '_');
     suptitle([sessionName ': ' cellName])
 
@@ -610,6 +613,7 @@ for i = 1:length(clust)
     rasters = figure; hold on
     axisColor = [0 0 0];
     set(rasters,'defaultAxesColorOrder',[axisColor; axisColor]);
+    set(rasters, 'Position', screenSize)
 
     % All trials
     r(1) = subplot(8,7,[3 10 17 24]); t(1) = title('All Trials');
@@ -856,8 +860,8 @@ for i = 1:length(clust)
     ylim([0 sum(CSplus_Inds)])
     xlabel('<-- Left Choice (Slope) Right Choice -->')
     ylabel('Trials')
-    legend({'C','R'},'FontSize',5,'location','best')
     plot(repmat([-5000 10000],length(blockSwitch_CSminCorrected),1)', [blockSwitch_CSminCorrected; blockSwitch_CSminCorrected],'r')
+    legend({'C','R'},'FontSize',5,'location','best')
     
     %rwd hist and firing rate across session
     subplot(8,7,[43 44 45; 50 51 52])
@@ -868,14 +872,13 @@ for i = 1:length(clust)
     xlim([60000 length(sessionTime)])
     yyaxis right
     plot(sessionRwdsSmooth, 'b', 'LineWidth', 2);
-    legend('fr', 'fr smooth', 'rwd hist', 'location','best')
     xlabel('Time')
     set(gca,'Xtick',[]);
     xlim([60000 length(sessionTime)])
     rMin = ylim;
     rMag = rMin(2)*0.9;
     for j = 1:length(s.behSessionData)
-        if s.behSessionData(j).rewardL == 1 | s.behSessionData(j).rewardR == 1
+        if s.behSessionData(j).rewardL == 1 || s.behSessionData(j).rewardR == 1
             xTemp = s.behSessionData(j).rewardTime - s.behSessionData(1).CSon;
             plot([xTemp xTemp],[rMag rMin(2)],'b')
         end
@@ -897,10 +900,8 @@ for i = 1:length(clust)
     linkaxes(r(5:14),'y')
     ylim(z(5),[SDFyLimMin SDFyLimMax])
     linkaxes(z(1:9),'y')
-
+    legend('fr', 'fr smooth', 'rwd hist', 'location','best')
     
-    % max size
-    set(rasters, 'Position', get(0,'Screensize'))
     
     
     axes( 'Position', [0, 0.95, 1, 0.05] ) ; % set axes for the 'text' call below

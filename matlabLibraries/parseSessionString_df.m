@@ -27,7 +27,7 @@ else % input is the folder
     animalName = animalName(2:end);
     filepath = [root animalName sep sessionFolder sep 'behavior' sep];
     allFiles = dir(filepath);
-    fileInd = contains({allFiles.name},'.asc') | contains({allFiles.name},'.txt');
+    fileInd = contains({allFiles.name},[fileOrFolder '.asc']) | contains({allFiles.name},[fileOrFolder '.asc']);
     behavioralDataPath = [filepath allFiles(fileInd).name];
     if any(fileInd)
         suptitleName = allFiles(fileInd).name(1:end-4);

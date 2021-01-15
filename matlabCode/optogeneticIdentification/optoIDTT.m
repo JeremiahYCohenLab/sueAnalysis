@@ -3,12 +3,12 @@ shutterOffset = 0.8;
 p = inputParser;
 % default parameters if none given
 p.addParameter('Session', 'opto')
-p.addParameter('subFolder', '1')
+p.addParameter('subFolder', '250ms')
 p.addParameter('Pulses', 10)
-p.addParameter('Trains', 10)
-p.addParameter('PulseWidth', 10)
-p.addParameter('ResponseWindow', 30000)
-p.addParameter('MedianRemoval', true)
+p.addParameter('Trains', 3)
+p.addParameter('PulseWidth', 10) %ms
+p.addParameter('ResponseWindow', 30000) %us
+p.addParameter('MedianRemoval', true)  
 p.addParameter('HighPassCutoffInHz', 300);
 p.addParameter('SamplingFreq', 32000);
 p.parse(varargin{:});
@@ -67,15 +67,19 @@ TTprev = '';
 tB = 500000;
 tA = 500000;
 pulseInds = (1:p.Results.Pulses:p.Results.Pulses*p.Results.Trains);
-respWin = p.Results.ResponseWindow;
+respWin = p.Results.ResponseWindow + p.Results.PulseWidth*1000;
 rasterLength = length(-1*tB:(p.Results.Pulses*(1000000/PulseFreq)+tA));
-    
 
-%% 
+%%
 
 for i = 1:length(sortedFiles)
     [cellName, ~] = strtok(sortedFiles(i).name, '.');
     spikeTimes = [load(strcat(sortedPath, sortedFiles(i).name))]';
+
+    % baseline freq
+    sponsFreq = 1000000*sum(spikeTimes > laser(1) - 5000000 & spikeTimes < laser(1))/...
+    (min(5000000, laser(1)-spikeTimes(1)));
+
     spikeRast = [];
     for j = 1:p.Results.Trains
         spikeRast{j} = spikeTimes(spikeTimes > (laser(pulseInds(j)) - tB) &...
@@ -88,11 +92,13 @@ for i = 1:length(sortedFiles)
     end
     
     %find times when there is no light for control comparison
-    laserSham = [linspace(-tB, 0-1000/PulseFreq, p.Results.Pulses/2) ...
-        linspace(p.Results.Pulses*1000/PulseFreq, rasterLength-1000/PulseFreq, p.Results.Pulses/2)];
+    laserSham = [linspace(-3000000, -tB, p.Results.Pulses/2) ...
+        linspace(p.Results.Pulses*1000000/PulseFreq, rasterLength+3000000, p.Results.Pulses/2)];
     
     spikeLat = nan(p.Results.Trains,p.Results.Pulses);
     spikeLatSham = nan(p.Results.Trains,p.Results.Pulses);
+    spikeNum = zeros(p.Results.Trains,p.Results.Pulses);
+    spikeNumSham = zeros(p.Results.Trains,p.Results.Pulses);
     lightSpikeTimes = [];
     for j = 1:p.Results.Trains              %for all pulses in all trains, find spikes within the response window
         for k = 1:p.Results.Pulses
@@ -102,10 +108,12 @@ for i = 1:length(sortedFiles)
                 spikeTimes < laserSham(k) + laser(pulseInds(j)) + respWin);
             if ~isempty(spikeRespTmp)
                 spikeLat(j,k) = spikeRespTmp(1) - laser(pulseInds(j)+k-1);
-                lightSpikeTimes = [lightSpikeTimes spikeRespTmp(1)];
+                spikeNum(j,k) = length(spikeRespTmp);
+                lightSpikeTimes = [lightSpikeTimes spikeRespTmp];
             end
-             if ~isempty(spikeRespTmpSham)
+            if ~isempty(spikeRespTmpSham)
                 spikeLatSham(j,k) = spikeRespTmpSham(1) - (laserSham(k) + laser(pulseInds(j)));
+                spikeNumSham(j,k) = length(spikeRespTmpSham);
             end           
         end
     end
@@ -114,7 +122,6 @@ for i = 1:length(sortedFiles)
     avgSpikeLat = nanmean(spikeLat);    avgSpikeLatSham = nanmean(spikeLatSham);        %find average spikeLat and P(spike)
     semSpikeLat = nanstd(spikeLat)/sqrt(p.Results.Trains);      semSpikeLatSham = nanstd(spikeLatSham)/sqrt(p.Results.Trains); 
     spikeProb = mean(~isnan(spikeLat)); spikeProbSham = mean(~isnan(spikeLatSham));
-    
     %get waveforms for light evoked and spontaneous spikes
     [TTname, unitNum] = strtok(cellName, 'SS');
     TTname = TTname(1:end-1);
@@ -144,18 +151,26 @@ for i = 1:length(sortedFiles)
         plotShaded(1000*[x(j) xx(j)],[0 0; 1+p.Results.Trains 1+p.Results.Trains],'b');
     end
     
-    subplot(4,3,[7]); hold on;
-    xlabel('Pulse'); ylabel('Latency (ms)'); ylim([0 30]); xlim([0 p.Results.Pulses+1])
+    text(0, 0.25, ['baseline activity ', num2str(sponsFreq) 'Hz']);
+    
+    subplot(4,3,7); hold on;
+    xlabel('Pulse'); ylabel('Latency (ms)'); ylim([0 respWin/1000]); xlim([0 p.Results.Pulses+1])
     errorbar(avgSpikeLat/1000, semSpikeLat/1000, 'b', 'LineWidth', 2);
     errorbar(avgSpikeLatSham/1000, semSpikeLatSham/1000, 'k', 'LineWidth', 2);
     legend('laser','control');
     
-    subplot(4,3,10); hold on;
+    subplot(4,3,8); hold on;
     xlabel('Pulse'); ylabel('P(spike)'); ylim([-0.1 1.1]); xlim([0 p.Results.Pulses+1])
     plot(spikeProb, 'b', 'LineWidth', 2);
     plot(spikeProbSham, 'k', 'LineWidth', 2);
 
-    subplot(4,3,8); hold on;
+    subplot(4,3,9); hold on;
+    xlabel('Pulse'); ylabel('spikeNum'); ylim([-0.1 max([spikeNum, spikeNumSham],[],'all')]); xlim([0 p.Results.Pulses+1])
+    plot(mean(spikeNum), 'b', 'LineWidth', 2);
+    plot(mean(spikeNumSham), 'k', 'LineWidth', 2);
+    
+
+    subplot(4,3,10); hold on;
     ylabel('Amplitude (\muV)');
     for j = 1:4
         plotFilled([1:32]+32*(j-1), spontWaveForm{j}, 'k');
@@ -175,7 +190,7 @@ for i = 1:length(sortedFiles)
         end
     end
     
-    subplot(4,3,[9 12]); hold on
+    subplot(4,3,12); hold on
     xlabel('Time (ms)'); ylabel('Amplitude (\muV)')
     if ~isempty(lightWaveForm{1})
         if size(lightWaveForm{1}, 1) > 1
