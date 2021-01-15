@@ -3,12 +3,21 @@ shutterOffset = 0.8;
 p = inputParser;
 % default parameters if none given
 p.addParameter('Session', 'opto')
+<<<<<<< HEAD
 p.addParameter('subFolder', '250ms')
 p.addParameter('Pulses', 10)
 p.addParameter('Trains', 3)
 p.addParameter('PulseWidth', 10) %ms
 p.addParameter('ResponseWindow', 30000) %us
 p.addParameter('MedianRemoval', true)  
+=======
+p.addParameter('subFolder', '')
+p.addParameter('Pulses', 10)
+p.addParameter('Trains', 10)
+p.addParameter('PulseWidth', 200)
+p.addParameter('ResponseWindow', 30000)
+p.addParameter('MedianRemoval', true)
+>>>>>>> cfe5d4b5f3b3d76ac28bea90f69606a89622482a
 p.addParameter('HighPassCutoffInHz', 300);
 p.addParameter('SamplingFreq', 32000);
 p.parse(varargin{:});

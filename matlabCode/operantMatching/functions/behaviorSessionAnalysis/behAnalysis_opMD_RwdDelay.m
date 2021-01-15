@@ -1,6 +1,6 @@
 function behAnalysis_opMD_RwdDelay(sessionName, varargin)
 p = inputParser;
-p.addParameter('maxTrials', 300)
+p.addParameter('maxTrials', 600)
 p.addParameter('lickFlag',1)
 p.addParameter('saveFigFlag',1)
 p.addParameter('coupledFlag',0)
@@ -310,14 +310,14 @@ plot([0 tMax],[0 0],'k--')
 
 
 %% exponential decay fit to beta values from linear regression
-expFit = singleExpFit(glm_rwdANDnoRwd.Coefficients.Estimate(2:end));
-expConv = expFit.a*exp(-(1/expFit.b)*(1:10));
-expConv = expConv./sum(expConv);
-                      
-allRewardsBinary = allRewards;                       %makewe all rewards have the same value
-allRewardsBinary(find(allRewards == -1)) = 1;
-rwdHx = conv(allRewardsBinary,expConv);              %convolve with exponential decay to give weighted moving average
-rwdHx = rwdHx(1:end-(length(expConv)-1));                   %to account for convolution padding
+% expFit = singleExpFit(glm_rwdANDnoRwd.Coefficients.Estimate(2:end));
+% expConv = expFit.a*exp(-(1/expFit.b)*(1:10));
+% expConv = expConv./sum(expConv);
+%                       
+% allRewardsBinary = allRewards;                       %makewe all rewards have the same value
+% allRewardsBinary(find(allRewards == -1)) = 1;
+% rwdHx = conv(allRewardsBinary,expConv);              %convolve with exponential decay to give weighted moving average
+% rwdHx = rwdHx(1:end-(length(expConv)-1));                   %to account for convolution padding
 
 
 
