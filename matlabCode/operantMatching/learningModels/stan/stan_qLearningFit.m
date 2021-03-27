@@ -1,4 +1,4 @@
-function [paramEsts] = stan_qLearningFit(xlFile, animal, category, varargin)
+function [paramEsts] = stan_qLearningFit(xlFile, sheet, category, varargin)
 
 p = inputParser;
 % default parameters if none given
@@ -30,15 +30,15 @@ end
 
 [root, sep] = currComputer();
 if p.Results.bernFlag
-    savePath = [root animal sep animal 'sorted' sep 'stan' sep 'bernoulli' sep p.Results.modelName sep];
+    savePath = [root sheet sep sheet 'sorted' sep 'stan' sep 'bernoulli' sep p.Results.modelName sep];
 else
-    savePath = [root animal sep animal 'sorted' sep 'stan' sep p.Results.modelName sep];
+    savePath = [root sheet sep sheet 'sorted' sep 'stan' sep p.Results.modelName sep];
 end
 if ~exist(savePath)
     mkdir(savePath);
 end
 
-[~, dayList, ~] = xlsread([root xlFile], animal);
+[~, dayList, ~] = xlsread([root xlFile], sheet);
 [~,col] = find(contains(dayList, category) == 1);
 % [~,col] = find(~cellfun(@isempty,strfind(dayList, category)) == 1);
 dayList = dayList(2:end,col);
@@ -137,13 +137,26 @@ if p.Results.nonfixedParams
     [~, maxInd] = max(n);
     paramEsts = median(tmp(tmp > e(maxInd) & tmp < e(maxInd+1)));
 else
+    allSamples = [];
+    edges = cell(1,length(paramInds));
     for i = 1:length(paramInds)
         tmp = eval(['samples.mu_' p.Results.paramNames{i}]);
-        [n,e] = histcounts(tmp, 50);
-        [~, maxInd] = max(n);
-        paramEsts(i) = median(tmp(tmp > e(maxInd) & tmp < e(maxInd+1)));
+        allSamples = [allSamples tmp];
+        edges{i} = linspace(min(tmp), max(tmp),50);
+    end
+    n = histcnd(allSamples,edges); %bin samples by multiple dimensions
+    [~, inds] = myMaxAll(n); %find the bin with max num in bin
+    for i = 1:length(paramInds) %use median in bin as best estimate
+        tmp = allSamples(:,i);
+        edgeTmp = edges{i};
+        if inds(i) < 50
+            paramEsts(i) = median(tmp(tmp >= edgeTmp(inds(i)) & tmp < edgeTmp(inds(i)+1)));
+        else
+            paramEsts(i) = edgeTmp(inds(i));
+        end
     end
 end
+
 
 %plot the distributions of the mouse-level parameters
  figure2; 
@@ -165,24 +178,24 @@ else
         title(p.Results.paramNames{paramInds(i)})
     end
 end
-titleTxt = strrep([animal ' - ' p.Results.modelName], '_', ' ');
+titleTxt = strrep([sheet ' - ' p.Results.modelName], '_', ' ');
 suptitle(titleTxt);
 set(gcf,'Renderer', 'Painters')
 
 if p.Results.saveFlag
     %save the full samples
     if p.Results.nonfixedParams
-        sampFile = [animal category, '_', p.Results.modelName, '_', p.Results.nonfixedParams];
+        sampFile = [sheet category, '_', p.Results.modelName, '_', p.Results.nonfixedParams];
         saveFile = [sampFile '.mat'];
         eval([sampFile,  ' = samples;']);
     else
-        sampFile = [animal category '_', p.Results.modelName];
+        sampFile = [sheet category '_', p.Results.modelName];
         saveFile = [sampFile '.mat'];
         eval([sampFile,  ' = samples;']);
     end
     %save([savePath saveFile], sampFile, 'paramEsts', 'dayList', 'tbl');
     save([savePath saveFile], sampFile, 'paramEsts', 'dayList');
     
-    saveFigurePDF(gcf,[savePath animal category '_' p.Results.modelName  '_posteriors'])
+    saveFigurePDF(gcf,[savePath sheet category '_' p.Results.modelName  '_posteriors'])
 end
     

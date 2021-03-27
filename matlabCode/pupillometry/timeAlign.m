@@ -4,12 +4,13 @@ saveFlag = 1;
 unblockedError = false; 
 iterMaxReach = false;
 errorRate = 0.05;
-errorThresh = 2;
+errorThresh = 2; %no. of frames allowed for mis-alignment
 iter = 0;
 errorProp = NaN;
 csFT = NaN;
 pupilIdx = NaN;
 ratioMax = NaN;
+ledLLThresh = 0.7;
 %% training set
 [root,sep] = currComputer;
    
@@ -39,7 +40,7 @@ else
     savepath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep];
 end
 
-iterMax = 0.1*length(behSessionData);
+iterMax = 0.15*length(behSessionData);
 %% load diameter and position
 videopath = [root animalName sep sessionFolder sep 'pupil'];
 list = dir(videopath);
@@ -52,9 +53,10 @@ position = list(~cellfun(@isempty, cellfun(@(x) regexp(x, expression), {list.nam
 positionRaw = csvread([videopath sep position],3,0);
 %% Align time by finding maximum projection
 ratio = 20.5:0.01:21.5;
-ledLL = sign(positionRaw(:,16).*positionRaw(:,10) - 0.9999);
+%ledLL = sign(positionRaw(:,16).*positionRaw(:,10) - ledLLThresh);
+ledLL = sign(positionRaw(:,16) - ledLLThresh);
 ledQual = positionRaw(:,10);
-ledLL = ledLL .* (ledQual.^2);
+%ledLL = ledLL .* (ledQual.^2);
 csT = [behSessionData(cellfun(@(x) strcmp(x,'CSplus'), {behSessionData.trialType})).CSon];
 csT = csT - csT(1);
 filter = ones(1,round(0.5 * mean(ratio)));
@@ -208,8 +210,8 @@ for j = 1:length(qualInd)
     if cueFT(j)
         minF = max(1, min(cueFT(j) - 30, length(qualF)));
         maxF = min(cueFT(j) + 100, length(qualF));
-        minF
-        maxF
+        minF;
+        maxF;
         qualInd(j) = sum(qualF(minF : maxF));% frame quality around the time of cue
     end
 end

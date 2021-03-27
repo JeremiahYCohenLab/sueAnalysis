@@ -9,7 +9,6 @@ p.addParameter('timeMax', 121000)
 p.addParameter('timeBins', 12)
 p.parse(varargin{:});
 
-
 [root, sep] = currComputer();
 
 [animalName, date] = strtok(sessionName, 'd'); 
@@ -39,7 +38,7 @@ else
             behSessionData = sessionData;
         end
     else
-        [behSessionData, blockSwitch, blockSwitchL, blockSwitchR] = generateSessionData_operantMatchingDecoupled(sessionName);
+        [behSessionData, blockSwitch, blockSwitchL, blockSwitchR] = generateSessionData_operantMatchingDecoupledRwdDelay(sessionName);
     end
 end
 
@@ -55,6 +54,7 @@ for i = 2:length(blockSwitch)
     blockSwitch(i:end) = blockSwitch(i:end) - subVal;
 end
 
+rwdDelay = mode([behSessionData(responseInds).rewardTime] - [behSessionData(responseInds).respondTime]);
 allReward_R = [behSessionData(responseInds).rewardR]; 
 allReward_L = [behSessionData(responseInds).rewardL]; 
 allChoices = NaN(1,length(behSessionData(responseInds)));
@@ -78,6 +78,10 @@ if blockSwitch(end) == length(allChoices)
     blockSwitch = blockSwitch(1:end-1);
 end
 
+% calculate timeBetween trials
+timeBtwn = [behSessionData(responseInds(2:end)).CSon] - [behSessionData(responseInds(1:end-1)).rewardTime];
+timeBtwn(timeBtwn < 0 ) = 0;
+timeBtwn = [NaN zscore(timeBtwn(~isnan(timeBtwn)))];
 
 %% determine and plot lick latency distributions for each spout
 lickLat = [];       lickRate = [];
@@ -85,74 +89,48 @@ lickLat_L = [];     lickRate_L = [];
 lickLat_R = [];     lickRate_R = [];
 lickSide = NaN(1,length(behSessionData));
 for i = 1:length(behSessionData)
-    if ~isempty(behSessionData(i).rewardTime)
-        lickLat = [lickLat behSessionData(i).rewardTime - behSessionData(i).CSon];
+    if ~isnan(behSessionData(i).rewardTime)
+        lickLat = [lickLat behSessionData(i).respondTime - behSessionData(i).CSon];
         if ~isnan(behSessionData(i).rewardL)
             lickSide(i) = -1;
-            lickLat_L = [lickLat_L behSessionData(i).rewardTime - behSessionData(i).CSon];
-            if behSessionData(i).rewardL == 1
-                if length(behSessionData(i).licksL) > 1
-                    lickRateTemp = 1000/(min(diff(behSessionData(i).licksL)));
-                    lickRate = [lickRate lickRateTemp];
-                    lickRate_L = [lickRate_L lickRateTemp];
-                else
-                   lickRate = [lickRate 0];
-                   lickRate_L = [lickRate_L 0]; 
-                end
-            end
+            lickLat_L = [lickLat_L behSessionData(i).respondTime - behSessionData(i).CSon];
+            
+            lickRateTemp = length(find(behSessionData(i).licksL < behSessionData(i).rewardTime))/(0.001*rwdDelay);
+            lickRate = [lickRate lickRateTemp];
+            lickRate_L = [lickRate_L lickRateTemp];
+
         elseif ~isnan(behSessionData(i).rewardR)
             lickSide(i) = 1;
-            lickLat_R = [lickLat_R behSessionData(i).rewardTime - behSessionData(i).CSon];      
-            if behSessionData(i).rewardR == 1
-                if length(behSessionData(i).licksR) > 1     
-                    lickRateTemp = 1000/(min(diff(behSessionData(i).licksR)));
-                    lickRate = [lickRate lickRateTemp];
-                    lickRate_R = [lickRate_R lickRateTemp];  
-                else                                                                    %make single licks zeros for easier indexing
-                    lickRate = [lickRate 0];
-                    lickRate_R = [lickRate_R 0];
-                end
-            end
+            lickLat_R = [lickLat_R behSessionData(i).respondTime - behSessionData(i).CSon];   
+            
+            lickRateTemp = length(find(behSessionData(i).licksR < behSessionData(i).rewardTime))/(0.001*rwdDelay);
+            lickRate = [lickRate lickRateTemp];
+            lickRate_R = [lickRate_R lickRateTemp];  
+
         end
     end
-end
+ end
 
-%% Z-scored lick latency (gets rid of preemptive licks)
+%% Z-scored lick latency and Z-scored log lick latency (gets rid of preemptive licks)
 
-lickLatResp = lickLat(responseInds);                    %remove NaNs from lickLat array
-lickLatResp = lickLatResp(2:end);                       %shift for comparison to rwd history
-lickLatInds = find(lickLatResp > 250);                  %find indices of non-preemptive licks (limit to normal distribution)
-
-if ~isnan(behSessionData(responseInds(1)).rewardR)      %remove first response for shift to compare to rwd hist
-    responseLat_R = lickLat_R(2:end);
-    responseLat_L = lickLat_L;
-else
-    responseLat_R = lickLat_R;
-    responseLat_L = lickLat_L(2:end);
-end
-
-responseLat_R = responseLat_R(responseLat_R > 250);        %remove lick latencies outside of normal distribution
-responseLat_L = responseLat_L(responseLat_L > 250);
-responseLat_R  = zscore(responseLat_R);                   %get z scores for lick latencies based on spout side average
-responseLat_L  = zscore(responseLat_L);
-choicesLick = allChoices(2:end);                        %make shifted choice array without preemptive licks
-choicesLick = choicesLick(lickLatInds);
-
-L = 1;
-R = 1;
-for j = 1:length(choicesLick)                     %put z scored lick latencies back in trial order
-    if choicesLick(j) == 1
-        responseLat(j) = responseLat_R(R);
-        R = R + 1;
-    else
-        responseLat(j) = responseLat_L(L);
-        L = L + 1;
-    end
-end
+realID = lickLat>200; % take 200ms as the min lick latency
+lickLatZ = NaN(1, length(allChoices));
+lickLatLog = NaN(1,length(lickLat));
+lickLatLogZ = NaN(1,length(lickLat));
+indsR = allChoices == 1 & realID;
+indsL = allChoices == -1 & realID;
+lickLat_R = zscore(lickLat(indsR));
+lickLat_L = zscore(lickLat(indsL));
+lickLat_Rlog = log(lickLat(indsR));
+lickLat_Llog = log(lickLat(indsL));
+lickLatZ(indsR) = lickLat_R;
+lickLatZ(indsL) = lickLat_L;
+lickLatLogZ(indsR) = zscore(lickLat_Rlog);
+lickLatLogZ(indsL) = zscore(lickLat_Llog);
 
 %% Z scored lick rate (eliminates trials with impossible lick rates)
 
-rewardsLick = allRewards(allRewards == 1 | allRewards == -1);
+
 responseRateInds = find(lickRate < 15);
 
 corrLickRate = lickRate(lickRate < 15);
@@ -160,18 +138,43 @@ corrLickRate_R = lickRate_R(lickRate_R < 15);
 corrLickRate_L = lickRate_L(lickRate_L < 15);
 corrLickRate_R = zscore(corrLickRate_R);
 corrLickRate_L = zscore(corrLickRate_L);
-rewardsLick = rewardsLick(responseRateInds);
+lickRateChoice = allChoices(responseRateInds);
 
 L = 1;
 R = 1;
-for j = 1:length(rewardsLick)                     %put z scored lick rates back in trial order
-    if rewardsLick(j) == 1
+for j = 1:length(lickRateChoice)                     %put z scored lick rates back in trial order
+    if lickRateChoice(j) == 1
         corrLickRate(j) = corrLickRate_R(R);
         R = R + 1;
-    elseif rewardsLick(j) == -1
+    elseif lickRateChoice(j) == -1
         corrLickRate(j) = corrLickRate_L(L);
         L = L + 1;
     end
+end
+
+
+%%
+% CSplus trials
+CSplus_Inds = strcmp({behSessionData.trialType},'CSplus');
+
+% CSminus trials
+CSminus_Inds = strcmp({behSessionData.trialType},'CSminus');
+
+% sort all licks
+[~, lick_Inds] = sort(lickLat); 
+
+% Lick R trials
+Rlicks = allChoices == 1;
+lickR_Inds = lick_Inds(Rlicks(lick_Inds));
+
+% Lick L trials
+Llicks = allChoices == -1;
+lickL_Inds = lick_Inds(Llicks(lick_Inds));
+%% hmm states
+if sum(strcmp(fields(behSessionData),'hmm'))>0
+    hmmStates = [behSessionData.hmm];
+else
+    [~, hmmStates] = fitHmmOpt(sessionName);
 end
 
 
@@ -209,7 +212,7 @@ rwdHx_R = rwdHx_R(1:end-(length(expConv)-1));
 
 %from choice model
 expFitChoice = singleExpFit(glm_choice.Coefficients.Estimate(2:end));
-expConvChoice = expFitChoice.a*exp(-(1/expFitChoice.b)*(1:10));
+expConvChoice = expFitChoice.a*exp(-(1/expFitChoice.b)*(1:10)); %generate kernel
 expConvChoice = expConvChoice./sum(expConvChoice);
 allChoices_L = +(allChoices == -1);                                       % + converts to double from logical
 allChoices_R = +(allChoices == 1);
@@ -217,7 +220,10 @@ choiceHx = conv(allChoices,expConvChoice,'full');
 choiceHx = choiceHx(1:end-(length(expConvChoice)-1));
 choiceHx = [0 choiceHx(1:end-1)];  
 
-
+% stay/switch
+changeChoice = [false abs(diff(allChoices)) > 0];
+changeChoice_Inds = find(changeChoice == 1);
+stayChoice_Inds = find(changeChoice == 0);
 %% linear regression model by time
 
 timeBinSize = (p.Results.timeMax - 1000)/p.Results.timeBins;
@@ -364,10 +370,11 @@ s.choiceTimes = choiceTimes;
 s.choiceSlope = choiceSlope;
 s.corrLickRate = corrLickRate;
 s.lickLat = lickLat;
-s.lickLatInds = lickLatInds;
+s.lickLatInds = find(realID>0);
 s.lickSide = lickSide;
 s.responseInds = responseInds;
-s.responseLat = responseLat;
+s.lickLatZ = lickLatZ;
+s.lickLatLogZ = lickLatLogZ;
 s.responseRateInds = responseRateInds; 
 s.rwdHx = rwdHx;
 s.rwdHxTimeChoice = rwdHxTimeChoice;
@@ -378,6 +385,18 @@ s.rwdTimeMatxBin = rwdTimeMatxBin;
 s.sessionRwds = sessionRwds;
 s.timeBinSize = timeBinSize;
 s.timeMax = p.Results.timeMax;
+s.CSplus = CSplus_Inds;
+s.CSminus = CSminus_Inds;
+s.lickR_Inds = lickR_Inds;
+s.lickL_Inds = lickL_Inds;
+s.rwd_Inds = find(allRewards~=0);
+s.nrwd_Inds = find(allRewards==0);
+s.hmmStates = hmmStates;
+s.changeChoice_Inds = changeChoice_Inds;
+s.stayChoice_Inds = stayChoice_Inds;
+s.rwdDelay = rwdDelay;
+s.timeBtwn = timeBtwn;
+
 
 if p.Results.revForFlag
     s.blockProbs = blockProbs;

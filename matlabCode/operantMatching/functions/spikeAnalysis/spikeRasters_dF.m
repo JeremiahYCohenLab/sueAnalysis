@@ -445,7 +445,9 @@ for i = 1:length(clust)
         downsampFactor = floor(avgFiringRate/6);
         downsampFlag = true;
         for j = 1:size(allTrial_spike,2)
-            allTrial_spike{i,j} = downsample(allTrial_spike{i,j}, downsampFactor);
+            if ~isempty(allTrial_spike{i,j})
+              allTrial_spike{i,j} = downsample(allTrial_spike{i,j}, downsampFactor);
+            end
         end   
     end
  

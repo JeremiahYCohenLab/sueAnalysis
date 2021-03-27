@@ -14,7 +14,7 @@ else                 % Multiple monitors
   FigH     = figure(varargin{:}, 'Visible', 'off');
   set(FigH, 'Units', 'pixels');
   pos = get(FigH, 'Position');
-  x = 0.5*MP(1,1) - 0.5*pos(3);
+  x = - 1.5*pos(3);
   y = MP(1,2) + 0.5*MP(1,4) - 0.5*pos(4); 
   set(FigH, 'Position', [x,y, pos(3:4)], ...
             'Visible', paramVisible);

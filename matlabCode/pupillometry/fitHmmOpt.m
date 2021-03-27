@@ -43,11 +43,11 @@ function [behSessionData, states, trans_fit, emis_fit] = fitHmmOpt(sessionName,p
                 0.5, 0.5];
     if allChoices(1) == 2
         allChoices = 3 - allChoices;
-        [trans_est_oit,emis_est_oit] = hmmtrainPrior(allChoices,trans_guess,emis_guess); % should be done separately for each session because of bias.
+        [trans_est_oit,emis_est_oit, postlik_oit] = hmmtrainPrior(allChoices,trans_guess,emis_guess); % should be done separately for each session because of bias.
         allChoices = 3 - allChoices;
         emis_est_oit = emis_est_oit(:,[2,1]);
     else
-        [trans_est_oit,emis_est_oit] = hmmtrainPrior(allChoices,trans_guess,emis_guess); % should be done separately for each session because of bias.
+        [trans_est_oit,emis_est_oit, postlik_oit] = hmmtrainPrior(allChoices,trans_guess,emis_guess); % should be done separately for each session because of bias.
     end
 
     %% fit hmm ORE start
@@ -57,12 +57,14 @@ function [behSessionData, states, trans_fit, emis_fit] = fitHmmOpt(sessionName,p
     emis_guess = [0.5, 0.5;
                  1, 0;...
                  0, 1];
-    [trans_est_ore,emis_est_ore] = hmmtrainPrior(allChoices,trans_guess,emis_guess); % should be done separately for each session because of bias.
+    [trans_est_ore,emis_est_ore, postlik_ore] = hmmtrainPrior(allChoices,trans_guess,emis_guess); % should be done separately for each session because of bias.
     
     %% compare
     bias_t = trans_est_oit(1,1)* trans_est_oit(2,2);
     bias_e = trans_est_ore(2,2)* trans_est_ore(3,3);
-    if bias_t >= bias_e
+    
+    if postlik_oit(end)>postlik_ore(end)
+%     if bias_t >= bias_e
         emis_fit = emis_est_oit([3,1,2],:);
         trans_fit([2,3],[2,3]) = trans_est_oit([1,2],[1,2]);
         trans_fit(1,1) = trans_est_oit(3,3);

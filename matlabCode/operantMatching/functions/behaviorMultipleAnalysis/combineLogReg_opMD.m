@@ -51,7 +51,7 @@ for i = 1: length(dayList)
     elseif p.Results.revForFlag                                    %otherwise generate the struct
         [behSessionData, ~] = generateSessionData_operantMatching(sessionName);
     else
-        [behSessionData, ~, ~, ~] = generateSessionData_operantMatchingDecoupled(sessionName);
+        [behSessionData, ~, ~, ~] = generateSessionData_operantMatchingDecoupledRwdDelay(sessionName);
     end
     behSessionData = behSessionData(1:min(length(behSessionData), p.Results.maxTrials));
     responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window

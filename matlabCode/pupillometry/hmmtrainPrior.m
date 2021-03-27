@@ -234,10 +234,10 @@ for iteration = 1:maxiter
             loglik = loglik + logPseq;
 %             postlik = loglik + log(normpdf(guessE(1,1), 0.5, 0.20)) ...
 %                 + log(normpdf((guessTR(1,2) - guessTR(1,3))/(guessTR(1,2) - guessTR(1,3)), 0, 0.5));
-            if  strcmp(startState,'oit')
-                postlik = loglik + log(betapdf(guessE(3,1), 5, 5)); 
+            if  strcmp(startState,'oit') % adding prior 
+                postlik = loglik + log(betapdf(guessE(3,1), 1.2, 1.5)); 
             else
-                postlik = loglik + log(betapdf(guessE(1,1), 5, 5));
+                postlik = loglik + log(betapdf(guessE(1,1), 1.2, 1.5));
             end
             
             logf = log(fs);

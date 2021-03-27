@@ -1,0 +1,514 @@
+  function lickRasters_dF_choiceAlign(sessionName, varargin)
+
+p = inputParser;
+% default parameters if none given
+p.addParameter('cellName', ['all']);
+p.addParameter('saveFigFlag', 1)
+p.addParameter('intanFlag',1)
+p.addParameter('revForFlag',0)
+p.addParameter('modelsFlag',0)
+p.addParameter('timeMax', 121000)
+p.addParameter('timeBins', 12)
+p.addParameter('tb', 1.5);
+p.addParameter('tf', 5); % in s
+p.addParameter('binSize', 150); %in ms
+p.addParameter('stepSize', 150); % in ms
+p.parse(varargin{:});
+
+cellName = p.Results.cellName;
+
+% Path
+[root,sep] = currComputer();
+
+[animalName] = strtok(sessionName, 'd');
+animalName = animalName(2:end);
+
+if isstrprop(sessionName(end), 'alpha')
+    sortedFolderLocation = [root animalName sep sessionName(1:end-1) sep 'sorted' sep 'session ' sessionName(end) sep];
+    savepath = [root animalName sep sessionName(1:end-1) sep  'figures' sep 'session ' sessionName(end) sep];
+else
+    sortedFolderLocation = [root animalName sep sessionName sep 'sorted' sep 'session' sep];
+    savepath = [root animalName sep sessionName sep  'figures' sep];
+end
+
+if exist([sortedFolderLocation sessionName '_sessionData_behav.mat'],'file')
+    load([sortedFolderLocation sessionName '_sessionData_behav.mat'])
+    sessionData = behSessionData;
+else
+    [sessionData] = generateSessionData_operantMatchingDecoupledRwdDelay(sessionName);
+end
+
+[s] = behAnalysisNoPlot_opMD(sessionName, 'revForFlag', p.Results.revForFlag);
+
+if isempty(dir(savepath))
+    mkdir(savepath)
+end
+
+
+time = -1000*p.Results.tb:1000*p.Results.tf;
+
+omitInds = isnan([sessionData.rewardTime]);
+tempBlockSwitch = s.blockSwitch;
+blockSwitch_CSminCorrected = s.blockSwitch;
+for i = 2:length(blockSwitch_CSminCorrected)
+    subVal = sum(omitInds(tempBlockSwitch(i-1):tempBlockSwitch(i)));
+    blockSwitch_CSminCorrected(i:end) = blockSwitch_CSminCorrected(i:end) - subVal;
+end
+
+
+%% Sort all licks into a raster-able matrix
+allTrial_lick = cell(length(s.responseInds),1);
+for k = 1:length(s.responseInds)
+    if ~isnan(sessionData(s.responseInds(k)).rewardL)
+        currTrial_lickInd = [sessionData(s.responseInds(k)).licksL] < (sessionData(s.responseInds(k)).respondTime + p.Results.tf*1000);
+        currTrial_lick = sessionData(s.responseInds(k)).licksL(currTrial_lickInd) - sessionData(s.responseInds(k)).respondTime;
+    elseif ~isnan(sessionData(s.responseInds(k)).rewardR)
+        currTrial_lickInd = [sessionData(s.responseInds(k)).licksR] < (sessionData(s.responseInds(k)).respondTime + p.Results.tf*1000);
+        currTrial_lick = sessionData(s.responseInds(k)).licksR(currTrial_lickInd) - sessionData(s.responseInds(k)).respondTime;  
+    else
+        currTrial_lick = 0;
+    end
+    allTrial_lick{k} = [currTrial_lick];
+end
+
+%% Generate indices for block switches
+blockS = [];
+blockL = [];
+blockR = [];
+s.blockSwitch = s.blockSwitch + 1;
+s.blockSwitch(1) = 1; %% this is to avoid an error on the first iteration of the loop because it's trying to index at 0
+
+if p.Results.revForFlag
+    for i = 1:length(s.blockSwitch)
+        [rewardProbL, rewardProbR] = strtok(s.blockProbs(i), '/');
+        rewardProbL = str2double(rewardProbL); rewardProbR = str2double(rewardProbR{1}(2:end));
+        if rewardProbL > rewardProbR
+            if i ~= length(s.blockSwitch)
+                blockL = [blockL s.blockSwitch(i):s.blockSwitch(i+1)-1];
+            else
+                blockL = [blockL s.blockSwitch(i):length(s.responseInds)];
+            end
+        else
+            if i ~= length(s.blockSwitch)
+                blockR = [blockR s.blockSwitch(i):s.blockSwitch(i+1)-1];
+            else
+                blockR = [blockR s.blockSwitch(i):length(s.responseInds)];
+            end
+        end
+    end
+else
+    for i = 1:length(s.blockSwitch)
+        if s.behSessionData(s.blockSwitch(i)).rewardProbL == s.behSessionData(s.blockSwitch(i)).rewardProbR   
+            if i ~= length(s.blockSwitch)
+                blockS = [blockS s.blockSwitch(i):s.blockSwitch(i+1)-1];
+            else
+                blockS = [blockS s.blockSwitch(i):length(s.responseInds)];
+            end
+        elseif s.behSessionData(s.blockSwitch(i)).rewardProbL > s.behSessionData(s.blockSwitch(i)).rewardProbR
+            if i ~= length(s.blockSwitch)
+                blockL = [blockL s.blockSwitch(i):s.blockSwitch(i+1)-1];
+            else
+                blockL = [blockL s.blockSwitch(i):length(s.responseInds)];
+            end
+        else
+            if i ~= length(s.blockSwitch)
+                blockR = [blockR s.blockSwitch(i):s.blockSwitch(i+1)-1];
+            else
+                blockR = [blockR s.blockSwitch(i):length(s.responseInds)];
+            end
+        end
+    end
+end
+
+%set max trial number for plotting
+yLimMax = max([length(blockR) length(blockL) length(s.lickR_Inds) length(s.lickL_Inds)]);
+
+%% smooth rewards over time
+sessionTime = [sessionData(1).CSon:sessionData(end).CSon + 3000] - sessionData(1).CSon;       %pad time for reward on last trial
+
+sessionRwds = [sessionData.rewardTime] - sessionData(1).CSon;     %baseline to start time
+session_rwdsArray = zeros(1,length(sessionTime));
+sessionRwds = sessionRwds(s.responseInds(s.rwd_Inds));
+session_rwdsArray(round(sessionRwds)) = 1;
+
+boxKern = ones(1,60000);                                       %smooth rewards over time
+sessionRwdsSmooth = conv(session_rwdsArray, boxKern);
+sessionRwdsSmooth = sessionRwdsSmooth(1:(end-(length(boxKern)-1)));
+
+
+%% Generate smoothed choice-history values       
+[choiceHx_Sorted,choiceHx_Inds] = sort(s.choiceHx);                                          %sort by choice history
+choiceHx_Lims = [find(choiceHx_Sorted < -0.9999, 1) find(choiceHx_Sorted > 0.9999, 1)];           %find where choice hist is all L or all R
+
+
+%% Generate smoothed reward-history values over trials
+
+[~,rwdHx_Inds] = sort(s.rwdHx);
+
+%outcome indices for rwd hist
+[~,rwdHxRwd_Inds,~] = intersect(rwdHx_Inds, s.rwd_Inds); 
+[~,rwdHxNoRwd_Inds,~] = intersect(rwdHx_Inds, s.nrwd_Inds); 
+
+%for tercile analysis
+tercile = floor(length(rwdHx_Inds)/3);
+rwdHxI_Inds = rwdHx_Inds(1:tercile);
+rwdHxII_Inds = rwdHx_Inds(tercile+1:tercile*2);
+rwdHxIII_Inds = rwdHx_Inds(tercile*2+1:end);
+
+
+%outcome indices for rwd hist divisions
+rwdHxIrwd_Inds = intersect(rwdHxI_Inds, s.rwd_Inds);          rwdHxInoRwd_Inds = intersect(rwdHxI_Inds, s.nrwd_Inds);
+rwdHxIIrwd_Inds = intersect(rwdHxII_Inds, s.rwd_Inds);          rwdHxIInoRwd_Inds = intersect(rwdHxII_Inds, s.nrwd_Inds);
+rwdHxIIIrwd_Inds = intersect(rwdHxIII_Inds, s.rwd_Inds);          rwdHxIIInoRwd_Inds = intersect(rwdHxIII_Inds, s.nrwd_Inds);
+
+%choice indices for rwd hist divisions
+% [~,rwdHxIR_Inds,~] = intersect(rwdHxI_Inds, lickR_Inds);          [~,rwdHxIL_Inds,~] = intersect(rwdHxI_Inds, lickL_Inds);
+% [~,rwdHxIIR_Inds,~] = intersect(rwdHxII_Inds, lickR_Inds);          [~,rwdHxIIL_Inds,~] = intersect(rwdHxII_Inds, lickL_Inds);
+% [~,rwdHxIIIR_Inds,~] = intersect(rwdHxIII_Inds, lickR_Inds);          [~,rwdHxIIIL_Inds,~] = intersect(rwdHxIII_Inds, lickL_Inds);
+
+%% sort licking for sdfs
+
+for j = 1:length(s.responseInds)
+    trialDurDiff(j) = (sessionData(s.responseInds(j)).trialEnd - sessionData(s.responseInds(j)).CSon)- p.Results.tf*1000;
+end
+trialDurDiff(end) = 0;  %to account for no trialEnd timestamp on last trial
+
+%initialize lick matrices
+allTrial_lickMatx = NaN(length(s.responseInds),length(time)); 
+
+for j = 1:length(allTrial_lick)
+    tempLick = allTrial_lick{j};
+    tempLick = tempLick + p.Results.tb*1000; % add this to pad time for SDF
+    allTrial_lickMatx(j,tempLick) = 1;
+    if trialDurDiff(j) < 0
+        allTrial_lickMatx(j, isnan(allTrial_lickMatx(j, 1:end+trialDurDiff(j)))) = 0;  %converts within trial duration NaNs to 0's
+    else
+        allTrial_lickMatx(j, isnan(allTrial_lickMatx(j,:))) = 0;
+    end
+    if sum(allTrial_lickMatx(j,:)) == 0     %if there is no spike data for this trial, don't count it
+        allTrial_lickMatx(j,:) = NaN;
+    end
+end
+
+% calculate slide window lickRate
+midPoints = (0.5*p.Results.binSize + 1):p.Results.stepSize:(length(time)-0.5*p.Results.binSize);
+slideTime = midPoints - p.Results.tb*1000;
+allTrial_lickMatx_slide = zeros(length(s.responseInds), length(midPoints));
+for w = 1:length(midPoints)
+    allTrial_lickMatx_slide(:,w) = ...
+        sum(allTrial_lickMatx(:,midPoints(w)-0.5*p.Results.binSize:midPoints(w)+0.5*p.Results.binSize-1),2)*1000/p.Results.binSize;
+    
+end
+
+%sort by receipt of rewardS
+    rwd_lickMatx = allTrial_lickMatx_slide(s.rwd_Inds,:);
+    noRwd_lickMatx = allTrial_lickMatx_slide(s.nrwd_Inds,:);
+
+
+%sort by lick choice
+    choiceR_lickMatx = allTrial_lickMatx_slide(s.lickR_Inds,:);
+    choiceL_lickMatx = allTrial_lickMatx_slide(s.lickL_Inds,:);
+
+
+%sort licks by reward history
+    rwdHxI_lickMatx = allTrial_lickMatx_slide(rwdHxI_Inds,:);
+    rwdHxII_lickMatx = allTrial_lickMatx_slide(rwdHxII_Inds,:);
+    rwdHxIII_lickMatx = allTrial_lickMatx_slide(rwdHxIII_Inds,:);
+          
+    rwdPrev_lickMatx = allTrial_lickMatx_slide(s.rwd_Inds(1:end-1)+1,:);
+    noRwdPrev_lickMatx = allTrial_lickMatx_slide(s.nrwd_Inds(1:end-1)+1,:);
+    changeChoice_lickMatx = allTrial_lickMatx_slide(s.changeChoice_Inds,:);
+    stayChoice_lickMatx = allTrial_lickMatx_slide(s.stayChoice_Inds,:);
+    
+    %% Plotting
+    maxLick = 12;
+    
+    screenSize = get(0,'Screensize');
+    screenSize(4) = screenSize(4) - 100;
+    rasters = figure; hold on
+    axisColor = [0 0 0];
+    set(rasters,'defaultAxesColorOrder',[axisColor; axisColor]);
+    set(rasters, 'Position', screenSize)
+
+    % All trials
+    r(1) = subplot(8,7,[1 8 15 22]); t(1) = title('All Trials');
+    plotSpikeRaster(allTrial_lick,'PlotType','vertline'); hold on
+    plot(repmat([-5000 10000],length(s.blockSwitch),1)', [s.blockSwitch; s.blockSwitch],'r')
+    line([s.rwdDelay s.rwdDelay], [0 length(s.responseInds)], 'color', 'r')
+    
+    
+    % Block_R trials
+    r(4) = subplot(8,7,[2 9]); t(4) = title('higher prob on R');
+    if ~all(cellfun(@isempty,allTrial_lick(blockR)))
+        plotSpikeRaster(allTrial_lick(blockR),'PlotType','vertline'); hold on
+        plot([-5000 5000],[length(blockR) length(blockR)],'Color',[192 192 192]/255)
+        bR_switch = find(diff(blockR) > 1);
+        line([s.rwdDelay s.rwdDelay], [0 length(blockR)], 'color', 'r')
+        plot(repmat([-5000 10000],length(bR_switch),1)', [bR_switch; bR_switch],'r')
+        set(gca,'Xticklabel',[]);
+    end
+    
+    
+    % Block_L trials
+    r(5) = subplot(8,7,[16 23]); t(5) = title('higher prob on L');
+    if ~all(cellfun(@isempty,allTrial_lick(blockL)))
+        plotSpikeRaster(allTrial_lick(blockL),'PlotType','vertline'); hold on
+        plot([-5000 5000],[length(blockL) length(blockL)],'Color',[192 192 192]/255)
+        bL_switch = find(diff(blockL) > 1);
+        plot(repmat([-5000 10000],length(bL_switch),1)', [bL_switch; bL_switch],'r')
+        line([s.rwdDelay s.rwdDelay], [0 length(blockL)], 'color', 'r')
+        set(gca,'Xticklabel',[]);
+    end
+    
+    % R lick broken by rwd vs no rwd
+    r(6) = subplot(8,7,[3 10]); t(6) = title('R lick; no rwd v. rwd');
+    R_rwd = intersect(s.lickR_Inds,s.rwd_Inds);
+    R_norwd = intersect(s.lickR_Inds,s.nrwd_Inds);
+    if ~all(cellfun(@isempty,allTrial_lick([R_norwd R_rwd])))
+        plotSpikeRaster(allTrial_lick([R_norwd R_rwd]),'PlotType','vertline'); hold on
+        plot([-5000 10000],[length(R_norwd) length(R_norwd)],'r')
+        plot([-5000 10000],[length([R_norwd R_rwd]) length([R_norwd R_rwd])],'Color',[192 192 192]/255)
+        line([s.rwdDelay s.rwdDelay], [0 length(s.lickR_Inds)], 'color', 'r')
+        set(gca,'Xticklabel',[]);
+    end
+    
+    % L lick broken by rwd vs no rwd
+    r(7) = subplot(8,7,[17 24]); t(7) = title('L lick; no rwd v. rwd');
+    L_rwd = intersect(s.lickL_Inds,s.rwd_Inds);
+    L_norwd = intersect(s.lickL_Inds,s.nrwd_Inds);
+    if ~all(cellfun(@isempty,allTrial_lick([L_norwd L_rwd])))
+        plotSpikeRaster(allTrial_lick([L_norwd L_rwd]),'PlotType','vertline'); hold on
+        plot([-5000 10000],[length(L_norwd) length(L_norwd)],'r')
+        plot([-5000 10000],[length([L_norwd L_rwd]) length([L_norwd L_rwd])],'Color',[192 192 192]/255)
+        line([s.rwdDelay s.rwdDelay], [0 length(s.lickL_Inds)], 'color', 'r')
+        set(gca,'Xticklabel',[]);
+    end
+    
+    % R lick sorted by latency
+    r(8) = subplot(8,7,[4 11]); t(8) = title('R licks');
+    if ~all(cellfun(@isempty,allTrial_lick(s.lickR_Inds)))
+        plotSpikeRaster(allTrial_lick(s.lickR_Inds),'PlotType','vertline'); hold on
+        plot([-5000 10000],[length(s.lickR_Inds) length(s.lickR_Inds)],'Color',[192 192 192]/255)
+        line([s.rwdDelay s.rwdDelay], [0 length(s.lickR_Inds)], 'color', 'r')
+        set(gca,'Xticklabel',[]);
+    end
+        
+    % L lick sorted by latency
+    r(9) = subplot(8,7,[18 25]); t(9) = title('L licks');
+    if ~all(cellfun(@isempty,allTrial_lick(s.lickL_Inds)))
+        plotSpikeRaster(allTrial_lick(s.lickL_Inds),'PlotType','vertline'); hold on  
+        plot([-5000 10000],[length(s.lickL_Inds) length(s.lickL_Inds)],'Color',[192 192 192]/255)
+        line([s.rwdDelay s.rwdDelay], [0 length(s.lickL_Inds)], 'color', 'r')
+        set(gca,'Xticklabel',[]);
+    end
+    
+    % raster  switch vs stay
+    r(10) = subplot(8,7,[5 12]); t(10) = title('switch vs stay');
+    if ~all(cellfun(@isempty,allTrial_lick(s.changeChoice_Inds)))
+        plotSpikeRaster(allTrial_lick([s.changeChoice_Inds s.stayChoice_Inds]),'PlotType','vertline'); hold on
+        plot([-5000 10000],[length(s.changeChoice_Inds) length(s.changeChoice_Inds)],'color', 'r')
+        line([s.rwdDelay s.rwdDelay], [0 length(s.responseInds)], 'color', 'r')
+        title('switch vs stay');
+        set(gca,'Xticklabel',[]);
+    end
+    
+    % raster explore vs exploit
+    r(11) = subplot(8,7,[19 26]); t(11) = title('explore vs exploit');
+    if ~all(cellfun(@isempty,allTrial_lick(s.hmmStates==1)))
+        plotSpikeRaster(allTrial_lick([find(s.hmmStates==1) find(s.hmmStates~=1)]),'PlotType','vertline'); hold on
+        plot([-5000 10000],[sum(s.hmmStates==1) sum(s.hmmStates==1)],'color', 'r')
+        line([s.rwdDelay s.rwdDelay], [0 length(s.responseInds)], 'color', 'r')
+        set(gca,'Xticklabel',[]);
+    end
+
+    % rwd-history by outcome
+    r(13) = subplot(8,7,[6 13]); t(13) = title('rwd hist L->H; no rwd v. rwd');
+    rwdHxOutcome = [allTrial_lick(rwdHx_Inds(rwdHxNoRwd_Inds)); allTrial_lick(rwdHx_Inds(rwdHxRwd_Inds))];
+    plotSpikeRaster(rwdHxOutcome,'PlotType','vertline'); hold on
+    plot([-5000 10000],[length(rwdHxNoRwd_Inds) length(rwdHxNoRwd_Inds)],'-r')
+    line([s.rwdDelay s.rwdDelay], [0 length(s.responseInds)], 'color', 'r')
+    set(gca,'Xticklabel',[]);
+    
+    % rwd/noRwd and lick rate SDFs
+    z(2) = subplot(8,7,[29 30 36 37]); hold on
+    mySDF_rwd = allTrial_lickMatx_slide(s.rwd_Inds,:);
+    mySDF_noRwd = allTrial_lickMatx_slide(s.nrwd_Inds,:);
+    plotFilled(slideTime, mySDF_rwd,[0 0 1])
+    plotFilled(slideTime, mySDF_noRwd,[0.7 0 1])
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')
+    ylim([0 maxLick]);
+    legend({'rwd','','no Rwd',''},'FontSize',6,'Location','northeast')
+    
+    % rdwHx terciles SDFs
+    z(3) = subplot(8,7,[31 38]); t(5) = title('rwd hist'); hold off
+    mySDF_rwdHxIlicks = rwdHxI_lickMatx; hold on;
+    mySDF_rwdHxIIlicks = rwdHxII_lickMatx;
+    mySDF_rwdHxIIIlicks = rwdHxIII_lickMatx;
+
+    plotFilled(slideTime, mySDF_rwdHxIIIlicks,[0 0 1])
+    plotFilled(slideTime, mySDF_rwdHxIIlicks, [0.3 0.3 1])
+    plotFilled(slideTime, mySDF_rwdHxIlicks, [0.6 0.6 1])
+    ylim([0 maxLick]);
+    legend({'High','','Middle','','Low',''},'FontSize',5,'Location','northeast')
+    set(gca,'Xticklabel',[]);
+    
+    
+    
+    
+    %sdf by reward hist, rewarded trials
+    z(4) = subplot(8,7,[32 39]); t(5) = title('rwd hist - rwd'); hold on
+    mySDF_rwdHxIrwd = allTrial_lickMatx_slide(rwdHxIrwd_Inds,:);
+    mySDF_rwdHxIIrwd = allTrial_lickMatx_slide(rwdHxIIrwd_Inds,:);
+    mySDF_rwdHxIIIrwd = allTrial_lickMatx_slide(rwdHxIIIrwd_Inds,:);
+    plotFilled(slideTime, mySDF_rwdHxIIIrwd, [0 0 1])
+    plotFilled(slideTime, mySDF_rwdHxIIrwd, [0.4 0.4 1])
+    plotFilled(slideTime, mySDF_rwdHxIrwd, [0.8 0.8 1])
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')
+    legend({'High','','Middle','','Low',''},'FontSize',5,'Location','northeast')
+    ylim([0 maxLick]);
+    
+    %sdf by reward hist, NON-rewarded trials
+    z(5) = subplot(8,7,[33 40]); t(6) = title('rwd hist - no rwd'); hold on
+    mySDF_rwdHxInoRwd = allTrial_lickMatx_slide(rwdHxInoRwd_Inds,:);
+    mySDF_rwdHxIInoRwd = allTrial_lickMatx_slide(rwdHxIInoRwd_Inds,:);
+    mySDF_rwdHxIIInoRwd = allTrial_lickMatx_slide(rwdHxIIInoRwd_Inds,:);
+%    mySDF_rwdHxIVnoRwd = fastsmooth(nanmean(rwdHxIV_spikeMatx(rwdHxIVnoRwd_Inds,:), 1)*1000, 250);
+%    plot(time, mySDF_rwdHxIVnoRwd(1:length(time)),'g','LineWidth',2)
+    plotFilled(slideTime, mySDF_rwdHxIIInoRwd, [1 0 0])
+    plotFilled(slideTime, mySDF_rwdHxIInoRwd, [1 0.4 0.4])
+    plotFilled(slideTime, mySDF_rwdHxInoRwd, [1 0.8 0.8])
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')
+    legend({'High','','Middle','','Low',''},'FontSize',5,'Location','northeast')
+    ylim([0 maxLick]);
+ 
+    z(8) = subplot(8,7,[45 52]); hold on;
+    mySDF_stay = stayChoice_lickMatx;
+    mySDF_change = changeChoice_lickMatx;
+    plotFilled(slideTime, mySDF_change,[0 0 1])
+    plotFilled(slideTime, mySDF_stay,[0.7 0 1])
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')
+    legend('switch', '', 'stay', '')
+    title('stay vs switch')
+    ylim([0 maxLick]);
+
+
+    z(9) = subplot(8,7,[46 53]); title('switch/stay rwd'); hold on;
+    mySDF_stayRwd = allTrial_lickMatx_slide(intersect(s.rwd_Inds, s.stayChoice_Inds),:);
+    mySDF_switchRwd = allTrial_lickMatx_slide(intersect(s.rwd_Inds, s.changeChoice_Inds),:);
+    plotFilled(slideTime, mySDF_switchRwd,[0 0 1])
+    plotFilled(slideTime, mySDF_stayRwd,[0.7 0 1])    
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')    
+    legend({'switch-rwd','','stay-rwd',''},'FontSize',5)
+    ylim([0 maxLick]);
+    
+    z(10) = subplot(8,7,[47 54]); title('switch/stay noRwd'); hold on;
+    mySDF_stayNoRwd = allTrial_lickMatx_slide(intersect(s.nrwd_Inds, s.stayChoice_Inds),:);
+    mySDF_switchNoRwd = allTrial_lickMatx_slide(intersect(s.nrwd_Inds, s.changeChoice_Inds),:);
+    plotFilled(slideTime, mySDF_switchNoRwd,[0 0 1]) 
+    plotFilled(slideTime, mySDF_stayNoRwd,[0.7 0 1]) 
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')    
+    legend({'switch-nrwd','','stay-nrwd',''},'FontSize',5)
+    ylim([0 maxLick]);
+    
+    z(11) = subplot(8,7,[48 55]); title('switch pre-rwd/noRwd'); hold on;
+    mySDF_switchRwd = allTrial_lickMatx_slide(intersect(s.rwd_Inds + 1, s.changeChoice_Inds),:);
+    mySDF_switchNoRwd = allTrial_lickMatx_slide(intersect(s.nrwd_Inds + 1, s.changeChoice_Inds),:);
+    
+    if size(mySDF_switchRwd,1) > 2
+        plotFilled(slideTime, mySDF_switchRwd,[0 0 1])
+    else
+        if size(mySDF_switchRwd,1) == 1
+            plot(slideTime, mySDF_switchRwd)
+        end        
+    end
+    plotFilled(slideTime, mySDF_switchNoRwd,[0.8 0 1]) 
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')  
+    if size(mySDF_switchRwd,1) > 0
+        legend({'switch-prerwd','','switch-prenrwd',''},'FontSize',5)
+    else
+        legend({'switch-prenrwd',''},'FontSize',5)
+    end
+    ylim([0 maxLick]);
+    
+    z(12) = subplot(8,7,[49 56]); title('stay pre-rwd/noRwd'); hold on;
+    mySDF_stayRwd = allTrial_lickMatx_slide(intersect(s.rwd_Inds + 1, s.stayChoice_Inds),:);
+    mySDF_stayNoRwd = allTrial_lickMatx_slide(intersect(s.nrwd_Inds + 1, s.stayChoice_Inds),:);
+    plotFilled(slideTime, mySDF_stayRwd,[0 0 1])   
+    plotFilled(slideTime, mySDF_stayNoRwd,[0.9 0 1]) 
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')    
+    legend({'stay-prerwd','','stay-prenrwd',''},'FontSize',5)
+    ylim([0 maxLick]);
+   
+    
+    z(13) = subplot(8,7,[34 41]); title('explore vs exploit'); hold on;
+    mySDF_ore = allTrial_lickMatx_slide(s.hmmStates==1,:);
+    mySDF_oit = allTrial_lickMatx_slide(s.hmmStates~=1,:);
+    plotFilled(slideTime, mySDF_ore,[0 0 1])
+    plotFilled(slideTime, mySDF_oit,[0.7 0 1])
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')
+    legend('explore', '', 'exploit', '')
+    ylim([0 maxLick]);
+
+
+    z(14) = subplot(8,7,[35 42]); title('explore rwd/nrwd'); hold on;
+    mySDF_exploreRwd = allTrial_lickMatx_slide(intersect(s.rwd_Inds, find(s.hmmStates==1)),:);
+    mySDF_exploreNoRwd = allTrial_lickMatx_slide(intersect(s.nrwd_Inds, find(s.hmmStates==1)),:);
+    plotFilled(slideTime, mySDF_exploreRwd,[0.7 0 1])   
+    plotFilled(slideTime, mySDF_exploreNoRwd,[0 0 1]) 
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')    
+    legend({'explore-rwd','','explore-nrwd',''},'FontSize',5)
+    ylim([0 maxLick]);
+    
+    z(15) = subplot(8,7,[21 28]); title('exploit rwd/nrwd'); hold on;
+    mySDF_exploitRwd = allTrial_lickMatx_slide(intersect(s.rwd_Inds, find(s.hmmStates~=1)),:);
+    mySDF_exploitNoRwd = allTrial_lickMatx_slide(intersect(s.nrwd_Inds, find(s.hmmStates~=1)),:);
+    plotFilled(slideTime, mySDF_exploitRwd,[0.7 0 1])
+    plotFilled(slideTime, mySDF_exploitNoRwd,[0 0 1])
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')    
+    legend({'exploit-rwd','','exploit-nrwd',''},'FontSize',5)
+    ylim([0 maxLick]);
+    
+    z(16) = subplot(8,7,[7 14]); title('exlpore/exploit rwd'); hold on;
+    mySDF_exploreRwd = allTrial_lickMatx_slide(intersect(s.rwd_Inds, find(s.hmmStates==1)),:);
+    mySDF_exploitRwd = allTrial_lickMatx_slide(intersect(s.rwd_Inds, find(s.hmmStates~=1)),:);
+    plotFilled(slideTime, mySDF_exploreRwd,[0 0 1])
+    plotFilled(slideTime, mySDF_exploitRwd,[0.7 0 1])    
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')    
+    legend({'explore-rwd','','exploit-rwd',''},'FontSize',5)
+    ylim([0 maxLick]);
+    
+    z(17) = subplot(8,7,[20 27]); title('exlpore/exploit noRwd'); hold on;
+    mySDF_exploreNoRwd = allTrial_lickMatx_slide(intersect(s.nrwd_Inds, find(s.hmmStates==1)),:);
+    mySDF_exploitNoRwd = allTrial_lickMatx_slide(intersect(s.nrwd_Inds, find(s.hmmStates~=1)),:);
+    plotFilled(slideTime, mySDF_exploreNoRwd,[0 0 1]) 
+    plotFilled(slideTime, mySDF_exploitNoRwd,[0.7 0 1]) 
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')    
+    legend({'explore-nrwd','','exploit-nrwd',''},'FontSize',5)
+    ylim([0 maxLick]);
+    
+    
+    
+    
+    z(18) = subplot(8,7,[43 44 50 51]); hold on;
+    mySDF_left_lick = allTrial_lickMatx_slide(s.lickL_Inds,:);
+    mySDF_right_lick = allTrial_lickMatx_slide(s.lickR_Inds,:);
+    plotFilled(slideTime, mySDF_left_lick,[0 0 1])
+    plotFilled(slideTime, mySDF_right_lick,[0.7 0 1])
+    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')
+    legend('left', '', 'right', '')
+    title('lick: left vs right')
+    ylim([0 maxLick]);
+    
+      
+    
+    axes( 'Position', [0, 0.95, 1, 0.05] ) ; % set axes for the 'text' call below
+    set( gca, 'Color', 'None', 'XColor', 'None', 'YColor', 'None' ) ;
+    text( 0.5, 0, [sessionName ': '  'Licks Aligned to choice'], 'FontSize', 14', 'FontWeight', 'Bold', ...
+      'HorizontalAlignment', 'Center', 'VerticalAlignment', 'Bottom','Interpreter','none') ;
+
+    
+    
+    if p.Results.saveFigFlag == 1 
+        saveFigurePDF(rasters,[savepath sep sessionName '_licks aligned to choice'])
+    end
+end

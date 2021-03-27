@@ -67,6 +67,7 @@ sessionData.licksL = [];
 sessionData.licksR = [];
 sessionData.rewardL = [];
 sessionData.rewardR = [];
+sessionData.respondTime = [];
 sessionData.rewardTime = [];
 sessionData.allSpikes = [];
 
@@ -101,12 +102,12 @@ for i = 1:length(ttlEvents)
                 sessionData(trial).licksR = [sessionData(trial).licksR ttlEvents(1,currInd)];
             elseif ttlEvents(2,currInd) == lickL % left licks
                 sessionData(trial).licksL = [sessionData(trial).licksL ttlEvents(1,currInd)];
-            elseif ttlEvents(2,currInd) == (lickR+waterR) % R rewards; waterR by itself could be evap code
+            elseif ttlEvents(2,currInd) == (lickR+waterR) || ttlEvents(2,currInd) == waterR % R rewards; waterR by itself could be evap code
                 if isnan(sessionData(trial).rewardR)
                     sessionData(trial).rewardR = 1;
                     sessionData(trial).rewardTime = ttlEvents(1,currInd);
                 end
-            elseif ttlEvents(2,currInd) == (lickL+waterL) % L rewards; waterL by itself could be evap code
+            elseif ttlEvents(2,currInd) == (lickL+waterL) || ttlEvents(2,currInd) == waterL % L rewards; waterL by itself could be evap code
                 if isnan(sessionData(trial).rewardL)
                     sessionData(trial).rewardL = 1;
                     sessionData(trial).rewardTime = ttlEvents(1,currInd);
@@ -134,29 +135,23 @@ for i = 1:length(ttlEvents)
                     if lickRlat <= lickWindowDuration && lickLlat <= lickWindowDuration % L and R within lick window; shouldn't ever happen
                         if lickRlat < lickLlat
                             sessionData(trial).rewardR = 0;
-                            sessionData(trial).rewardTime = sessionData(trial).licksR(1);
                         else
                             sessionData(trial).rewardL = 0;
-                            sessionData(trial).rewardTime = sessionData(trial).licksL(1);
                         end
                     elseif lickRlat <= lickWindowDuration % R lick within lick window
                         sessionData(trial).rewardR = 0;
-                        sessionData(trial).rewardTime = sessionData(trial).licksR(1);
                     elseif lickLlat <= lickWindowDuration % L lick within lick window
                         sessionData(trial).rewardL = 0;
-                        sessionData(trial).rewardTime = sessionData(trial).licksL(1);
                     end
                 elseif ~isempty(sessionData(trial).licksR) && isempty(sessionData(trial).licksL) % R lick window
                     lickRlat = sessionData(trial).licksR(1) - sessionData(trial).CSon;
                     if lickRlat <= lickWindowDuration % R lick within lick window
                         sessionData(trial).rewardR = 0;
-                        sessionData(trial).rewardTime = sessionData(trial).licksR(1);
                     end
                 elseif isempty(sessionData(trial).licksR) && ~isempty(sessionData(trial).licksL) % L lick window
                     lickLlat = sessionData(trial).licksL(1) - sessionData(trial).CSon;
                     if lickLlat <= lickWindowDuration % L lick within lick window
                         sessionData(trial).rewardL = 0;
-                        sessionData(trial).rewardTime = sessionData(trial).licksL(1);
                     end
                 end
             end
@@ -169,6 +164,9 @@ for i = 1:length(ttlEvents)
         if ~isempty(sessionData(trial).licksL)
             sessionData(trial).licksL = removeBadLicks(sessionData(trial).licksL);
         end
+        
+        % add respond time
+        sessionData(trial).respondTime = min([sessionData(trial).licksL sessionData(trial).licksR]);
         
         % add spike data
         L = sessionData(trial).CSon;
@@ -184,6 +182,18 @@ for i = 1:length(ttlEvents)
         trial = trial+1;
     end
 end
+
+% figure out non-reward time for non-rewarded trials
+rewardInd = ~isnan([sessionData.rewardTime]);
+rwdDelay = mode([sessionData(rewardInd).rewardTime] - [sessionData(rewardInd).respondTime]);
+
+nonrewardInd = [sessionData.rewardL] == 0 | [sessionData.rewardR] == 0;
+
+for n = find(nonrewardInd>0)
+    sessionData(n).rewardTime = sessionData(n).respondTime + rwdDelay;
+end
+
+
 
 % save the data
 if isempty(dir(sortedDir))

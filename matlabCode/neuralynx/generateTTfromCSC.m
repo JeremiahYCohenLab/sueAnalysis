@@ -12,10 +12,12 @@ p.addParameter('FilterTrace_Flag', true)
 p.addParameter('HighPassCutoffInHz', 300)
 p.addParameter('LowPassCutoffInHz', []);
 p.addParameter('SamplingFreq', 32000)
-p.addParameter('ThresholdFactor', 2);
+p.addParameter('ThresholdFactor', 3);
 p.addParameter('RefractorySamples', 20); % Neuralynx gives 24 samples before looking for new spike
 p.addParameter('AnalyzeSpecificTTs', 1:8);
 p.addParameter('RescaleCSCs_Flag', false);
+p.addParameter('changeReference',false);
+p.addParameter('newReference',5)
 % p.addParameter('CSCscaleFactor', []);
 % p.addParameter('CSCstoScale', []);
 
@@ -26,8 +28,8 @@ brokenChannels = [];
 % brokenChannels = [2,8,12,17,32];%ZS050
 % brokenChannels = [19,23];%ZS051
 % brokenChannels = [9,10,11,12,29,30]; %ZS052
-  
-
+brokenChannels = [15]; %ZS061
+% brokenChannels = [22]; %ZS062
 pd = parseSessionString_df(session, p.Results.Root, p.Results.Separator);
 if p.Results.opto
     nLynxDir = dir([pd.nLynxFolderOpto p.Results.subFolder sep]);
@@ -80,6 +82,10 @@ if p.Results.RescaleCSCs_Flag == true
         fprintf('No pausing in session; assuming no rescaling necessary.\n\n')
     end
 end
+if p.Results.changeReference
+    reference = Nlx2MatCSC([pd.nLynxFolder 'CSC' num2str(p.Results.newReference) '.ncs'], [0 0 0 0 1], 0, 1, []);
+    reference = reshape(reference,[],1);
+end
 
 fprintf('Analyzing %s\n', pd.sessionFolder)
 for currTT = 1:length(TTnum)
@@ -90,11 +96,14 @@ for currTT = 1:length(TTnum)
     fprintf('Currently on TT%0.1d: CSC %0.1d,%0.1d,%0.1d,%0.1d. ', currTTnum, chan(1), chan(2), chan(3), chan(4))
 %     header = Nlx2MatSpike([pd.nLynxFolder TTname], [0 0 0 0 0], 1 , 1, []);
 
-    [ts, samp0] = Nlx2MatCSC([pd.nLynxFolder 'CSC' num2str(chan(1)) '.ncs'], [1 0 0 0 1], 0, 1, []);
+    [ts, samp0, header] = Nlx2MatCSC([pd.nLynxFolder 'CSC' num2str(chan(1)) '.ncs'], [1 0 0 0 1], 1, 1, []);
     [samp1] = Nlx2MatCSC([pd.nLynxFolder 'CSC' num2str(chan(2)) '.ncs'], [0 0 0 0 1], 0, 1, []);
     [samp2] = Nlx2MatCSC([pd.nLynxFolder 'CSC' num2str(chan(3)) '.ncs'], [0 0 0 0 1], 0, 1, []);
     [samp3] = Nlx2MatCSC([pd.nLynxFolder 'CSC' num2str(chan(4)) '.ncs'], [0 0 0 0 1], 0, 1, []);
- 
+    
+%     AD2uV = split(header{contains(header, '-ADBitVolts')}, 'Volts');
+%     AD2uV = str2num(AD2uV{2})*10^6;
+    
 %     samp0 = -1 * samp0;
 %     samp1 = -1 * samp1;
 %     samp2 = -1 * samp2;
@@ -118,7 +127,12 @@ for currTT = 1:length(TTnum)
             indMin = indMax + 1;
         end
     end
-    
+    samp = reshape(samp, [] ,4); 
+    if p.Results.changeReference
+        for t = 1:4
+            samp(:,t) = samp(:,t)- reference;
+        end
+    end
     if p.Results.FilterTrace_Flag == true
         if isempty(p.Results.LowPassCutoffInHz)
             Wn = p.Results.HighPassCutoffInHz / (p.Results.SamplingFreq/2);
@@ -128,8 +142,7 @@ for currTT = 1:length(TTnum)
             Wn = [p.Results.HighPassCutoffInHz p.Results.LowPassCutoffInHz] / (p.Results.SamplingFreq/2);
             [b, a] = butter(2, Wn, 'bandpass');
             fprintf('Bandpass: %iHz - %iHz. ', p.Results.HighPassCutoffInHz, p.Results.LowPassCutoffInHz)
-        end        
-        samp = reshape(samp, [] ,4);   
+        end          
         samp = filtfilt(b, a, samp);
     else
         fprintf('Not filtering the data. ');

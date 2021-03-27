@@ -175,7 +175,7 @@ end
 
 %linear regression model
 glm_rwdLick = fitlm([rwdMatx'], combinedLickLat);
-glm_rwdLickAll = fitlm([rwdMatx' noRwdMatx' combinedTimeInSesh' combinedChangeChoice'], combinedLickLat);
+glm_rwdLickAll = fitlm([rwdMatx' noRwdMatx' combinedTimeInSesh' combinedChangeChoice'], combinedLickLatZ);
 tbl = table(combinedPreLick', rwdMatx(1,:)', noRwdMatx(1,:)', combinedLickLatZ', 'VariableNames', {'pre', 'rwd1', 'nRwd1', 'lickLat'});
 mdl = stepwiselm(tbl,'interactions');
 

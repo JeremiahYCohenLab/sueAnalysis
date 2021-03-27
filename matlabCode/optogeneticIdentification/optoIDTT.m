@@ -3,21 +3,12 @@ shutterOffset = 0.8;
 p = inputParser;
 % default parameters if none given
 p.addParameter('Session', 'opto')
-<<<<<<< HEAD
-p.addParameter('subFolder', '250ms')
-p.addParameter('Pulses', 10)
-p.addParameter('Trains', 3)
-p.addParameter('PulseWidth', 10) %ms
-p.addParameter('ResponseWindow', 30000) %us
-p.addParameter('MedianRemoval', true)  
-=======
 p.addParameter('subFolder', '')
 p.addParameter('Pulses', 10)
 p.addParameter('Trains', 10)
-p.addParameter('PulseWidth', 200)
-p.addParameter('ResponseWindow', 30000)
-p.addParameter('MedianRemoval', true)
->>>>>>> cfe5d4b5f3b3d76ac28bea90f69606a89622482a
+p.addParameter('PulseWidth', 10) %ms
+p.addParameter('ResponseWindow', 30000) %us
+p.addParameter('MedianRemoval', true)  
 p.addParameter('HighPassCutoffInHz', 300);
 p.addParameter('SamplingFreq', 32000);
 p.parse(varargin{:});
@@ -42,6 +33,7 @@ sampFreq = p.Results.SamplingFreq;
 
 %events data
 [tsEv, Ev] = Nlx2MatEV([sortedPath 'Events.nev'], [1 0 1 0 0], 0, 1);
+
 % TTL events
 laser = 4;
 laserRaw = 1024; %16384; % raw data file uses this as laser TTL 
@@ -59,7 +51,7 @@ laserOnTimes = tsEv(laserOn_mask);
 laserOnTimes = laserOnTimes / 1e3; % to ms
 laserOnTimes = laserOnTimes + shutterOffset;
 laser = laserOnTimes*1000;
-PulseFreq = round(1000000/min(diff(laser)));
+PulseFreq = round(1000000/min(diff(laser)));   
 
 % %set params for butterworth filter
 % Wn = p.Results.HighPassCutoffInHz / (sampFreq/2);
@@ -73,11 +65,16 @@ for i = 1:length(sortedFiles)
 end
 TTprev = '';
 %set window and stim paramaters
-tB = 500000;
+tB = 500000;% in us
 tA = 500000;
 pulseInds = (1:p.Results.Pulses:p.Results.Pulses*p.Results.Trains);
 respWin = p.Results.ResponseWindow + p.Results.PulseWidth*1000;
 rasterLength = length(-1*tB:(p.Results.Pulses*(1000000/PulseFreq)+tA));
+
+header = Nlx2MatCSC([sortedPath 'CSC1.ncs'], [0 0 0 0 0], 1, 1, []);
+
+AD2uV = split(header{contains(header, '-ADBitVolts')}, 'Volts');
+AD2uV = str2double(AD2uV{2})*10^6;
 
 %%
 
@@ -138,18 +135,49 @@ for i = 1:length(sortedFiles)
     if strcmp(TTname, TTprev) == false % if the tetrode has changed, load a new one
         tmp_TTname = [TTname '.ntt'];
         TTdir = fullfile(sortedPath, tmp_TTname);
-        [tt_ts, tt_cn, tt_sig] = Nlx2MatSpike(TTdir, [1 0 1 0 1], 0, 1, 1);
+        [tt_ts, tt_sig] = Nlx2MatSpike(TTdir, [1 0 0 0 1], 0, 1, 1);
         TTprev = TTname;
     end
     for j = 1:4
-        lightWaveForm{j} = squeeze(tt_sig(:, j, ismember(tt_ts, lightSpikeTimes)))';
-        spontWaveForm{j} = squeeze(tt_sig(:, j, ismember(tt_ts, spontSpikeTimes)))';
+        lightWaveForm{j} = AD2uV*squeeze(tt_sig(:, j, ismember(tt_ts, lightSpikeTimes)))';
+        spontWaveForm{j} = AD2uV*squeeze(tt_sig(:, j, ismember(tt_ts, spontSpikeTimes)))';
     end
-  
+    % find channel with max peak
+    % no.TT
+    CSCnum = 4*str2double(TTname(end));
+    CSCnum = CSCnum-3 : CSCnum;
+    % no.CSC
+    meanWaveform = cellfun(@(x) mean(x,1), spontWaveForm, 'UniformOutput', false);
+    for k = 1:4
+        maxChannel(k) = max(meanWaveform{k});
+    end
+    [~,maxChannel] = max(maxChannel);
+    maxChannel = CSCnum(maxChannel);
+    % get raw trace for trials
+    [ts, samp] = Nlx2MatCSC([sortedPath 'CSC' num2str(maxChannel) '.ncs'], [1 0 0 0 1], 0, 1, []);
+    samp = reshape(samp,[],1);
+    tSamp = 1/p.Results.SamplingFreq * 1e6; % time for each sample
+    if length(unique(diff(ts))) == 1 % no pausing
+        ts_interp = ts(1):tSamp:ts(1) + tSamp*(size(samp,1) - 1);
+    else % if pausing/skip due to data loss, use the proper for loop
+        ts_interp = NaN(1, size(samp,1)); 
+        for k = 1:length(ts)
+            ts_interp(512*(k - 1) + 1:512*(k)) = ts(k):tSamp:ts(k) + tSamp*511;
+        end
+    end
+    
+    % find traces for trials
+    rawTraces = cell(p.Results.Trains,1);
+    time = cell(p.Results.Trains,1);
+    for j = 1:p.Results.Trains
+        rawTraces{j} = samp(ts_interp>laser(pulseInds(j))- tB & ts_interp<laser(pulseInds(j)+p.Results.Pulses-1) + tA); 
+        time{j} = (ts_interp(ts_interp>laser(pulseInds(j))- tB & ts_interp<laser(pulseInds(j)+p.Results.Pulses-1) + tA)-laser(pulseInds(j)))/1000000;
+    end
+    
     
     %% plot everything
     
-    rasters = figure; subplot(4,3,[1:6]); hold on; title(strcat(session, '_', cellName),'Interpreter','none')
+    rasters = figure; subplot(4,3,[1:3]); hold on; title(strcat(session, '_', cellName),'Interpreter','none')
     xlabel('Time (us)'); ylabel('Trials')
     LineFormat.Color = 'k'; LineFormat.LineWidth = 1;
     plotSpikeRaster(spikeRast,'PlotType','vertline','XLimForCell',[-1*tB rasterLength-tB],'LineFormat',LineFormat);
@@ -162,11 +190,32 @@ for i = 1:length(sortedFiles)
     
     text(0, 0.25, ['baseline activity ', num2str(sponsFreq) 'Hz']);
     
+    subplot(4,3,[4:6]); hold on; 
+    rowH = 1.2*range(rawTraces{1});
+    x = x/1000;
+    xx = xx/1000;
+    for j = 1:p.Results.Trains
+        plot(time{j}, rawTraces{j} + rowH*(j-1), 'color', 'k');
+        for k = 1:p.Results.Pulses
+            line([x(k) xx(k)], [max(rawTraces{j})+rowH*(j-1) max(rawTraces{j})+rowH*(j-1)], 'color', [0 0 1], 'LineWidth', 2);
+        end
+    end
+    
+    plot([-0.25 -0.25], [-700 -200],'color', 'k', 'lineWidth',2);
+    plot([-0.25 0], [-700 -700],'color', 'k', 'lineWidth',2);
+    text(-0.5,-350, '500 uV', 'HorizontalAlignment','left')
+    text(-0.1,-900, '0.25 s', 'HorizontalAlignment','center')
+%     for j = 1:length(x)
+%         plotShaded([x(j) xx(j)]/1000,[min(rawTraces{1}) min(rawTraces{1}); max(rawTraces{1})+rowH*(p.Results.Trains-1) max(rawTraces{1})+rowH*(p.Results.Trains-1)],'b');
+%     end
+    xlim(minmax(time{1}));
+    
     subplot(4,3,7); hold on;
     xlabel('Pulse'); ylabel('Latency (ms)'); ylim([0 respWin/1000]); xlim([0 p.Results.Pulses+1])
     errorbar(avgSpikeLat/1000, semSpikeLat/1000, 'b', 'LineWidth', 2);
-    errorbar(avgSpikeLatSham/1000, semSpikeLatSham/1000, 'k', 'LineWidth', 2);
-    legend('laser','control');
+%     errorbar(avgSpikeLatSham/1000, semSpikeLatSham/1000, 'k', 'LineWidth', 2);
+%     legend('laser','control');
+    ylim([0 90])
     
     subplot(4,3,8); hold on;
     xlabel('Pulse'); ylabel('P(spike)'); ylim([-0.1 1.1]); xlim([0 p.Results.Pulses+1])
@@ -200,7 +249,7 @@ for i = 1:length(sortedFiles)
     end
     
     subplot(4,3,12); hold on
-    xlabel('Time (ms)'); ylabel('Amplitude (\muV)')
+    ylabel('Amplitude (\muV)')
     if ~isempty(lightWaveForm{1})
         if size(lightWaveForm{1}, 1) > 1
             for j = 1:4
@@ -215,6 +264,11 @@ for i = 1:length(sortedFiles)
     for j =1:4
         plotFilled([1:32]+32*(j-1), spontWaveForm{j}, 'k');
     end
+    
+    plot([5 5], [70 120],'color', 'k', 'lineWidth',2);
+    plot([5 21], [70 70],'color', 'k', 'lineWidth',2);
+    text(10,100, '50 uV', 'HorizontalAlignment','left')
+    text(15,60, '0.5 ms', 'HorizontalAlignment','center')
     screen = get(0,'Screensize');
     screen(4) = screen(4) - 100;
     set(rasters, 'Position', screen)
