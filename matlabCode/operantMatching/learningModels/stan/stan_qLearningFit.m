@@ -6,8 +6,8 @@ p.addParameter('revForFlag', 0);
 p.addParameter('bernFlag', 1);
 p.addParameter('nonfixedParams', 0);
 p.addParameter('fixedParams', []);
-p.addParameter('paramNames', {'aN', 'aP', 'aF', 'beta'});
-p.addParameter('modelName', '4params');
+p.addParameter('paramNames', {'aN', 'aP', 'aF', 'beta','bias'});
+p.addParameter('modelName', '5params');
 p.addParameter('iter', 20000);
 p.addParameter('warmup', []);
 p.addParameter('saveFlag', 1);
@@ -50,6 +50,7 @@ end
 for i = 1:length(dayList)
     sessionName = dayList{i};
     filename = [sessionName '.asc'];
+    fprintf([sessionName '\n']);
     behSessionData = loadBehavioralData(filename, p.Results.revForFlag);
     behavStruct = parseBehavioralData(behSessionData, p.Results.maxTrial);
 

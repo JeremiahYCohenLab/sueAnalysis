@@ -41,7 +41,7 @@ if any(sessionDataInd) % check if there is a file with suptitleName prefix and _
     end
 else
     if revForFlag
-        [behSessionData, blockSwitch, ~] = generateSessionData_behav_operantMatching(suptitleName);
+        [behSessionData, blockSwitch, ~] = generateSessionData_behav_operantMatching(fileOrFolder);
     else
         [behSessionData, blockSwitch] = generateSessionData_operantMatchingDecoupledRwdDelay(suptitleName);
     end

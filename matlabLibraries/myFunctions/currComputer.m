@@ -5,7 +5,7 @@ if ismac
   %  root = '/Volumes/bbari1/';
     sep = '/';
 elseif ispc
-   root = 'D:\';
+   root = 'F:\';
   %  root = 'Z:\';
 %    root = 'C:\Users\zhixi\Documents\data\';
   %  root = 'D:\';

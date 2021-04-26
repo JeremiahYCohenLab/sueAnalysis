@@ -6,7 +6,7 @@ p.addParameter('revForFlag',0)
 p.addParameter('plotFlag', 0)
 p.addParameter('binSize', 10000);
 p.addParameter('numBins', 20);
-p.addParameter('maxTrials', 200);
+p.addParameter('maxTrials', 400);
 p.parse(varargin{:});
 
 [root, sep] = currComputer();
@@ -29,10 +29,13 @@ combinedLickLat = [];
 combinedLickLatZ = [];
 stayLickLat = [];
 switchLickLat = [];
+exploreLickLat = [];
+exploitLickLat = [];
 combinedITIlicks = [];
 combinedTimeInSesh = [];
 combinedChangeChoice = [];
 combinedPreLick = [];
+preITI = [];
 latAndTime = [];
 
 
@@ -50,12 +53,11 @@ for i = 1: length(dayList)
     end
 
     if exist(sessionDataPath,'file')
+%         fprintf([sessionName '\n']);
         load(sessionDataPath)
-        if p.Results.revForFlag
-            behSessionData = sessionData;
-        end
     else
-        [behSessionData, ~] = generateSessionData_operantMatchingDecoupledRwdDelay(sessionName);
+        fprintf([sessionName '\n']);
+        [behSessionData, ~] = generateSessionData_operantMatchingDecoupledRwdDelay(sessionName);        
     end
     responseInds = find(~isnan([behSessionData.rewardTime])); 
     responseInds = responseInds(1:min(length(responseInds),p.Results.maxTrials));   
@@ -73,8 +75,12 @@ for i = 1: length(dayList)
     allRewards(logical(allReward_L)) = 1;
     timeInSesh = ([behSessionData(responseInds).CSon] - behSessionData(1).CSon) / (1000 * behSessionData(responseInds(end)).CSon - behSessionData(responseInds(1)).CSon);
     changeChoice = [0 abs(diff(allChoices)) > 0];
+    s = behAnalysisNoPlot_opMD(sessionName);
+    hmmStates = s.hmmStates(1:length(responseInds));
+    timeBtwn = s.timeBtwn(1:length(responseInds));
     %% determine lick latency distributions for each spout
     lickLat = [behSessionData(responseInds).respondTime] - [behSessionData(responseInds).CSon];
+    lickLatLog = log(lickLat);
     indsR = find(allChoices == 1);
     indsL = find(allChoices == -1);
     lickLat_R = zscore(lickLat(indsR));
@@ -86,6 +92,7 @@ for i = 1: length(dayList)
     %combinedLickLat = [combinedLickLat NaN(1,101) lickLatZ(2:end)];
     combinedLickLat = [combinedLickLat NaN(1,100) lickLat];
     combinedLickLatZ = [combinedLickLatZ NaN(1,100) lickLatZ];
+    preITI = [preITI NaN(1,100) timeBtwn];
     %% create binned outcome matrices
     rwdTmpMatx = zeros(tMax, length(responseInds));     %initialize matrices for number of response trials x number of time bins
     noRwdTmpMatx = zeros(tMax, length(responseInds));
@@ -152,10 +159,12 @@ for i = 1: length(dayList)
     combinedChangeChoice = [combinedChangeChoice NaN(1, 100) changeChoice];
     combinedTimeInSesh = [combinedTimeInSesh NaN(1, 100) timeInSesh];
     combinedPreLick = [combinedPreLick NaN(1, 100) preLickTmp];
-    %% determine lick latency for stay v switch trials
+    %% determine lick latency for stay v switch trials; explore vs exploit trails
     changeChoice = [false abs(diff(allChoices)) > 0];
-    stayLickLat = [stayLickLat lickLatZ(~changeChoice)]; 
-    switchLickLat = [switchLickLat lickLatZ(changeChoice)];
+    stayLickLat = [stayLickLat lickLat(~changeChoice)]; 
+    switchLickLat = [switchLickLat lickLat(changeChoice)];
+    exploitLickLat = [exploitLickLat lickLat(hmmStates~=1)];
+    exploreLickLat = [exploreLickLat lickLat(hmmStates==1)];
     
     %% combine lick latency and time in session
     tmp = [lickLatZ; timeInSesh];
@@ -175,8 +184,8 @@ end
 
 %linear regression model
 glm_rwdLick = fitlm([rwdMatx'], combinedLickLat);
-glm_rwdLickAll = fitlm([rwdMatx' noRwdMatx' combinedTimeInSesh' combinedChangeChoice'], combinedLickLatZ);
-tbl = table(combinedPreLick', rwdMatx(1,:)', noRwdMatx(1,:)', combinedLickLatZ', 'VariableNames', {'pre', 'rwd1', 'nRwd1', 'lickLat'});
+glm_rwdLickAll = fitlm([rwdMatx' noRwdMatx' combinedTimeInSesh' combinedChangeChoice' preITI'], combinedLickLatZ);
+tbl = table(combinedPreLick', rwdMatx(1,:)', noRwdMatx(1,:)', preITI',combinedLickLatZ', 'VariableNames', {'pre', 'rwd1', 'nRwd1', 'preITI', 'lickLat'});
 mdl = stepwiselm(tbl,'interactions');
 
 if p.Results.plotFlag
@@ -205,16 +214,18 @@ if p.Results.plotFlag
     set(gca, 'tickdir', 'out')
         
     subplot(4,2,2); hold on
-    histogram(stayLickLat,min(lickLatZ)-0.25:0.25:max(lickLatZ)+0.25,'FaceColor', colors(2,:), 'Normalization', 'Probability')
-    histogram(switchLickLat,min(lickLatZ)-0.25:0.25:max(lickLatZ)+0.25,'FaceColor', colors(5,:), 'Normalization', 'Probability')
+    histogram(stayLickLat,min(lickLat)-25:25:max(lickLat)+25,'FaceColor', colors(2,:), 'Normalization', 'Probability')
+    histogram(switchLickLat,min(lickLat)-25:25:max(lickLat)+25,'FaceColor', colors(5,:), 'Normalization', 'Probability')
     ylabel('probability')
-    xlabel('z-scored lick latency')
+    xlabel('lick latency')
     legend('stay', 'switch')
 
     subplot(4,2,4); hold on
-    histogram(lickLat,300:50:1800, 'FaceColor', colors(3,:), 'Normalization', 'Probability')
+    histogram(exploitLickLat,min(lickLat)-25:25:max(lickLat)+25,'FaceColor', colors(2,:), 'Normalization', 'Probability')
+    histogram(exploreLickLat,min(lickLat)-25:25:max(lickLat)+25,'FaceColor', colors(5,:), 'Normalization', 'Probability')
     ylabel('probability')
     xlabel('lick latency')
+    legend('exploit', 'explore')
     
     subplot(2,2,3); hold on
     numBins = 6;

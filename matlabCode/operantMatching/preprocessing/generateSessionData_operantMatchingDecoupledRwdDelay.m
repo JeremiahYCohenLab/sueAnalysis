@@ -3,6 +3,7 @@ function [behSessionData, blockSwitch, blockSwitchL, blockSwitchR] = generateSes
 
 % Determine if computer is PC or Mac and set roots and separators appropriately
 [root, sep] = currComputer();
+% tell apart directory or file
 
 % Generate the correct file path and see what files are available
 [animalName, date] = strtok(sessionName, 'd'); 

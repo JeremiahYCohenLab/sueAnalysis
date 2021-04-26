@@ -14,10 +14,11 @@ p.addParameter('LowPassCutoffInHz', []);
 p.addParameter('SamplingFreq', 32000)
 p.addParameter('ThresholdFactor', 3);
 p.addParameter('RefractorySamples', 20); % Neuralynx gives 24 samples before looking for new spike
-p.addParameter('AnalyzeSpecificTTs', 1:8);
+p.addParameter('AnalyzeSpecificTTs', [1]);
 p.addParameter('RescaleCSCs_Flag', false);
 p.addParameter('changeReference',false);
-p.addParameter('newReference',5)
+p.addParameter('newReference',1)
+p.addParameter('flipSign',false)
 % p.addParameter('CSCscaleFactor', []);
 % p.addParameter('CSCstoScale', []);
 
@@ -28,8 +29,10 @@ brokenChannels = [];
 % brokenChannels = [2,8,12,17,32];%ZS050
 % brokenChannels = [19,23];%ZS051
 % brokenChannels = [9,10,11,12,29,30]; %ZS052
-brokenChannels = [15]; %ZS061
-% brokenChannels = [22]; %ZS062
+% brokenChannels = [15]; %ZS061
+brokenChannels = [22]; %ZS062
+% brokenChannels = [8]; %ZS059
+% brokenChannels = [27]; %ZS060
 pd = parseSessionString_df(session, p.Results.Root, p.Results.Separator);
 if p.Results.opto
     nLynxDir = dir([pd.nLynxFolderOpto p.Results.subFolder sep]);
@@ -108,7 +111,8 @@ for currTT = 1:length(TTnum)
 %     samp1 = -1 * samp1;
 %     samp2 = -1 * samp2;
 %     samp3 = -1 * samp3;
-    samp = cat(3, samp0, samp1, samp2, samp3);
+     samp = cat(3, samp0, samp1, samp2, samp3);
+
     if p.Results.RescaleCSCs_Flag == true && ~isempty(tsDifferences) % any pauses in this session; indicative of change in CSC
         indMin = 1;
         for currPause = 1:length(tsDifferences)
@@ -159,7 +163,9 @@ for currTT = 1:length(TTnum)
         end
     end
     
-
+    if p.Results.flipSign == true
+        samp = -samp;
+    end
     % threshold and median method from Rey, Pedreira, Quiroga (2015)
     thresh = p.Results.ThresholdFactor*round(median(abs(samp), 1)/0.6745);
     

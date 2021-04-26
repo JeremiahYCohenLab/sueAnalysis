@@ -43,6 +43,9 @@ else
 end
 
 %% Break session down into CS+ trials where animal responded
+blockSwitch = blockSwitch(blockSwitch<length(behSessionData));
+blockSwitchL = blockSwitchL(blockSwitchL<length(behSessionData));
+blockSwitchR = blockSwitchR(blockSwitchR<length(behSessionData));
 
 responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window
 omitInds = isnan([behSessionData.rewardTime]); 

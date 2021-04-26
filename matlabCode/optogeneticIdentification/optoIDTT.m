@@ -230,8 +230,16 @@ for i = 1:length(sortedFiles)
 
     subplot(4,3,10); hold on;
     ylabel('Amplitude (\muV)');
-    for j = 1:4
-        plotFilled([1:32]+32*(j-1), spontWaveForm{j}, 'k');
+    if ~isempty(spontWaveForm{1})
+        if size(spontWaveForm{1}, 1) > 1
+            for j = 1:4
+                plotFilled([1:32]+32*(j-1), spontWaveForm{j}, 'k');
+            end
+        else
+            for j = 1:4
+                plot([1:32]+32*(j-1), spontWaveForm{j}, 'k');
+            end
+        end
     end
     
     subplot(4,3,11); hold on;
@@ -261,8 +269,16 @@ for i = 1:length(sortedFiles)
             end
         end
     end
-    for j =1:4
-        plotFilled([1:32]+32*(j-1), spontWaveForm{j}, 'k');
+    if ~isempty(spontWaveForm{1})
+        if size(spontWaveForm{1}, 1) > 1
+            for j = 1:4
+                plotFilled([1:32]+32*(j-1), spontWaveForm{j}, 'k');
+            end
+        else
+            for j = 1:4
+                plot([1:32]+32*(j-1), spontWaveForm{j}, 'k');
+            end
+        end
     end
     
     plot([5 5], [70 120],'color', 'k', 'lineWidth',2);
