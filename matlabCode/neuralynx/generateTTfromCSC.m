@@ -14,10 +14,10 @@ p.addParameter('LowPassCutoffInHz', []);
 p.addParameter('SamplingFreq', 32000)
 p.addParameter('ThresholdFactor', 3);
 p.addParameter('RefractorySamples', 20); % Neuralynx gives 24 samples before looking for new spike
-p.addParameter('AnalyzeSpecificTTs', [1]);
+p.addParameter('AnalyzeSpecificTTs', 6);
 p.addParameter('RescaleCSCs_Flag', false);
 p.addParameter('changeReference',false);
-p.addParameter('newReference',1)
+p.addParameter('newReference',21)
 p.addParameter('flipSign',false)
 % p.addParameter('CSCscaleFactor', []);
 % p.addParameter('CSCstoScale', []);

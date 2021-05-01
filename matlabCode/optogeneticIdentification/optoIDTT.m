@@ -7,7 +7,7 @@ p.addParameter('subFolder', '')
 p.addParameter('Pulses', 10)
 p.addParameter('Trains', 10)
 p.addParameter('PulseWidth', 10) %ms
-p.addParameter('ResponseWindow', 30000) %us
+p.addParameter('ResponseWindow', 20000) %us
 p.addParameter('MedianRemoval', true)  
 p.addParameter('HighPassCutoffInHz', 300);
 p.addParameter('SamplingFreq', 32000);
@@ -41,14 +41,11 @@ laserRaw = 1024; %16384; % raw data file uses this as laser TTL
 % isolate just laser on times
 Ev(Ev == laserRaw) = laser;
 
-laserEventInds = find(Ev == laser | Ev == laserRaw);
-consecLaserInds = diff(laserEventInds) == 1; % laserOn TTLs without laserOff TTLs
-Ev(laserEventInds(consecLaserInds) + 1) = 0; % set all repeats to 0
-laserOn_mask = ismember(Ev, laser) | ismember(Ev, laserRaw);
-% only for rig 295F
-laserOn_mask = [laserOn_mask(2:end) false]; % offset by an index because, for some reason, _0_ is the laser on in this rig
-laserOnTimes = tsEv(laserOn_mask);
-laserOnTimes = laserOnTimes / 1e3; % to ms
+biEv = de2bi(Ev);
+biEv = biEv(:,3);
+laserInd = (biEv(2:end)==1 & biEv(1:end-1)==0); %for some reason, _0_ is the laser on in this rig
+
+laserOnTimes = tsEv(laserInd)/1000;
 laserOnTimes = laserOnTimes + shutterOffset;
 laser = laserOnTimes*1000;
 PulseFreq = round(1000000/min(diff(laser)));   
@@ -68,7 +65,7 @@ TTprev = '';
 tB = 500000;% in us
 tA = 500000;
 pulseInds = (1:p.Results.Pulses:p.Results.Pulses*p.Results.Trains);
-respWin = p.Results.ResponseWindow + p.Results.PulseWidth*1000;
+respWin = p.Results.ResponseWindow;
 rasterLength = length(-1*tB:(p.Results.Pulses*(1000000/PulseFreq)+tA));
 
 header = Nlx2MatCSC([sortedPath 'CSC1.ncs'], [0 0 0 0 0], 1, 1, []);
