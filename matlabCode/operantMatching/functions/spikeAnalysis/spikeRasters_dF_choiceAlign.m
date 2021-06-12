@@ -643,15 +643,15 @@ for i = 1:length(clust)
     
     
     
-    z(18) = subplot(8,7,[43 50]); hold on;
-    mySDF_rwd_lick = allTrial_lickMatx_slide(s.rwd_Inds,:);
-    mySDF_noRwd_lick = allTrial_lickMatx_slide(s.nrwd_Inds,:);
-    plotFilled(slideTime, mySDF_rwd_lick,[0 0 1])
-    plotFilled(slideTime, mySDF_noRwd_lick,[0.7 0 1])
-    line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')
-    legend('rwd', '', 'noRwd', '')
-    title('lick: rwd vs noRwd')
-    ylim([0 maxLick]);
+%     z(18) = subplot(8,7,[43 50]); hold on;
+%     mySDF_rwd_lick = allTrial_lickMatx_slide(s.rwd_Inds,:);
+%     mySDF_noRwd_lick = allTrial_lickMatx_slide(s.nrwd_Inds,:);
+%     plotFilled(slideTime, mySDF_rwd_lick,[0 0 1])
+%     plotFilled(slideTime, mySDF_noRwd_lick,[0.7 0 1])
+%     line([s.rwdDelay s.rwdDelay], [0 maxLick], 'color', 'r')
+%     legend('rwd', '', 'noRwd', '')
+%     title('lick: rwd vs noRwd')
+%     ylim([0 maxLick]);
     
     % win-stay vs win-shift
     z(19) = subplot(8,7,[30 37]); hold on;
@@ -673,16 +673,57 @@ for i = 1:length(clust)
     title('winStay vs winShift')
     ylim([0 maxFreq]);
     
-    % lose-shift vs lose-stay
-    z(20) = subplot(8,7,[44 51]); hold on;
-    mySDF_loseStay_spike = allTrial_spikeMatx_slide(intersect(s.nrwd_Inds, s.stayChoice_Inds(2:end)-1),:);
-    mySDF_loseShift_spike = allTrial_spikeMatx_slide(intersect(s.nrwd_Inds, s.changeChoice_Inds-1),:);
-    plotFilled(slideTime, mySDF_loseShift_spike,[0 0 1])
-    plotFilled(slideTime, mySDF_loseStay_spike,[0.7 0 1])
-    line([0 0], [0 maxLick], 'color', 'r')
-    legend('loseShift', '', 'loseStay', '')
-    title('loseShift vs loseStay')
-    ylim([0 maxFreq]);
+    
+    if ismember(animalName, {'ZS059','ZS060','ZS062'})
+        z(18) = subplot(8,7,44); hold on;
+%     mySDF_rwd_lick = allTrial_lickMatx_slide(s.responseInds(s.rwd_Inds),:);
+%     mySDF_noRwd_lick = allTrial_lickMatx_slide(s.responseInds(s.nrwd_Inds),:);
+%     plotFilled(slideTime, mySDF_rwd_lick,[0 0 1])
+%     plotFilled(slideTime, mySDF_noRwd_lick,[0.7 0 1])
+%     line([0 0], [0 maxLick], 'color', 'r')
+%     legend('rwd', '', 'noRwd', '')
+%     title('lick: rwd vs noRwd')
+%     ylim([0 maxLick]);
+        mySDF_shortPreRwd_spike = allTrial_spikeMatx_slide(intersect(find(s.lickInds==0), s.rwd_Inds),:);
+        mySDF_longPreRwd_spike = allTrial_spikeMatx_slide(intersect(find(s.lickInds==1), s.rwd_Inds),:);
+        plotFilled(slideTime, mySDF_shortPreRwd_spike,[0 0 1])
+        plotFilled(slideTime, mySDF_longPreRwd_spike,[0.7 0 1])
+        line([0 0], [0 maxLick], 'color', 'r')
+        title('shortAndRwd vs longAndRwd')
+        ylim([0 maxFreq]);
+
+         subplot(8,7,51); hold on;
+
+        mySDF_shortPreNoRwd_spike = allTrial_spikeMatx_slide(intersect(find(s.lickInds==0), s.nrwd_Inds),:);
+        mySDF_longPreNoRwd_spike = allTrial_spikeMatx_slide(intersect(find(s.lickInds==1), s.nrwd_Inds),:);
+        plotFilled(slideTime, mySDF_shortPreNoRwd_spike,[0 0 1])
+        plotFilled(slideTime, mySDF_longPreNoRwd_spike,[0.7 0 1])
+        line([0 0], [0 maxLick], 'color', 'r')
+        title('shortAndNoRwd vs longAndNoRwd')
+        ylim([0 maxFreq]);
+
+
+        z(20) = subplot(8,7,[43 50]); hold on;
+        mySDF_one_spike = allTrial_spikeMatx_slide(s.lickInds==0,:);
+        mySDF_two_spike = allTrial_spikeMatx_slide(s.lickInds==1,:);
+        plotFilled(slideTime, mySDF_one_spike,[0 0 1])
+        plotFilled(slideTime, mySDF_two_spike,[0.7 0 1])
+        line([0 0], [0 maxLick], 'color', 'r')
+        legend('shortLicks', '', 'longLicks', '')
+        title('short vs long')
+        ylim([0 maxFreq]);
+        
+     end
+%     % lose-shift vs lose-stay
+%     z(20) = subplot(8,7,[44 51]); hold on;
+%     mySDF_loseStay_spike = allTrial_spikeMatx_slide(intersect(s.nrwd_Inds, s.stayChoice_Inds(2:end)-1),:);
+%     mySDF_loseShift_spike = allTrial_spikeMatx_slide(intersect(s.nrwd_Inds, s.changeChoice_Inds-1),:);
+%     plotFilled(slideTime, mySDF_loseShift_spike,[0 0 1])
+%     plotFilled(slideTime, mySDF_loseStay_spike,[0.7 0 1])
+%     line([0 0], [0 maxLick], 'color', 'r')
+%     legend('loseShift', '', 'loseStay', '')
+%     title('loseShift vs loseStay')
+%     ylim([0 maxFreq]);
     
     %ISI histogram
     %reward and choice behavior

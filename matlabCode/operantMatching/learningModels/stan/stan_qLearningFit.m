@@ -6,12 +6,15 @@ p.addParameter('revForFlag', 0);
 p.addParameter('bernFlag', 1);
 p.addParameter('nonfixedParams', 0);
 p.addParameter('fixedParams', []);
-p.addParameter('paramNames', {'aN', 'aP', 'aF', 'beta','bias'});
-p.addParameter('modelName', '5params');
-p.addParameter('iter', 20000);
+p.addParameter('paramNames',{'aNmin', 'aP', 'aF', 'aPE', 'v', 'beta'}); % animal level
+p.addParameter('modelName', '7params_absPePeAN_scale_int_bias_ord');
+% p.addParameter('paramNames',{'aN', 'aP', 'aF', 'beta'}); % animal level
+% p.addParameter('modelName', '5params');
+p.addParameter('iter', 15000);
 p.addParameter('warmup', []);
 p.addParameter('saveFlag', 1);
 p.addParameter('maxTrial', 500);
+p.addParameter('numChains', 6);
 p.parse(varargin{:});
 
 if ~p.Results.nonfixedParams
@@ -30,9 +33,9 @@ end
 
 [root, sep] = currComputer();
 if p.Results.bernFlag
-    savePath = [root sheet sep sheet 'sorted' sep 'stan' sep 'bernoulli' sep p.Results.modelName sep];
+    savePath = [root sheet sep sheet 'sorted' sep 'stan' sep 'bernoulli' sep p.Results.modelName sep category sep];
 else
-    savePath = [root sheet sep sheet 'sorted' sep 'stan' sep p.Results.modelName sep];
+    savePath = [root sheet sep sheet 'sorted' sep 'stan' sep p.Results.modelName sep category sep];
 end
 if ~exist(savePath)
     mkdir(savePath);
@@ -50,7 +53,7 @@ end
 for i = 1:length(dayList)
     sessionName = dayList{i};
     filename = [sessionName '.asc'];
-    fprintf([sessionName '\n']);
+    %fprintf([sessionName '\n']);
     behSessionData = loadBehavioralData(filename, p.Results.revForFlag);
     behavStruct = parseBehavioralData(behSessionData, p.Results.maxTrial);
 
@@ -97,7 +100,7 @@ else
     filePath = 'C:\Users\zhixi\Documents\gitRepositories\sueAnalysis\matlabCode\operantMatching\learningModels\stan\';
 end
 fit = stan('file',[filePath fullName],'data',session_dat,'verbose',true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath);
+            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath, 'chains', p.Results.numChains, 'refresh', 200);
 %read command line output to stall matlab until stan is finished processing
 doneFlag = 0;
 diary([savePath 'diaryTmp.txt']); diary off;
@@ -112,7 +115,7 @@ while doneFlag == 0
     fclose(fid);
     tmpCount = find(~cellfun(@isempty,strfind(tmp{1}, '[100%]')) == 1);
     if ~isempty(tmpCount)
-        if length(tmpCount) == length(baseCount) + 4
+        if length(tmpCount) == length(baseCount) + 6
             doneFlag = 1;
         end
     end
@@ -143,7 +146,7 @@ else
     for i = 1:length(paramInds)
         tmp = eval(['samples.mu_' p.Results.paramNames{i}]);
         allSamples = [allSamples tmp];
-        edges{i} = linspace(min(tmp), max(tmp),50);
+        edges{i} = linspace(min(tmp), max(tmp),40);
     end
     n = histcnd(allSamples,edges); %bin samples by multiple dimensions
     [~, inds] = myMaxAll(n); %find the bin with max num in bin
@@ -160,7 +163,7 @@ end
 
 
 %plot the distributions of the mouse-level parameters
- figure2; 
+ figure2('position', [0 0 800 400]); 
 if p.Results.nonfixedParams
     histogram(eval(['samples.mu_' p.Results.nonfixedParams]), 100,...
             'Normalization', 'Probability', 'FaceColor', 'k')
@@ -175,6 +178,7 @@ else
         subplot(1,numParams,i); hold on;
         histogram(eval(['samples.mu_' p.Results.paramNames{paramInds(i)}]) , 100,...
             'Normalization', 'Probability', 'FaceColor', colors(i,:), 'EdgeColor', 'none')
+%         line([paramEsts(i) paramEsts(i)], [0 0.05], 'color', [0 0 0]);
         set(gca,'tickdir', 'out') 
         title(p.Results.paramNames{paramInds(i)})
     end

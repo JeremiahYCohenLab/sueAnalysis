@@ -4,10 +4,15 @@ p = inputParser;
 % default parameters if none given
 p.addParameter('revForFlag',0)
 p.addParameter('makeFigFlag', 0)
-p.addParameter('tMax', 20)
-p.addParameter('timeMax', 121000)
-p.addParameter('timeBins', 12)
+p.addParameter('tMax', 10)
+p.addParameter('timeMax', 61000)
+p.addParameter('timeBins', 6)
 p.parse(varargin{:});
+
+timeMax = p.Results.timeMax;
+binSize = (timeMax - 1000)/p.Results.timeBins;
+timeBinEdges = 1000:binSize:timeMax;  %no trials shorter than 1s between outcome and CS on
+tMax = length(timeBinEdges) - 1;
 
 [root, sep] = currComputer();
 
@@ -76,6 +81,10 @@ allRewards(logical(allReward_L)) = -1;
 allRewardsBinary = allRewards;                      %make all rewards have the same value
 allRewardsBinary(find(allRewards==-1)) = 1;
 rewardsList =  allRewards(find(allRewards~=0));
+
+allNoRewards = allChoices;
+allNoRewards(allRewards~=0) = 0;
+
 
 if blockSwitch(end) == length(allChoices)
     blockSwitch = blockSwitch(1:end-1);
@@ -184,8 +193,10 @@ end
 %% linear regression model by trial
 
 rwdMatx = [];
+noRwdMatx = [];
 for i = 1:p.Results.tMax
     rwdMatx(i,:) = [NaN(1,i) allRewards(1:end-i)];
+    noRwdMatx(i,:) = [NaN(1,i) allNoRewards(1:end-i)];
 end
 
 choiceMatx = [];
@@ -250,7 +261,7 @@ for j = 2:length(responseInds)
             nTimeTmpL = [nTimeTmpL (behSessionData(responseInds(j)).rewardTime - behSessionData(responseInds(j-k)).rewardTime)];
         end
         if behSessionData(responseInds(j-k)).rewardR == 0
-            nTtimeTmpR = [nTimeTmpR (behSessionData(responseInds(j)).rewardTime - behSessionData(responseInds(j-k)).rewardTime)];
+            nTimeTmpR = [nTimeTmpR (behSessionData(responseInds(j)).rewardTime - behSessionData(responseInds(j-k)).rewardTime)];
         end
         k = k + 1;
     end
@@ -302,6 +313,55 @@ rwdTimeMatxBin(find(rwdTimeMatxBin < 0)) = rwdTimeMatxBin(find(rwdTimeMatxBin < 
 glm_rwdTime = fitglm([rwdTimeMatx]', allChoice_R,'distribution','binomial','link','logit'); 
 glm_noRwdTime = fitglm([noRwdTimeMatx]', allChoice_R,'distribution','binomial','link','logit');
 glm_allTime = fitglm([rwdTimeMatx' noRwdTimeMatx'], allChoice_R,'distribution','binomial','link','logit');
+
+%% linear regression model by time for lickLat
+rwdMatxForLick = zeros(tMax, length(responseInds));     %initialize matrices for number of response trials x number of time bins
+noRwdMatxForLick = zeros(tMax, length(responseInds));
+preLickTmp = NaN(1,length(responseInds));
+preC = NaN(1,length(responseInds));
+for j = 2:length(responseInds)          
+    k = 1;
+    %find time between "current" choice and previous rewards, up to timeMax in the past 
+    timeTmp = [];
+    timeTmpNoRwd = [];
+    while j-k > 0 & behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(j-k)).rewardTime < timeMax
+        if behSessionData(responseInds(j-k)).rewardL == 1 || behSessionData(responseInds(j-k)).rewardR == 1
+            timeTmp = [timeTmp (behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(j-k)).rewardTime)];
+        end
+        if behSessionData(responseInds(j-k)).rewardL == 0 || behSessionData(responseInds(j-k)).rewardR == 0
+            timeTmpNoRwd = [timeTmpNoRwd (behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(j-k)).rewardTime)];
+        end
+        k = k + 1;
+    end
+    %bin outcome times and use to fill matrices
+    if ~isempty(timeTmp)
+        binnedRwds = discretize(timeTmp,timeBinEdges);
+        for k = 1:tMax
+            if ~isempty(find(binnedRwds == k, 1))
+                rwdMatxForLick(k,j) = sum(binnedRwds == k);
+            end
+        end
+    end
+    if ~isempty(timeTmpNoRwd)
+        binnedNoRwds = discretize(timeTmpNoRwd,timeBinEdges);
+        for k = 1:tMax
+            if ~isempty(find(binnedNoRwds == k, 1))
+                noRwdMatxForLick(k,j) = sum(binnedNoRwds == k);
+            end
+        end
+    end
+    % The last lick binSize ago. 
+    m = 1;
+    while j-m > 1 && behSessionData(responseInds(j)).respondTime - behSessionData(responseInds(j-m)).rewardTime < binSize
+        m = m + 1;
+    end
+    if allChoices(j-m) == 1
+        preC(j) = 1;
+    else
+        preC(j) = -1;
+    end
+    preLickTmp(j) = lickLatZ(j-m);
+end
 
 
 %% create rwds array in time
@@ -359,6 +419,13 @@ for i = 1:length(cumsum_blockSwitch)
         avgRwdSlope(i) = tand(mean(rwdSlope(blockSwitch(i):end)));
     end
 end
+%% divide licks into two groups
+ind = kmeans(log(lickLat'),2,'Start', [4.5; 5.5], 'OnlinePhase', 'on');
+ind(ind == 3) = 2;
+if mean(lickLat(ind==1))>mean(lickLat(ind==2))
+    ind = 3-ind;
+end
+ind = ind - 1;
 
 %% make output struct 
 s = struct;
@@ -382,7 +449,7 @@ s.responseRateInds = responseRateInds;
 s.rwdHx = rwdHx;
 s.rwdHxTimeChoice = rwdHxTimeChoice;
 s.rwdSlope = rwdSlope;
-s.rwdMatx = rwdMatx;
+s.rwdMatx = [rwdMatx; noRwdMatx];
 s.rwdTimeMatx = rwdTimeMatx;
 s.rwdTimeMatxBin = rwdTimeMatxBin;
 s.sessionRwds = sessionRwds;
@@ -399,6 +466,10 @@ s.changeChoice_Inds = changeChoice_Inds;
 s.stayChoice_Inds = stayChoice_Inds;
 s.rwdDelay = rwdDelay;
 s.timeBtwn = timeBtwn;
+s.rwdMatxForLick = rwdMatxForLick;
+s.noRwdMatxForLick = noRwdMatxForLick;
+s.choiceMatx = choiceMatx;
+s.lickInds = ind;
 
 
 if p.Results.revForFlag

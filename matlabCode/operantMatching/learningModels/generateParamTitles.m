@@ -4,7 +4,7 @@ function [titles] = generateParamTitles(paramNames)
 for i = 1:length(paramNames)
     switch paramNames{i}
         case 'aN'
-            titles{i} = '\alpha_N_P_E';
+            titles{i} = '$\alpha_{(-)}$';
         case 'aNscale'
             titles{i} = '\alpha_N_P_E scale';
         case 'aNmin'
@@ -25,6 +25,10 @@ for i = 1:length(paramNames)
             titles{i} = '\kappa';
         case 'peBar'
             titles{i} = '$\bar{\upsilon}$';
+        case 'pePe'
+            titles{i} = '$\sigma$';
+        case 'pe'
+            titles{i} = '$\delta$';
         otherwise
             titles{i} = paramNames{i};
     end

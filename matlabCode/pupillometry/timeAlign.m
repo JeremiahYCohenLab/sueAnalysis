@@ -1,4 +1,4 @@
-function [errorProp,csFT, pupilIdx, ratioMax] = timeAlign(session, plotFlag)
+function [errorProp,csFT, qualInd, ratioMax] = timeAlign(session, plotFlag)
 %% calculate time projection of behavior time onto pupil time 
 saveFlag = 1;
 unblockedError = false; 
@@ -10,7 +10,8 @@ errorProp = NaN;
 csFT = NaN;
 pupilIdx = NaN;
 ratioMax = NaN;
-ledLLThresh = 0.7;
+ledLLThresh = 0.995;
+ledDisThresh = 80;
 %% training set
 [root,sep] = currComputer;
    
@@ -40,21 +41,31 @@ else
     savepath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep];
 end
 
-iterMax = 0.15*length(behSessionData);
+iterMax = 0.2*length(behSessionData);
 %% load diameter and position
 videopath = [root animalName sep sessionFolder sep 'pupil'];
 list = dir(videopath);
-expression = ['^' session 'DLC' '\w*' 'shuffle2_480000.csv' '$'];
+expression = ['^' session 'DLC' '\w*' '100000.csv' '$'];
 if isempty(find(~cellfun(@isempty, cellfun(@(x) regexp(x, expression), {list.name}, 'UniformOutput', false)), 1))
    fprintf([session ' no pupil video \n'])
    return
 end
 position = list(~cellfun(@isempty, cellfun(@(x) regexp(x, expression), {list.name}, 'UniformOutput', false))).name;
+if isempty(position)
+    fprintf([session ' pupil video not amalyzed \n'])
+    return
+end
 positionRaw = csvread([videopath sep position],3,0);
+
 %% Align time by finding maximum projection
 ratio = 20.5:0.01:21.5;
 %ledLL = sign(positionRaw(:,16).*positionRaw(:,10) - ledLLThresh);
 ledLL = sign(positionRaw(:,16) - ledLLThresh);
+%% led position
+ledx = sum(double(ledLL > 0).*positionRaw(:,14))/sum(ledLL > 0);
+ledy = sum(double(ledLL > 0).*positionRaw(:,15))/sum(ledLL > 0);
+dis = sqrt((positionRaw(:,14)-ledx).^2 + (positionRaw(:,15)-ledy).^2);
+ledLL(dis > ledDisThresh) = -1; % exlude led too far away. (likely to be false positive)
 ledQual = positionRaw(:,10);
 %ledLL = ledLL .* (ledQual.^2);
 csT = [behSessionData(cellfun(@(x) strcmp(x,'CSplus'), {behSessionData.trialType})).CSon];

@@ -1,4 +1,4 @@
-function pupilAnalysis(animal, category, varargin)
+function pupilAnalysis(session, category, varargin)
 %task and model parameters
 p = inputParser;
 % default parameters if none given

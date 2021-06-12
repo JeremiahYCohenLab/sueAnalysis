@@ -12,15 +12,15 @@ transformed data {
 parameters {
 // Declare all parameters as vectors for vectorizing
   // Hyper(animal)-parameters
-  vector[5] mu_p;
-  vector<lower=0>[5] sigma;
+  vector[4] mu_p;
+  vector<lower=0>[4] sigma;
 
   // Session-level raw parameters
   vector[N] aN_pr;    // learning rate for NPE
   vector[N] aP_pr;    // learning rate for PPE
   vector[N] aF_pr;    // forgetting rate
   vector[N] beta_pr;  // inverse temperature
-  vector[N] bias_pr;  // side bias
+  vector[N] bias;  // side bias
 }
 transformed parameters {
 // Transform session-level raw parameters
@@ -28,14 +28,12 @@ transformed parameters {
   vector<lower=0, upper=1>[N] aP;
   vector<lower=0, upper=1>[N] aF;
   vector<lower=0, upper=10>[N] beta;
-  vector<lower=-5, upper=5>[N] bias;
 
   for (n in 1:N) {
     aN[n]   = Phi_approx(mu_p[1] + sigma[1] * aN_pr[n]);
     aP[n]   = Phi_approx(mu_p[2] + sigma[2] * aP_pr[n]);
     aF[n]   = Phi_approx(mu_p[3] + sigma[3] * aF_pr[n]);
     beta[n] = Phi_approx(mu_p[4] + sigma[4] * beta_pr[n]) * 10;
-    bias[n] = Phi_approx(mu_p[5] + sigma[5] * beta_pr[n]) * 10 - 5;
   }
 }
 model {
@@ -48,7 +46,7 @@ model {
   aP_pr   ~ normal(0, 1);
   aF_pr   ~ normal(0, 1);
   beta_pr ~ normal(0, 1);
-  bias_pr ~ normal(0, 1);
+  bias ~ normal(0, 20);
 
   // session loop and trial loop
   for (n in 1:N) {
@@ -88,7 +86,6 @@ generated quantities {
   real<lower=0, upper=1> mu_aP;
   real<lower=0, upper=1> mu_aF;
   real<lower=0, upper=10> mu_beta;
-  real<lower=-5, upper=5> mu_bias;
 
   // For log likelihood calculation
   real log_lik[N];
@@ -107,7 +104,6 @@ generated quantities {
   mu_aP   = Phi_approx(mu_p[2]);
   mu_aF   = Phi_approx(mu_p[3]);
   mu_beta = Phi_approx(mu_p[4])*10;
-  mu_bias = Phi_approx(mu_p[5])*10 - 5;
 
   { // local section, this saves time and space
     for (n in 1:N) {
@@ -129,7 +125,7 @@ generated quantities {
         Qdiff[t] = Q[2] - Q[1];
 
         // compute log likelihood of current trial
-        log_lik[n] = log_lik[n] + bernoulli_logit_lpmf(choice[n, t] | (beta[n] * Qdiff[t] + bias[n]);
+        log_lik[n] = log_lik[n] + bernoulli_logit_lpmf(choice[n, t] | (beta[n] * Qdiff[t] + bias[n]));
 
         // generate posterior prediction for current trial
 

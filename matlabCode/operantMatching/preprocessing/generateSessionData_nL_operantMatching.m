@@ -18,10 +18,13 @@ animalName = animalName(2:end);
 if isstrprop(sessionName(end), 'alpha')
     filepath = [root animalName sep sessionName(1:end-1) sep 'neuralynx' sep 'session ' sessionName(end) sep];
     sortedDir = [root animalName sep sessionName(1:end-1) sep 'neuralynx' sep 'session ' sessionName(end) sep];
+    saveDir = [root animalName sep sessionName(1:end-1) sep 'sorted' sep 'session ' sessionName(end) sep];
 else
     filepath = [root animalName sep sessionName sep 'neuralynx' sep 'session' sep];
     sortedDir = [root animalName sep sessionName sep 'neuralynx' sep 'session' sep];
+    saveDir = [root animalName sep sessionName sep 'sorted' sep 'session' sep];
 end
+
 
 % TTL values
 CSplus = 136;
@@ -196,9 +199,9 @@ end
 
 
 % save the data
-if isempty(dir(sortedDir))
+if isempty(dir(saveDir))
     mkdir(sortedDir)
 end
 
 % sessionFolder(~(sessionFolder==sep)) removes the separator (/ or \) in the filename before saving
-save([sortedDir sep sessionName(~(sessionName==sep)) '_sessionData_nL.mat'], 'sessionData')
+save([saveDir sep sessionName(~(sessionName==sep)) '_sessionData_nL.mat'], 'sessionData')

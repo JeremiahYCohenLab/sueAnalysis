@@ -173,6 +173,9 @@ for i = 1:length(sessionText)
     end
 end
 
+blockSwitch = blockSwitch(blockSwitch<length(behSessionData));
+blockSwitchL = blockSwitchL(blockSwitchL<length(behSessionData));
+blockSwitchR = blockSwitchR(blockSwitchR<length(behSessionData));
 
 if isempty(dir(savepath))
     mkdir(savepath)
