@@ -1,4 +1,4 @@
-function [LH, probChoice, Q, pe, pePe, aN, peBar] = qLearningModel_7params_absPePeAN_scale_int_bias(startValues, choice, outcome)
+function [LH, probChosen, Q, pe, pePe, aN, peBar] = qLearningModel_7params_absPePeAN_scale_int_bias(startValues, choice, outcome)
 
 aNmin = startValues(1);
 aP = startValues(2);

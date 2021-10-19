@@ -6,6 +6,8 @@ switch modelName
         paramNames = [{'aN', 'aP', 'aF', 'beta'}];
     case '5params'
         paramNames = [{'aN', 'aP', 'aF', 'beta'}];
+    case '5params_inv'
+        paramNames = [{'aN', 'aP', 'aF', 'beta'}];
     case 'fiveParam_kappa'
         paramNames = [{'aN', 'aP', 'aF', 'beta', 'k'}];
     case 'fiveParam_ph_bias'
@@ -60,6 +62,15 @@ switch modelName
         paramNames = [{'gamma', 'beta', 'bias'}];
     case 'dbm_softmax_ab'
         paramNames = [{'gamma', 'ab', 'beta'}];
+    % vkf models
+    case 'vkf'
+        paramNames = [{'lambda', 'vInit', 'omega', 'beta'}];
+    case 'vkf_fixV'
+        paramNames = [{'lambda', 'vInit', 'omega', 'beta'}];        
+    case 'vkf_fixV_aF'
+        paramNames = [{'lambda', 'vInit', 'omega', 'beta', 'aF'}];
+    case 'vkf_fixV_kappa'
+        paramNames = [{'lambda', 'vInit', 'omega', 'beta', 'kappa'}];
 end
 
 if biasFlag

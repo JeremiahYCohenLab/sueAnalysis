@@ -4,13 +4,17 @@ p = inputParser;
 % default parameters if none given
 p.addParameter('beh', 'good')
 p.addParameter('bernFlag', 1)
-p.addParameter('modelName','7params_absPePeAN_scale_int_bias_ord')
+% p.addParameter('modelName','7params_absPePeAN_scale_int_bias_ord')
+p.addParameter('modelName', '5params');
 p.addParameter('plotFlag', 1)
-p.addParameter('saveFigFlag', 0)
+p.addParameter('saveFigFlag', 1)
 p.parse(varargin{:});
 
+bin1 = 1;
+bin2 = 35;
+
 [root, sep] = currComputer();
-paramNames = getParamNames_dF(p.Results.modelName, 1);
+paramNames = getParamNames_dF(p.Results.modelName, 0);
 numParams = length(paramNames);
 numAnimals = length(animals);
 
@@ -24,6 +28,7 @@ for aI = 1:numAnimals
     if p.Results.bernFlag
         filePath = [root animals{aI} sep  animals{aI} 'sorted' sep 'stan' sep 'bernoulli' sep...
             p.Results.modelName sep p.Results.beh sep animals{aI} p.Results.beh '_' p.Results.modelName '.mat'];
+        savePath = [root animals{aI} sep animals{aI} 'sorted' sep 'stan' sep 'bernoulli' sep p.Results.modelName sep p.Results.beh sep];
     else        
         filePath = [root animals{aI} sep  animals{aI} 'sorted' sep 'stan' sep...
             p.Results.modelName sep p.Results.beh sep animals{aI} p.Results.beh '_' p.Results.modelName '.mat'];
@@ -36,15 +41,46 @@ for aI = 1:numAnimals
 
     avgParams = nan(numSesh, numParams);
     for currS = 1:numSesh
-        for currP = 1:numParams
-            tmp = samps.(paramNames{currP})(:,currS);
-            if strcmp(paramNames{currP}, 'aPE') || strcmp(paramNames{currP}, 'v')
-                tmp = log(tmp);
+        allSamples = [];
+            % first bins
+            edges = cell(1,length(paramNames));
+            for i = 1:length(paramNames)
+                if size(samps.(paramNames{i}),2) == 1 % if there's only animal level
+                    tmp = samps.(paramNames{i});    
+                else
+                    tmp = samps.(paramNames{i})(:,currS);
+                end
+                
+                if strcmp(paramNames{i}, 'aPE') || strcmp(paramNames{i}, 'v') % log scale
+                    tmp = log(tmp);
+                end
+                
+                allSamples = [allSamples tmp];
+                edges{i} = linspace(min(tmp), max(tmp)+0.0001,bin1+1);
             end
-            [n,e] = histcounts(tmp, 50);
-            [~, maxInd] = max(n);
-            avgParams(currS, currP) = median(tmp(tmp > e(maxInd) & tmp < e(maxInd+1)));
-        end
+%             figure2;
+%             subplot(1,2,1); histogram(allSamples(:,1), 30);
+%             subplot(1,2,2); histogram(allSamples(:,3), 30);
+
+            n = histcnd(allSamples,edges); %bin samples by multiple dimensions
+            [~, inds] = myMaxAll(n); %find the bin with max num in bin
+            % second bins
+            edges2 = cell(1,length(paramNames));
+            for i = 1:length(paramNames) %use previous best bin as newbin
+                edgeTmp = edges{i};
+                edges2{i} = linspace(edgeTmp(inds(i)),edgeTmp(inds(i)+1)+0.0001,bin2+1);
+            end
+            n = histcnd(allSamples,edges2); %bin samples by multiple dimensions
+            [~, inds] = myMaxAll(n); %find the bin with max num in bin   
+            for i = 1:length(paramNames) %use median in bin as best estimate
+                tmp = allSamples(:,i);
+                edgeTmp = edges2{i};
+                if inds(i) < bin2
+                    avgParams(currS,i) = median(tmp(tmp >= edgeTmp(inds(i)) & tmp < edgeTmp(inds(i)+1)));
+                else
+                    avgParams(currS,i) = median(tmp(tmp >= edgeTmp(inds(i)) & tmp <= edgeTmp(inds(i)+1)));
+                end
+            end
     end
     paramMatx = [paramMatx; avgParams];
     clear mdl;
@@ -91,18 +127,77 @@ for aI = 1:numAnimals
         set(gcf,'Renderer', 'Painters', 'position', [-1928 278 1924 566])
 
         if p.Results.saveFigFlag
-            saveFigurePDF(gcf,['C:\Users\cooper\Desktop\analysis\model param pdfs\' p.Results.modelName '_' animals{aI}])
+            saveFigurePDF(gcf,[savePath animals{aI} p.Results.beh '_' p.Results.modelName '_parameters.pdf']);
         end
+        
+         dFig = figure;
+        for currPy = 1:numParams + size(samps.sigma,2)
+            if currPy <= numParams
+                tmpY = eval(['samps.mu_' paramNames{currPy}]);
+            else
+                tmpY = samps.sigma(:,currPy-numParams);
+            end
+            tmpY_d = tmpY(logical(samps.divergent__));
+            tmpY = tmpY(~logical(samps.divergent__));
+            for currPx = 1:numParams + size(samps.sigma,2)
+                subplot(numParams+size(samps.sigma,2), numParams+size(samps.sigma,2),(currPy-1)*(numParams + size(samps.sigma,2)) + currPx); hold on;
+
+                if currPy == currPx
+                    h = histogram(tmpY, 30, 'FaceColor', 'c', 'normalization', 'probability');
+                    histogram(tmpY_d, h.BinEdges, 'FaceColor', 'm', 'normalization', 'probability')
+                else       
+                    if currPx <= numParams
+                        tmpX = eval(['samps.mu_' paramNames{currPx}]);
+                    else
+                        tmpX = samps.sigma(:,currPx-numParams);
+                    end
+                    tmpX_d = tmpX(logical(samps.divergent__));
+                    tmpX = tmpX(~logical(samps.divergent__));
+                    scatter(tmpX, tmpY, 5, 'c', 'filled')
+                    scatter(tmpX_d, tmpY_d, 5, 'm', 'filled')
+                end
+
+                if currPx == 1
+                    if currPy <= numParams
+                       ylabel(paramNames{currPy})
+                    else
+                       ylabel(['sigma' '(' num2str(currPy-numParams) ')'])
+                    end
+                end
+                if currPy == numParams + size(samps.sigma,2)
+                    if currPx <= numParams
+                       xlabel(paramNames{currPx})
+                    else
+                       xlabel(['sigma' '(' num2str(currPx-numParams) ')'])
+                    end
+                end
+
+            end
+        end
+        titleTxt = [titleTxt ' (divergence rate = ' num2str(sum(samps.divergent__)/length(samps.divergent__)) ')'];
+        suptitle(titleTxt);
+        screenSize = get(0,'Screensize');
+        screenSize(4) = screenSize(4) - 100;
+        set(dFig, 'renderer', 'painters', 'position', screenSize)
+        if p.Results.saveFigFlag
+            saveFigurePDF(gcf,[savePath animals{aI} p.Results.beh '_' p.Results.modelName '_' 'divergence.pdf'])
+        end
+        cFig = figure;
+        scatterAll(avgParams, paramNames, 7, 'm')
+        suptitle(titleTxt);
+        if p.Results.saveFigFlag
+            saveFigurePDF(cFig,[savePath animals{aI} p.Results.beh '_' p.Results.modelName '_' 'estimatedParams.pdf'])
+        end      
     end
     
 end
 
 
 %amend cell figures as one pdf
-if p.Results.saveFigFlag
-    dirTmp = dir('C:\Users\cooper\Desktop\analysis\model param pdfs\');
-    for currFig = 3:length(dirTmp)
-        append_pdfs(['C:\Users\cooper\Desktop\analysis\model param pdfs\' p.Results.modelName '_all.pdf'], ...
-            [dirTmp(currFig).folder '\' dirTmp(currFig).name]);
-    end
-end 
+% if p.Results.saveFigFlag
+%     dirTmp = dir('C:\Users\cooper\Desktop\analysis\model param pdfs\');
+%     for currFig = 3:length(dirTmp)
+%         append_pdfs(['C:\Users\cooper\Desktop\analysis\model param pdfs\' p.Results.modelName '_all.pdf'], ...
+%             [dirTmp(currFig).folder '\' dirTmp(currFig).name]);
+%     end
+% end 

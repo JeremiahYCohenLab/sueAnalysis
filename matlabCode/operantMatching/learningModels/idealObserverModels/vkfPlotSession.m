@@ -5,6 +5,11 @@ s = parseBehavioralData(behSessionData, unCorrectedBlockSwitch);
 choices = s.allChoices;
 outcomes = abs(s.allRewards);
 
+lambda = 0.65;  % volatility update rate
+v0 = 0.95;      % initial volatility
+omega = 0.95;   % observation noise
+beta = 0.9;    % inverse-temp parameter for softmax decision function
+
 lambda = 0.549245864306393;  % volatility update rate
 v0 = 0.422311804752216;      % initial volatility
 omega = 0.975697922267773;   % observation noise
@@ -54,16 +59,15 @@ end
 
 figure; hold on
 
-plot(v(:,1), '-c', 'linewidth', 1.5)
-plot(v(:,2), '-m', 'linewidth', 1.5)
-legend('volatility L', 'volatility R')
+plot(w(:,1), '-c', 'linewidth', 1.5)
+plot(w(:,2), '-m', 'linewidth', 1.5)
 yU = max(max(v));
 yL = min(min(v));
 
 blockProbs = [behSessionData(unCorrectedBlockSwitch).rewardProbL; behSessionData(unCorrectedBlockSwitch).rewardProbR]';
 
-for i = 1:length(s.blockSwitch)
-    bs_loc = s.blockSwitch(i);
+for i = 1:length(unCorrectedBlockSwitch)
+    bs_loc = unCorrectedBlockSwitch(i);
     plot([bs_loc bs_loc],[yL yU+0.5],'--k','linewidth',1)
     if rem(i,2) == 0
         labelOffset = yU + 0.42;
@@ -100,7 +104,7 @@ for i = 1:length(choices)
         end
     end
 end
-
+legend('volatility L', 'volatility R')
 xlim([0 numT])
 ylim([-1*rMag + yL yU+0.5])
 set(gca,'tickdir', 'out')

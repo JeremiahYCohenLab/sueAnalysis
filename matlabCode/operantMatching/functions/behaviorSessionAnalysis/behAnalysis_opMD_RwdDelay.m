@@ -476,7 +476,7 @@ if p.Results.lickFlag == 1
 
     lickLatResp = lickLat(responseInds);                    %remove NaNs from lickLat array
     lickLatResp = lickLatResp(2:end);                       %shift for comparison to rwd history
-    lickLatInds = find(lickLatResp > 250);                  %find indices of non-preemptive licks (limit to normal distribution)
+    lickLatInds = find(lickLatResp > 50);                  %find indices of non-preemptive licks (limit to normal distribution)
 
     if ~isnan(behSessionData(responseInds(1)).rewardR)      %remove first response for shift to compare to rwd hist
         responseLat_R = lickLat_R(2:end);
@@ -486,8 +486,8 @@ if p.Results.lickFlag == 1
         responseLat_L = lickLat_L(2:end);
     end
 
-    responseLat_R = responseLat_R(responseLat_R > 250);        %remove lick latencies outside of normal distribution
-    responseLat_L = responseLat_L(responseLat_L > 250);
+    responseLat_R = responseLat_R(responseLat_R > 50);        %remove lick latencies outside of normal distribution
+    responseLat_L = responseLat_L(responseLat_L > 50);
     responseLat_R  = zscore(responseLat_R);                   %get z scores for lick latencies based on spout side average
     responseLat_L  = zscore(responseLat_L);
     choicesLick = allChoices(2:end);                        %make shifted choice array without preemptive licks

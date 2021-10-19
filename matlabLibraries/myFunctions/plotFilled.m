@@ -19,12 +19,12 @@ if stdFlag
     yU = y + nanstd(data);
     yL = y - nanstd(data);
 else
-    yU = y + sem(data);
-    yL = y - sem(data);
+    yU = y + nanstd(data)/sqrt(size(data,1));
+    yL = y - nanstd(data)/sqrt(size(data,1));
 end
 
 if nargin > 4
     subplot(figHandle)
 end
-hOut = plot(x, y, 'color', color, 'linewidth', 1, 'Marker', 'none', 'LineStyle', '-'); hold on;
-fill([x fliplr(x)], [yU fliplr(yL)], color, 'facealpha', 0.25, 'edgecolor', 'none')
+hOut = plot(x, y, 'Color', color, 'linewidth', 1, 'Marker', 'none', 'LineStyle', '-'); hold on;
+fill([x(~isnan(yU)) fliplr(x(~isnan(yU)))], [yU(~isnan(yU)) fliplr(yL(~isnan(yU)))], color, 'facealpha', 0.25, 'edgecolor', 'none')

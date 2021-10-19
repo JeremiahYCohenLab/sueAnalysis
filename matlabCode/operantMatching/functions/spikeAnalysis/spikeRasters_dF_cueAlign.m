@@ -223,7 +223,16 @@ rwdHxIIIrwd_Inds = s.responseInds(intersect(rwdHxIII_Inds, s.rwd_Inds));        
 % [~,rwdHxIIR_Inds,~] = intersect(rwdHxII_Inds, lickR_Inds);          [~,rwdHxIIL_Inds,~] = intersect(rwdHxII_Inds, lickL_Inds);
 % [~,rwdHxIIIR_Inds,~] = intersect(rwdHxIII_Inds, lickR_Inds);          [~,rwdHxIIIL_Inds,~] = intersect(rwdHxIII_Inds, lickL_Inds);
 
+% divide lick latency into three percentile
+[~,lickLat_Inds] = sort(s.lickLatZ);
 
+latI_Inds = lickLat_Inds(1:tercile);
+latII_Inds = lickLat_Inds(tercile+1:tercile*2);
+latIII_Inds = lickLat_Inds(tercile*2+1:end);
+
+latI_Inds = s.responseInds(latI_Inds); 
+latII_Inds = s.responseInds(latII_Inds);
+latIII_Inds = s.responseInds(latIII_Inds);
 %% generate indeces for Q learning model values
 
 if p.Results.modelsFlag
@@ -520,7 +529,7 @@ for i = 1:length(clust)
     
     
     %sdf by reward hist, rewarded trials
-    z(4) = subplot(8,7,[32 39]); t(5) = title('rwd hist - rwd'); hold on
+    z(4) = subplot(8,7,32); t(5) = title('rwd hist - rwd'); hold on
     mySDF_rwdHxIrwd = allTrial_spikeMatx_slide(rwdHxIrwd_Inds,:);
     mySDF_rwdHxIIrwd = allTrial_spikeMatx_slide(rwdHxIIrwd_Inds,:);
     mySDF_rwdHxIIIrwd = allTrial_spikeMatx_slide(rwdHxIIIrwd_Inds,:);
@@ -531,7 +540,7 @@ for i = 1:length(clust)
     ylim([0 maxFreq]);
     
     %sdf by reward hist, NON-rewarded trials
-    z(5) = subplot(8,7,[33 40]); t(6) = title('rwd hist - no rwd'); hold on
+    z(5) = subplot(8,7,39); t(6) = title('rwd hist - no rwd'); hold on
     mySDF_rwdHxInoRwd = allTrial_spikeMatx_slide(rwdHxInoRwd_Inds,:);
     mySDF_rwdHxIInoRwd = allTrial_spikeMatx_slide(rwdHxIInoRwd_Inds,:);
     mySDF_rwdHxIIInoRwd = allTrial_spikeMatx_slide(rwdHxIIInoRwd_Inds,:);
@@ -543,6 +552,23 @@ for i = 1:length(clust)
     line([0 0], [0 maxFreq], 'color', 'r')
     ylim([0 maxFreq]);
  
+    % sdf sep by lick latency
+    subplot(8,7,[33, 40]); t(6) = title('lick latency'); hold on
+    mySDF_lickLatI = allTrial_spikeMatx_slide(latI_Inds,:);
+    mySDF_lickLatII = allTrial_spikeMatx_slide(latII_Inds,:);
+    mySDF_lickLatIII = allTrial_spikeMatx_slide(latIII_Inds,:);
+%    mySDF_rwdHxIVnoRwd = fastsmooth(nanmean(rwdHxIV_spikeMatx(rwdHxIVnoRwd_Inds,:), 1)*1000, 250);
+%    plot(time, mySDF_rwdHxIVnoRwd(1:length(time)),'g','LineWidth',2)
+    plotFilled(slideTime, mySDF_lickLatI, [0 0 1])
+    plotFilled(slideTime, mySDF_lickLatII, [0.4 0.4 1])
+    plotFilled(slideTime, mySDF_lickLatIII, [0.8 0.8 1])
+    line([0 0], [0 maxFreq], 'color', 'r')
+    ylim([0 maxFreq]);
+    legend('short','median','long');
+    
+    
+    
+    
     z(8) = subplot(8,7,[45 52]); hold on;
     mySDF_stay = stayChoice_spikeMatx;
     mySDF_change = changeChoice_spikeMatx;

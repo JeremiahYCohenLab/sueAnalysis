@@ -72,6 +72,7 @@ firstSpikeLat = [];
 width = [];
 spikeLatChange = [];
 spikeFreqChange = [];
+waveforms = [];
 
 for i = 1:length(sessionList)
     pd = parseSessionString_df(sessionList{i}, root, sep);
@@ -81,24 +82,35 @@ for i = 1:length(sessionList)
         met = getClusterMetric(sessionList{i}, unitList{i}, 0, 1);
     end
      respInds = find(met.spikeProp>=0.8);
-    if ~isempty(respInds)
+    if length(respInds)>=1
         respLat = nanmin(met.spikeLat(respInds));
         if respLat <= 15000 && met.isiV <= 0.001 && met.distance<0.3
             baselineFreq = [baselineFreq met.baseline];
-            firstSpikeFreq = [firstSpikeFreq 1000*mean(met.spikeNum(:,1))/met.pulseWidth];
+%             firstSpikeFreq = [firstSpikeFreq mean(met.spikeNum(:,1))];
+            firstSpikeFreq = [firstSpikeFreq 1000*mean(met.spikeNum(:,1))/20];
             firstSpikeLat = [firstSpikeLat met.spikeLat(1)/1000];
             width = [width met.width];
             spikeLatChange = [spikeLatChange (met.spikeLat(10)-met.spikeLat(1))/1000];
             spikeFreqChange = [spikeFreqChange 1000*(mean(met.spikeNum(:,10))-mean(met.spikeNum(:,1)))/met.pulseWidth];
+%             spikeFreqChange = [spikeFreqChange mean(met.spikeNum(:,10))-mean(met.spikeNum(:,1))];
+            [peak,peakCh] = max(max(met.optoWaveform));
+            [~,peakSamp] = max(met.optoWaveform(:,peakCh));
+            tempWaveform = [zeros(1, 16-peakSamp), met.optoWaveform(max(1,peakSamp-15):min(peakSamp+25,size(met.optoWaveform,1)),peakCh)', zeros(1, peakSamp+25 - size(met.optoWaveform,1))];
+            waveforms = [waveforms; tempWaveform/peak];
         end
     end 
     
 end
-
+%%
+% pca of spikeWaveform
+m = mean(waveforms,1);
+waveforms = waveforms - mean(waveforms,1);
+%%
+[coeff,score,latent, ~, explained, mu] = pca(waveforms);
 figure;
-matrix = [baselineFreq' firstSpikeFreq' firstSpikeLat' spikeLatChange' spikeFreqChange' width'];
-names = {'baselineFreq', 'firstSpikeFreq', 'firstSpikeLat', 'spikeLatChange', 'spikeFreqChange', 'width'};
-scatterAll(matrix, names, 7);
+matrix = [baselineFreq' firstSpikeFreq' firstSpikeLat' spikeLatChange' spikeFreqChange' width' score(:,1) score(:,2)];
+names = {'baselineFreq', 'firstSpikeFreq', 'firstSpikeLat', 'spikeLatChange', 'spikeFreqChange', 'width','PC1', 'PC2'};
+scatterAll(matrix, names, 7,'c');
 
 %%  lick distribution
 animalName = 'ZS062';

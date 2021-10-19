@@ -96,8 +96,8 @@ if p.Results.varFlag
         tmpQ_L = [tmpQ_L tmpStruct{currS}.Q(:,1)];
         tmpQ_R = [tmpQ_R tmpStruct{currS}.Q(:,2)];
     end
-    tmpL_Q(:,infInds) = NaN;
-    tmpR_Q(:,infInds) = NaN;
+    tmpQ_L(:,infInds) = NaN;
+    tmpQ_R(:,infInds) = NaN;
     t.Q(:,1) = nanmean(tmpQ_L,2);
     t.Q(:,2) = nanmean(tmpQ_R,2);
 else

@@ -9,7 +9,7 @@ p.addParameter('modelName', '5params');
 p.addParameter('binSize', 300)% in ms  
 p.addParameter('stepSize', 100)
 p.addParameter('tb', 1)% in s
-p.addParameter('tf', 4)% in s
+p.addParameter('tf', 2)% in s
 p.addParameter('saveFigFlag', 1);
 p.parse(varargin{:});
 
@@ -158,7 +158,7 @@ Qdiff = abs(Q(1:end-1,2)-Q(1:end-1,1));
 % total value
 Qsum = sum(Q(1:end-1,:),2);
 % prepe
-prePe = [NaN; pe(1:end-1)'];
+prePe = [NaN; pe(1:end-1)];
 
 %time in session
 timeTemp = [sessionData(responseInds).CSon] - sessionData(responseInds(1)).CSon;
@@ -238,8 +238,8 @@ end
 %% zscore all varialbles
 % pe = outcome - probC';
 hmm = double(os.hmmStates==1)';
-combineMat = [pe', svs', pe'.*svs'];
-regressors = {'pe', 'svs', 'pe*svs'};
+combineMat = [pe, svs', pe.*svs', os.lickInds];
+regressors = {'pe', 'svs', 'pe*svs', 'lick'};
 for k = 1:size(combineMat,2)
     combineMat(~isnan(combineMat(:,k)),k) = zscore(combineMat(~isnan(combineMat(:,k)),k),0,1);
 end
@@ -309,112 +309,114 @@ for i = 1:length(clust)
     %% bin no.spike by pe
     numBins = 10; % bins in pe
     width = 1000; %in ms
+    startTime = 300;
+    endTime = startTime + width;
     % decide start of the time windows
-    solenoidTimeEnd = max([sessionData(responseInds).CSon] + 3100 - [sessionData(responseInds).respondTime]); % 3600 ms is 500ms after sol coming back after 3100ms
-    solenoidTimeStart = min([sessionData(responseInds).CSon] + 3100 - [sessionData(responseInds).respondTime]);
-    
-    peInd = find(contains(regressors,'pe'));
-    if ~isempty(peInd) % if pe is regressor
-        sigIndEarly = find(sum(sigs(1:end-1,peInd+1),2)>0 & sum(sigs(2:end,peInd+1),2)>0 & slideTime(1:end-1)'<solenoidTimeStart & slideTime(1:end-1)'>os.rwdDelay); 
-        if ~isempty(sigIndEarly) % if any significance
-            peEffect = sum(squeeze(abs(coeff(sigIndEarly,peInd+1,1))),2);
-            [~,maxInd] = max(peEffect);
-            startTime = max(midPoints(sigIndEarly(maxInd)) - 0.5*width, 1000*p.Results.tb + os.rwdDelay);
-        else 
-            startTime = 1000*p.Results.tb + os.rwdDelay;
-        end
-        endTime  = min(startTime+width, solenoidTimeStart+1000*p.Results.tb);
-
-        sigIndLate = find(sum(sigs(:,peInd+1),2)>0 & slideTime' > solenoidTimeEnd & slideTime'<1000*p.Results.tf);
-        if ~isempty(sigIndLate)
-            peLateEffect = sum(squeeze(abs(coeff(sigIndLate,peInd+1,1))),2);
-            [~,maxInd] = max(peLateEffect);
-            startTimeLate = max(midPoints(sigIndLate(maxInd)) - 0.5*width, solenoidTimeEnd + 1000*p.Results.tb);
-        else 
-            startTimeLate = solenoidTimeEnd + 1000*p.Results.tb;
-        end
-        endTimeLate  = min(startTimeLate+width, 1000*(p.Results.tb+p.Results.tf));
-    else
-        startTime = 1000*p.Results.tb + os.rwdDelay;
-        endTime  = min(startTime+width, solenoidTimeStart+1000*p.Results.tb);
-        startTimeLate = solenoidTimeEnd + 1000*p.Results.tb;
-        endTimeLate  = min(startTimeLate+width, 1000*(p.Results.tb+p.Results.tf));
-    end
-    spikeCounts = zscore(nansum(allTrial_spikeMatx_choice(:,startTime:endTime),2)*1000/(width));
-    spikeCountsLate = zscore(nansum(allTrial_spikeMatx_choice(:,startTimeLate:endTimeLate),2)*1000/(width));
-    %% caculate on both sides
+%     solenoidTimeEnd = max([sessionData(responseInds).CSon] + 3100 - [sessionData(responseInds).respondTime]); % 3600 ms is 500ms after sol coming back after 3100ms
+%     solenoidTimeStart = min([sessionData(responseInds).CSon] + 3100 - [sessionData(responseInds).respondTime]);
+%     
+%     peInd = find(contains(regressors,'pe'));
+%     if ~isempty(peInd) % if pe is regressor
+%         sigIndEarly = find(sum(sigs(1:end-1,peInd+1),2)>0 & sum(sigs(2:end,peInd+1),2)>0 & slideTime(1:end-1)'<solenoidTimeStart & slideTime(1:end-1)'>os.rwdDelay); 
+%         if ~isempty(sigIndEarly) % if any significance
+%             peEffect = sum(squeeze(abs(coeff(sigIndEarly,peInd+1,1))),2);
+%             [~,maxInd] = max(peEffect);
+%             startTime = max(midPoints(sigIndEarly(maxInd)) - 0.5*width, 1000*p.Results.tb + os.rwdDelay);
+%         else 
+%             startTime = 1000*p.Results.tb + os.rwdDelay;
+%         end
+%         endTime  = min(startTime+width, solenoidTimeStart+1000*p.Results.tb);
+% 
+%         sigIndLate = find(sum(sigs(:,peInd+1),2)>0 & slideTime' > solenoidTimeEnd & slideTime'<1000*p.Results.tf);
+%         if ~isempty(sigIndLate)
+%             peLateEffect = sum(squeeze(abs(coeff(sigIndLate,peInd+1,1))),2);
+%             [~,maxInd] = max(peLateEffect);
+%             startTimeLate = max(midPoints(sigIndLate(maxInd)) - 0.5*width, solenoidTimeEnd + 1000*p.Results.tb);
+%         else 
+%             startTimeLate = solenoidTimeEnd + 1000*p.Results.tb;
+%         end
+%         endTimeLate  = min(startTimeLate+width, 1000*(p.Results.tb+p.Results.tf));
+%     else
+%         startTime = 1000*p.Results.tb + os.rwdDelay;
+%         endTime  = min(startTime+width, solenoidTimeStart+1000*p.Results.tb);
+%         startTimeLate = solenoidTimeEnd + 1000*p.Results.tb;
+%         endTimeLate  = min(startTimeLate+width, 1000*(p.Results.tb+p.Results.tf));
+%     end
+    spikeCounts = zscore(nansum(allTrial_spikeMatx_choice(:,startTime+p.Results.tb*1000:endTime+p.Results.tb*1000),2)*1000/(width));
+%     spikeCountsLate = zscore(nansum(allTrial_spikeMatx_choice(:,startTimeLate:endTimeLate),2)*1000/(width));
+     %% caculate on both sides
     edges = binEqualSize(pe, numBins);
     spikeMeans = zeros(numBins,1);
     spikeSems = zeros(numBins,1);
     peMeans = zeros(numBins,1);
-    spikeMeansLate = zeros(numBins,1);
-    spikeSemsLate = zeros(numBins,1);
+%     spikeMeansLate = zeros(numBins,1);
+%     spikeSemsLate = zeros(numBins,1);
     for k = 1:numBins
         if k < numBins
             spikeNumsTemp = spikeCounts(pe >= edges(k) & pe < edges(k+1));
-            spikeNumsTempLate = spikeCountsLate(pe >= edges(k) & pe < edges(k+1));
+%             spikeNumsTempLate = spikeCountsLate(pe >= edges(k) & pe < edges(k+1));
             peMeans(k) = mean(pe(pe >= edges(k) & pe < edges(k+1)));
         else
             spikeNumsTemp = spikeCounts(pe >= edges(k) & pe <= edges(k+1));
-            spikeNumsTempLate = spikeCountsLate(pe >= edges(k) & pe <= edges(k+1));
+%             spikeNumsTempLate = spikeCountsLate(pe >= edges(k) & pe <= edges(k+1));
             peMeans(k) = mean(pe(pe >= edges(k) & pe <= edges(k+1)));
         end
         spikeMeans(k) = mean(spikeNumsTemp);
-        spikeMeansLate(k) = mean(spikeNumsTempLate);
+%         spikeMeansLate(k) = mean(spikeNumsTempLate);
         spikeSems(k) = sem(spikeNumsTemp);
-        spikeSemsLate(k) = sem(spikeNumsTempLate);
+%         spikeSemsLate(k) = sem(spikeNumsTempLate);
     end
     
     %% separate left
     peL = pe(os.lickL_Inds);
     spikeCountsL = spikeCounts(os.lickL_Inds);
-    spikeCountsLLate = spikeCountsLate(os.lickL_Inds);
+%     spikeCountsLLate = spikeCountsLate(os.lickL_Inds);
     edgesL = binEqualSize(peL, numBins);
     spikeMeansL = zeros(numBins,1);
     spikeSemsL = zeros(numBins,1);
-    spikeMeansLLate = zeros(numBins,1);
-    spikeSemsLLate = zeros(numBins,1);
+%     spikeMeansLLate = zeros(numBins,1);
+%     spikeSemsLLate = zeros(numBins,1);
     peMeansL = zeros(numBins,1);
     for k = 1:numBins
         if k < numBins
             spikeNumsTemp = spikeCountsL(peL >= edgesL(k) & peL < edgesL(k+1));
-            spikeNumsTempLate = spikeCountsLLate(peL >= edgesL(k) & peL < edgesL(k+1));
+%             spikeNumsTempLate = spikeCountsLLate(peL >= edgesL(k) & peL < edgesL(k+1));
             peMeansL(k) = mean(peL(peL >= edgesL(k) & peL < edgesL(k+1)));
         else
             spikeNumsTemp = spikeCountsL(peL >= edgesL(k) & peL <= edgesL(k+1));
-            spikeNumsTempLate = spikeCountsLLate(peL >= edgesL(k) & peL <= edgesL(k+1));
+%             spikeNumsTempLate = spikeCountsLLate(peL >= edgesL(k) & peL <= edgesL(k+1));
             peMeansL(k) = mean(peL(peL >= edgesL(k) & peL <= edgesL(k+1)));
         end
         spikeMeansL(k) = mean(spikeNumsTemp);
-        spikeMeansLLate(k) = mean(spikeNumsTempLate);
+%         spikeMeansLLate(k) = mean(spikeNumsTempLate);
         spikeSemsL(k) = sem(spikeNumsTemp);
-        spikeSemsLLate(k) = sem(spikeNumsTempLate);
+%         spikeSemsLLate(k) = sem(spikeNumsTempLate);
     end
     
     %% separate right
     peR = pe(os.lickR_Inds);
     spikeCountsR = spikeCounts(os.lickR_Inds);
-    spikeCountsRLate = spikeCountsLate(os.lickR_Inds);
+%     spikeCountsRLate = spikeCountsLate(os.lickR_Inds);
     edgesR = binEqualSize(peR, numBins);
     spikeMeansR = zeros(numBins,1);
     spikeSemsR = zeros(numBins,1);
     peMeansR = zeros(numBins,1);
-    spikeMeansRLate = zeros(numBins,1);
-    spikeSemsRLate = zeros(numBins,1);
+%     spikeMeansRLate = zeros(numBins,1);
+%     spikeSemsRLate = zeros(numBins,1);
     for k = 1:numBins
         if k < numBins
             spikeNumsTemp = spikeCountsR(peR >= edgesR(k) & peR < edgesR(k+1));
-            spikeNumsTempLate = spikeCountsRLate(peR >= edgesR(k) & peR < edgesR(k+1));
+%             spikeNumsTempLate = spikeCountsRLate(peR >= edgesR(k) & peR < edgesR(k+1));
             peMeansR(k) = mean(peR(peR >= edgesR(k) & peR < edgesR(k+1)));
         else
             spikeNumsTemp = spikeCountsR(peR >= edgesR(k) & peR <= edgesR(k+1));
-            spikeNumsTempLate = spikeCountsRLate(peR >= edgesR(k) & peR <= edgesR(k+1));
+%             spikeNumsTempLate = spikeCountsRLate(peR >= edgesR(k) & peR <= edgesR(k+1));
             peMeansR(k) = mean(peR(peR >= edgesR(k) & peR <= edgesR(k+1)));
         end
         spikeMeansR(k) = mean(spikeNumsTemp);
-        spikeMeansRLate(k) = mean(spikeNumsTempLate);
+%         spikeMeansRLate(k) = mean(spikeNumsTempLate);
         spikeSemsR(k) = sem(spikeNumsTemp);
-        spikeSemsRLate(k) = sem(spikeNumsTempLate);        
+%         spikeSemsRLate(k) = sem(spikeNumsTempLate);        
     end
     
     %% plots 
@@ -458,7 +460,7 @@ for i = 1:length(clust)
     line(minmax(x), [0 0],'Color', [0.2 0.2 0.2], 'LineStyle','--')
     line([0 0], 1.2*[min(coeff(:,:,2),[],'all'),max(coeff(:,:,3),[],'all')],'Color', [0.2 0.2 0.2], 'LineStyle','--')
     line([os.rwdDelay os.rwdDelay], 1.2*[min(coeff(:,:,2),[],'all'),max(coeff(:,:,3),[],'all')],'Color', [1 0 0], 'LineStyle','--')
-    line([startTime-1000*p.Results.tb endTime-1000*p.Results.tb], [max(coeff(:,2:end,3),[],'all'),max(coeff(:,2:end,3),[],'all')],'Color', [1 0 0], 'LineWidth',4)
+    line([startTime endTime], [max(coeff(:,2:end,3),[],'all'),max(coeff(:,2:end,3),[],'all')],'Color', [1 0 0], 'LineWidth',4)
 %     line([startTimeLate-1000*p.Results.tb endTimeLate-1000*p.Results.tb],[max(coeff(:,2:end,3),[],'all'),max(coeff(:,2:end,3),[],'all')],'Color', [0 0 1], 'LineWidth',4)
     ylim([1.2*min(coeff(:,2:end,2),[],'all') 1.2*max(coeff(:,2:end,3),[],'all')]);
     xlim(minmax(x))

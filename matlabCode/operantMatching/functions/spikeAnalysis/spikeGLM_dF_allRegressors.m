@@ -103,7 +103,7 @@ else
 end
 rightSide = zeros(length(choice),1);
 rightSide(os.lickR_Inds) = 1;
-choiceConf = 2*t.probChoice - 1;
+????????choiceConf = 2*t.probChoice - 1;
 pe = t.pe;
 dawExp = double(t.probChoice <= 0.5);
 hmm = double(os.hmmStates==1)';

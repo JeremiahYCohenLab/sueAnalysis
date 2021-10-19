@@ -125,7 +125,7 @@ for i = 1:length(behSessionData)
 
 %% Z-scored lick latency and Z-scored log lick latency (gets rid of preemptive licks)
 
-realID = lickLat>200; % take 200ms as the min lick latency
+realID = lickLat>50; % take 50ms as the min lick latency
 lickLatZ = NaN(1, length(allChoices));
 lickLatLog = NaN(1,length(lickLat));
 lickLatLogZ = NaN(1,length(lickLat));
@@ -206,7 +206,7 @@ end
 
 glm_rwd = fitglm([rwdMatx]', allChoice_R,'distribution','binomial','link','logit'); 
 glm_choice = fitglm([choiceMatx]', allChoice_R, 'distribution','binomial','link','logit');
-glm_rwdANDchoice = fitglm([rwdMatx; choiceMatx]', allChoice_R, 'distribution','binomial','link','logit');
+% glm_rwdANDchoice = fitglm([rwdMatx; choiceMatx]', allChoice_R, 'distribution','binomial','link','logit');
 
 
 %% use exponential decay fit to beta values from trial-wise logistic regression to smooth reward hist

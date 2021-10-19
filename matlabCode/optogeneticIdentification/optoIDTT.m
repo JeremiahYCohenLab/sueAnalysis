@@ -167,7 +167,7 @@ for i = 1:length(sortedFiles)
     rawTraces = cell(p.Results.Trains,1);
     time = cell(p.Results.Trains,1);
     for j = 1:p.Results.Trains
-        rawTraces{j} = samp(ts_interp>laser(pulseInds(j))- tB & ts_interp<laser(pulseInds(j)+p.Results.Pulses-1) + tA); 
+        rawTraces{j} = AD2uV*samp(ts_interp>laser(pulseInds(j))- tB & ts_interp<laser(pulseInds(j)+p.Results.Pulses-1) + tA); 
         time{j} = (ts_interp(ts_interp>laser(pulseInds(j))- tB & ts_interp<laser(pulseInds(j)+p.Results.Pulses-1) + tA)-laser(pulseInds(j)))/1000000;
     end
     

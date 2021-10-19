@@ -5,13 +5,13 @@ p = inputParser;
 p.addParameter('cellName', ['all']);
 p.addParameter('plotFlag', 1);
 p.addParameter('maxTrial', 1000);
-p.addParameter('modelName','7params_absPePeAN_scale_int_bias_ord')
-% p.addParameter('modelName','5params')
+% p.addParameter('modelName','7params_absPePeAN_scale_int_bias_ord')
+p.addParameter('modelName','5params')
 p.addParameter('regressors', '1+pe+biasSide+pe*biasSide')
-p.addParameter('binSize', 1000)% in ms
-p.addParameter('stepSize', 1000)
-p.addParameter('tb', 1.7)% in s
-p.addParameter('tf', 3)% in s
+p.addParameter('binSize', 500)% in ms
+p.addParameter('stepSize', 200)
+p.addParameter('tb', 1.5)% in s 1.7
+p.addParameter('tf', 1.5)% in s
 p.addParameter('saveFigFlag', 1);
 p.parse(varargin{:});
 populationSig = []; % the matrix with 1 for positive beta, -1 for negative beta
@@ -91,6 +91,7 @@ for ani = 1:length(animalNames)
         %% behavior preparation 
         % parse behavior
         os = behAnalysisNoPlot_opMD(session);
+        lickInds = os.lickInds;
         choice = os.allChoices';
         choice(choice<0) = 0;
         outcome = abs(os.allRewards)';
@@ -107,6 +108,7 @@ for ani = 1:length(animalNames)
             fprintf(['no good behavior in ' session '\n']);
             continue
         end
+        
         % diff value
         Qdiff = abs(t.Q(:,2)-t.Q(:,1));
         % total value
@@ -124,13 +126,27 @@ for ani = 1:length(animalNames)
         % chosen valie
         Qchosen  = zeros(length(choice),1);
         Qunchosen  = zeros(length(choice),1);
+        QchosenUpdate = NaN(length(choice),1);
         for j = 1:length(choice)
-            if choice(j)>0
-                Qchosen(j) = t.Q(j,2);
-                Qunchosen(j) = t.Q(j,1);
-            else
-                Qchosen(j) = t.Q(j,1);
-                Qunchosen(j) = t.Q(j,2);
+            if j < length(choice)
+                if choice(j)>0
+                    Qchosen(j) = t.Q(j,2);
+                    Qunchosen(j) = t.Q(j,1);
+                    QchosenUpdate(j) = t.Q(j+2);
+                else
+                    Qchosen(j) = t.Q(j,1);
+                    Qunchosen(j) = t.Q(j,2);
+                    QchosenUpdate(j) = t.Q(j+1);
+                end
+            else                
+                if choice(j)>0
+                    Qchosen(j) = t.Q(j,2);
+                    Qunchosen(j) = t.Q(j,1);
+                else
+                    Qchosen(j) = t.Q(j,1);
+                    Qunchosen(j) = t.Q(j,2);
+                end
+                
             end
         end
         % bias side
@@ -151,9 +167,9 @@ for ani = 1:length(animalNames)
             peBar = t.peBar;
             pePe = t.pePe;
             scPe = pe.*(1-peBar);
-            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, preITI, dawExp, scPe, aN, peBar, pePe);
+            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, lickInds, scPe, aN, peBar, pePe);
         else
-            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, preITI, dawExp);
+            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, lickInds);
         end
         names = tbl.Properties.VariableNames;
         % zscore all regressors
@@ -177,6 +193,9 @@ for ani = 1:length(animalNames)
                 prevTrial_spike = [];
             else
                 prevTrial_spikeInd = [sessionData(os.responseInds(k)-1).(spikeFields{clust})] > (sessionData(os.responseInds(k)).respondTime-p.Results.tb*1000);
+%                 if contains(session,'mZS061d20210326')
+%                     fprintf([num2str(k),'\n']);
+%                 end
                 prevTrial_spike = sessionData(os.responseInds(k)-1).(spikeFields{clust})(prevTrial_spikeInd) - sessionData(os.responseInds(k)).respondTime;
             end
 
@@ -327,9 +346,10 @@ end
 
 for i = 1:length(midPoints)
     titleStr = sprintf('From %d To %d', edges(i), edges(i+1));
-    scatterAll(squeeze(populationCoeffs(i,:,:))', regressors,7);
+    figure;
+    scatterAll(squeeze(populationCoeffs(i,:,:))', regressors,7,'m');
     suptitle(titleStr)
-end
+end  
 
 
 

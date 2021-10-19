@@ -6,23 +6,29 @@ p.addParameter('revForFlag', 0);
 p.addParameter('bernFlag', 1);
 p.addParameter('nonfixedParams', 0);
 p.addParameter('fixedParams', []);
-p.addParameter('paramNames',{'aNmin', 'aP', 'aF', 'aPE', 'v', 'beta'}); % animal level
-p.addParameter('modelName', '7params_absPePeAN_scale_int_bias_ord');
-% p.addParameter('paramNames',{'aN', 'aP', 'aF', 'beta'}); % animal level
-% p.addParameter('modelName', '5params');
-p.addParameter('iter', 15000);
+% p.addParameter('paramNames',{'aNmin', 'aP', 'aF', 'aPE', 'v', 'beta'}); % animal level
+% p.addParameter('modelName', '7params_absPePeAN_scale_int_bias_ord');
+p.addParameter('modelName', '5params');
+% p.addParameter('modelName', 'vkf_fixV_kappa');
+p.addParameter('iter', 10000);
 p.addParameter('warmup', []);
 p.addParameter('saveFlag', 1);
-p.addParameter('maxTrial', 500);
+p.addParameter('maxTrial', 1000);
 p.addParameter('numChains', 6);
+p.addParameter('simFlag', 0);
 p.parse(varargin{:});
 
+paramNames = getParamNames_dF(p.Results.modelName,0);
 if ~p.Results.nonfixedParams
-    paramInds = 1:length(p.Results.paramNames);
+    paramInds = 1:length(paramNames);
     fullName = ['stan_qLearning_' p.Results.modelName '.stan'];
 else
-    paramInds = find(~contains(p.Results.paramNames, p.Results.nonfixedParams));
+    paramInds = find(~contains(paramNames, p.Results.nonfixedParams));
     fullName = ['stan_qLearning_' p.Results.modelName '_' p.Results.nonfixedParams '.stan'];
+end
+
+if contains(p.Results.modelName, 'vkf')
+    fullName = ['stan_' p.Results.modelName '.stan'];
 end
 
 if isempty(p.Results.warmup)
@@ -32,64 +38,113 @@ else
 end
 
 [root, sep] = currComputer();
-if p.Results.bernFlag
-    savePath = [root sheet sep sheet 'sorted' sep 'stan' sep 'bernoulli' sep p.Results.modelName sep category sep];
-else
-    savePath = [root sheet sep sheet 'sorted' sep 'stan' sep p.Results.modelName sep category sep];
-end
-if ~exist(savePath)
-    mkdir(savePath);
-end
 
-[~, dayList, ~] = xlsread([root xlFile], sheet);
-[~,col] = find(contains(dayList, category) == 1);
-% [~,col] = find(~cellfun(@isempty,strfind(dayList, category)) == 1);
-dayList = dayList(2:end,col);
-endInd = find(cellfun(@isempty,dayList),1);
-if ~isempty(endInd)
-    dayList = dayList(1:endInd-1,:);
-end
-
-for i = 1:length(dayList)
-    sessionName = dayList{i};
-    filename = [sessionName '.asc'];
-    %fprintf([sessionName '\n']);
-    behSessionData = loadBehavioralData(filename, p.Results.revForFlag);
-    behavStruct = parseBehavioralData(behSessionData, p.Results.maxTrial);
-
-    choiceTmp{i} = behavStruct.allChoices;
+if p.Results.simFlag
     if p.Results.bernFlag
-        choiceTmp{i}(choiceTmp{i} == -1) = 0;
+        savePath = [root 'sim' sep 'stan' sep 'bernoulli' sep p.Results.modelName sep];
     else
-        choiceTmp{i} = choiceTmp{i} + 1;
-        choiceTmp{i}(choiceTmp{i} == 0) = 1;
+        savePath = [root 'sim' sep 'stan' sep p.Results.modelName sep];
     end
-    outcomeTmp{i} = abs(behavStruct.allRewards); 
-    ITItemp{i} = behavStruct.timeBtwn;
-    Tsesh(i,1) = length(outcomeTmp{i});
-end
+    
+    if ~exist(savePath)
+        mkdir(savePath);
+    end
+    iteration = 50;
+    % generate random paramters
+    params = zeros(iteration, 4);
+    params(:,1) = 0.9*betarnd(3, 5, iteration,1)+0.1; % lambda [0 1]
+    params(:,2) = 10*betarnd(5, 2, iteration,1); % v0 [0 5]
+%     params(:,2) = 10*5/7 * ones(iteration,1); % v0 [0 5]
+    params(:,3) = 10*(0.9*betarnd(4, 2, iteration,1)+0.1); % omega [0 5]
+    params(:,4) = 0.7*betarnd(6, 3, iteration,1)+0.3; % beta [0 1]
+    params(:,5) = 0.9*betarnd(6, 3, iteration,1)+0.1; % aF/kappa [0 1]
+    % simulation
+    choice = zeros(iteration, p.Results.maxTrial);
+    outcome = zeros(iteration, p.Results.maxTrial);
+    for sim = 1:iteration
+        %simulation
+        if contains(p.Results.modelName, 'aF')
+            [~, outcomeSim, choiceSim] = vkfSim_aF('params', params(sim,:),'randomSeed', sim,'maxTrials', p.Results.maxTrial, 'plotFlag', 0);
+        else
+            if contains(p.Results.modelName, 'kappa')
+               [~, outcomeSim, choiceSim] = vkfSim_kappa('params', params(sim,:),'randomSeed', sim,'maxTrials', p.Results.maxTrial, 'plotFlag', 0); 
+            else
+                [~, outcomeSim, choiceSim] = vkfSim('params', params(sim,:),'randomSeed', sim,'maxTrials', p.Results.maxTrial, 'plotFlag', 0);
+            end
+        end
+        choiceSim(choiceSim<0) = 0;
+        outcomeSim = abs(outcomeSim);
+        choice(sim,:) = choiceSim;
+        outcome(sim,:) = outcomeSim;
+    end
+    
+    T = p.Results.maxTrial;
+    N = iteration;
+    Tsesh = p.Results.maxTrial*ones(iteration,1);
+    
+    session_dat = struct('N',N,'T',T, 'Tsesh', Tsesh, 'choice', choice, 'outcome', outcome);
+else
+    if p.Results.bernFlag
+        savePath = [root sheet sep sheet 'sorted' sep 'stan' sep 'bernoulli' sep p.Results.modelName sep category sep];
+    else
+        savePath = [root sheet sep sheet 'sorted' sep 'stan' sep p.Results.modelName sep category sep];
+    end
+    if ~exist(savePath)
+        mkdir(savePath);
+    end
+    [~, dayList, ~] = xlsread([root xlFile], sheet);
+    [~,col] = find(contains(dayList, category) == 1);
+    % [~,col] = find(~cellfun(@isempty,strfind(dayList, category)) == 1);
+    dayList = dayList(2:end,col);
+    endInd = find(cellfun(@isempty,dayList),1);
+    if ~isempty(endInd)
+        dayList = dayList(1:endInd-1,:);
+    end
 
-T = max(Tsesh);
-N = length(dayList);
-choice = zeros(N, T);
-outcome = zeros(N, T);
-ITI = zeros(N,T);
+    for i = 1:length(dayList)
+        sessionName = dayList{i};
+        filename = [sessionName '.asc'];
+        %fprintf([sessionName '\n']);
+        behSessionData = loadBehavioralData(filename, p.Results.revForFlag);
+        behavStruct = parseBehavioralData(behSessionData, p.Results.maxTrial);
 
-for i = 1:N
-    choice(i, 1:Tsesh(i)) = choiceTmp{i};
-    outcome(i, 1:Tsesh(i)) = outcomeTmp{i};
-    ITI(i, 1:Tsesh(i)) = ITItemp{i};
+        choiceTmp{i} = behavStruct.allChoices;
+        if p.Results.bernFlag
+            choiceTmp{i}(choiceTmp{i} == -1) = 0;
+        else
+            choiceTmp{i} = choiceTmp{i} + 1;
+            choiceTmp{i}(choiceTmp{i} == 0) = 1;
+        end
+        outcomeTmp{i} = abs(behavStruct.allRewards); 
+        ITItemp{i} = behavStruct.timeBtwn;
+        Tsesh(i,1) = length(outcomeTmp{i});
+    end
+
+    T = max(Tsesh);
+    N = length(dayList);
+    choice = zeros(N, T);
+    outcome = zeros(N, T);
+    ITI = zeros(N,T);
+
+    for i = 1:N
+        choice(i, 1:Tsesh(i)) = choiceTmp{i};
+        outcome(i, 1:Tsesh(i)) = outcomeTmp{i};
+        ITI(i, 1:Tsesh(i)) = ITItemp{i};
+    end
+    choice = choice(:,1:min([T p.Results.maxTrial]));
+    outcome = outcome(:,1:min([T p.Results.maxTrial]));
+    ITI = ITI(:,1:min([T p.Results.maxTrial]));
+    Tsesh(Tsesh>p.Results.maxTrial) = p.Results.maxTrial;
+    T = min([T p.Results.maxTrial]);
+    
+    session_dat = struct('N',N,'T',T, 'Tsesh', Tsesh, 'choice', choice, 'outcome', outcome, 'ITI', ITI);
 end
-choice = choice(:,1:min([T p.Results.maxTrial]));
-outcome = outcome(:,1:min([T p.Results.maxTrial]));
-ITI = ITI(:,1:min([T p.Results.maxTrial]));
-Tsesh(Tsesh>p.Results.maxTrial) = p.Results.maxTrial;
-T = min([T p.Results.maxTrial]);
+%%
 %create data structure to feed into stan model
-session_dat = struct('N',N,'T',T, 'Tsesh', Tsesh, 'choice', choice, 'outcome', outcome, 'ITI', ITI);
+
 if p.Results.nonfixedParams
     for j = 1:length(paramInds)
-        session_dat.(p.Results.paramNames{paramInds(j)}) = p.Results.fixedParams(:,paramInds(j));
+        session_dat.(paramNames{paramInds(j)}) = p.Results.fixedParams(:,paramInds(j));
     end
 end
 
@@ -115,12 +170,12 @@ while doneFlag == 0
     fclose(fid);
     tmpCount = find(~cellfun(@isempty,strfind(tmp{1}, '[100%]')) == 1);
     if ~isempty(tmpCount)
-        if length(tmpCount) == length(baseCount) + 6
+        if length(tmpCount) == length(baseCount) + p.Results.numChains
             doneFlag = 1;
         end
     end
 end
-delete([savePath 'diaryTmp.txt'])
+    delete([savePath 'diaryTmp.txt'])
 fit.block();
 pause(30);
 %extract samples from the stan fit object
@@ -144,7 +199,7 @@ else
     allSamples = [];
     edges = cell(1,length(paramInds));
     for i = 1:length(paramInds)
-        tmp = eval(['samples.mu_' p.Results.paramNames{i}]);
+        tmp = eval(['samples.mu_' paramNames{i}]);
         allSamples = [allSamples tmp];
         edges{i} = linspace(min(tmp), max(tmp),40);
     end
@@ -163,7 +218,7 @@ end
 
 
 %plot the distributions of the mouse-level parameters
- figure2('position', [0 0 800 400]); 
+pFig = figure2('position', [0 0 800 400]); 
 if p.Results.nonfixedParams
     histogram(eval(['samples.mu_' p.Results.nonfixedParams]), 100,...
             'Normalization', 'Probability', 'FaceColor', 'k')
@@ -176,31 +231,75 @@ else
     colors = [linspace(blue(1),purp(1),numParams)', linspace(blue(2),purp(2),numParams)', linspace(blue(3),purp(3),numParams)'];
     for i = 1:numParams
         subplot(1,numParams,i); hold on;
-        histogram(eval(['samples.mu_' p.Results.paramNames{paramInds(i)}]) , 100,...
+        histogram(eval(['samples.mu_' paramNames{paramInds(i)}]) , 100,...
             'Normalization', 'Probability', 'FaceColor', colors(i,:), 'EdgeColor', 'none')
 %         line([paramEsts(i) paramEsts(i)], [0 0.05], 'color', [0 0 0]);
         set(gca,'tickdir', 'out') 
-        title(p.Results.paramNames{paramInds(i)})
+        title(paramNames{paramInds(i)})
     end
 end
 titleTxt = strrep([sheet ' - ' p.Results.modelName], '_', ' ');
 suptitle(titleTxt);
 set(gcf,'Renderer', 'Painters')
 
+dFig = figure;
+for currPy = 1:numParams
+    tmpY = eval(['samples.mu_' paramNames{currPy}]);
+    tmpY_d = tmpY(logical(samples.divergent__));
+    tmpY = tmpY(~logical(samples.divergent__));
+    for currPx = 1:numParams
+        subplot(numParams,numParams,[(currPy-1)*numParams + currPx]); hold on;
+        
+        if currPy == currPx
+            h = histogram(tmpY, 30, 'FaceColor', 'c', 'normalization', 'probability');
+            histogram(tmpY_d, h.BinEdges, 'FaceColor', 'm', 'normalization', 'probability')
+        else       
+            tmpX = eval(['samples.mu_' paramNames{currPx}]);
+            tmpX_d = tmpX(logical(samples.divergent__));
+            tmpX = tmpX(~logical(samples.divergent__));
+            scatter(tmpX, tmpY, [], 'c')
+            scatter(tmpX_d, tmpY_d, [], 'm')
+        end
+        
+        if currPx == 1
+            ylabel(paramNames{currPy})
+        end
+        if currPy == numParams
+            xlabel(paramNames{currPx})
+        end
+        
+    end
+end
+titleTxt = [titleTxt ' (divergence rate = ' num2str(sum(samples.divergent__)/length(samples.divergent__)) ')'];
+suptitle(titleTxt);
+set(gcf, 'renderer', 'painters', 'position', [-1919 41 1920 963])
+
+
 if p.Results.saveFlag
     %save the full samples
-    if p.Results.nonfixedParams
-        sampFile = [sheet category, '_', p.Results.modelName, '_', p.Results.nonfixedParams];
+    if p.Results.simFlag
+        sampFile = ['sim_', p.Results.modelName];
         saveFile = [sampFile '.mat'];
         eval([sampFile,  ' = samples;']);
+        saveFigurePDF(pFig,[savePath p.Results.modelName  '_posteriors'])
+        saveFigurePDF(dFig,[savePath p.Results.modelName  '_divergence'])
+        save([savePath saveFile], sampFile, 'paramEsts', 'params', 'outcome', 'choice');
     else
-        sampFile = [sheet category '_', p.Results.modelName];
-        saveFile = [sampFile '.mat'];
-        eval([sampFile,  ' = samples;']);
+        if p.Results.nonfixedParams
+            sampFile = [sheet category, '_', p.Results.modelName, '_', p.Results.nonfixedParams];
+            saveFile = [sampFile '.mat'];
+            eval([sampFile,  ' = samples;']);
+        else
+            sampFile = [sheet category '_', p.Results.modelName];
+            saveFile = [sampFile '.mat'];
+            eval([sampFile,  ' = samples;']);
+        end
+        saveFigurePDF(pFig,[savePath sheet category '_' p.Results.modelName  '_posteriors'])
+        saveFigurePDF(dFig,[savePath sheet category '_' p.Results.modelName  '_divergence'])
+        save([savePath saveFile], sampFile, 'paramEsts', 'dayList');
+        
     end
     %save([savePath saveFile], sampFile, 'paramEsts', 'dayList', 'tbl');
-    save([savePath saveFile], sampFile, 'paramEsts', 'dayList');
     
-    saveFigurePDF(gcf,[savePath sheet category '_' p.Results.modelName  '_posteriors'])
 end
     

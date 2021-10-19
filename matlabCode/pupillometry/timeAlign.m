@@ -8,9 +8,8 @@ errorThresh = 2; %no. of frames allowed for mis-alignment
 iter = 0;
 errorProp = NaN;
 csFT = NaN;
-pupilIdx = NaN;
 ratioMax = NaN;
-ledLLThresh = 0.995;
+ledLLThresh = 0.9999;
 ledDisThresh = 80;
 %% training set
 [root,sep] = currComputer;
@@ -45,7 +44,7 @@ iterMax = 0.2*length(behSessionData);
 %% load diameter and position
 videopath = [root animalName sep sessionFolder sep 'pupil'];
 list = dir(videopath);
-expression = ['^' session 'DLC' '\w*' '100000.csv' '$'];
+expression = ['^' session 'DLC' '\w*' '200000.csv' '$'];
 if isempty(find(~cellfun(@isempty, cellfun(@(x) regexp(x, expression), {list.name}, 'UniformOutput', false)), 1))
    fprintf([session ' no pupil video \n'])
    return
@@ -146,7 +145,7 @@ while length(error) > errorRate*length(csT) && iter < iterMax
     error = find(cs < length(cskernel) - errorThresh);
     iter = iter + 1;
 end
-pupilIdx = ~(cs < length(cskernel) - errorThresh);
+pupilIdx = ~(cs < length(cskernel) - errorThresh); %% well aligned ones
 if length(error) > errorRate*length(csT) && iter == iterMax
     iterMaxReach = true;
 end
@@ -221,12 +220,10 @@ for j = 1:length(qualInd)
     if cueFT(j)
         minF = max(1, min(cueFT(j) - 30, length(qualF)));
         maxF = min(cueFT(j) + 100, length(qualF));
-        minF;
-        maxF;
         qualInd(j) = sum(qualF(minF : maxF));% frame quality around the time of cue
     end
 end
-qualInd = find(qualInd > 125); 
+qualInd = find(qualInd > 125); % 125 out of 130 frames are good
 pupilInds = csplusInds(pupilInds);% convert from csplus indexing to all trial type indexing 
 qualplus = intersect(qualInd, pupilInds);% both good frame quality and good alignment
 lowqualCSplus = csplusInds(~pupilIdx);
@@ -235,11 +232,71 @@ qualminus = intersect(qualInd, csminusInds(~poorMinus));% good frame quality and
 qualInd = sort([qualplus, qualminus]);
 qualInd = ismember(1:length(cueFT),qualInd);
 FR = ratioMax;
+
+%% load diameter
+% load diameter
+expressionSkeleton = ['^' session 'DLC' '\w*' 'shuffle1_200000_skeleton.csv' '$'];
+skeleton = list(~cellfun(@isempty, cellfun(@(x) regexp(x, expressionSkeleton), {list.name}, 'UniformOutput', false))).name;
+diaRaw = csvread([videopath sep skeleton], 2, 0);
+qualF(end) = 1; % make sure not having a lot of NaN
+dia = interp1(find(qualF>0),diaRaw(qualF,2),1:length(diaRaw(:,2)));
+
+% % zscore based on reliability
+% m = sum(dia'.* positionRaw(:,4).*positionRaw(:,7))/sum(positionRaw(:,4).*positionRaw(:,7));
+% sd = sum((dia' - m).^2.*positionRaw(:,4).*positionRaw(:,7))/(sum(positionRaw(:,4).*positionRaw(:,7))-1);
+% sd = sqrt(sd);
+% diaZ = (dia-m)/sd;
+
+% zscoring
+diaZ = dia;
+diaZ(~isnan(dia)) = zscore(dia(~isnan(dia)));
+
+% put aligned pupil diameter together
+preLen = round(2*FR);
+postLen = round(10*FR);
+sessionPupilCue = nan(length(cueFT),preLen+postLen+1);
+sessionPupilCueZ = nan(length(cueFT),preLen+postLen+1);
+for i = 1:length(cueFT)
+    startF = max([1, cueFT(i)-preLen]);
+    if i==length(cueFT)
+        endF = min([length(ledLL), cueFT(i)+postLen]);
+    else
+        endF = min([cueFT(i)+postLen, cueFT(i+1)]);
+    end
+
+    sessionPupilCue(i, preLen+1-(cueFT(i)-startF):preLen+1) = dia(startF:cueFT(i));
+    sessionPupilCue(i, preLen+2:preLen+1+endF-cueFT(i)) = dia(cueFT(i)+1:endF);
+    
+    sessionPupilCueZ(i, preLen+1-(cueFT(i)-startF):preLen+1) = diaZ(startF:cueFT(i));
+    sessionPupilCueZ(i, preLen+2:preLen+1+endF-cueFT(i)) = diaZ(cueFT(i)+1:endF);
+end
+
+responseInds = find(~isnan([behSessionData.rewardTime]));
+lickLat = [behSessionData(responseInds).respondTime] - [behSessionData(responseInds).CSon];
+choiceFT = cueFT(responseInds) + round(FR*lickLat/1000);
+
+sessionPupilChoice = nan(length(choiceFT),preLen+postLen+1);
+sessionPupilChoiceZ = nan(length(choiceFT),preLen+postLen+1);
+for i = 1:length(choiceFT)
+    startF = max([1, choiceFT(i)-preLen]);
+    if i==length(choiceFT)
+        endF = min([length(ledLL), choiceFT(i)+postLen]);
+    else
+        endF = min([choiceFT(i)+postLen, choiceFT(i+1)]);
+    end
+
+    sessionPupilChoice(i, preLen+1-(choiceFT(i)-startF):preLen+1) = dia(startF:choiceFT(i));
+    sessionPupilChoice(i, preLen+2:preLen+1+endF-choiceFT(i)) = dia(choiceFT(i)+1:endF);
+    
+    sessionPupilChoiceZ(i, preLen+1-(choiceFT(i)-startF):preLen+1) = diaZ(startF:choiceFT(i));
+    sessionPupilChoiceZ(i, preLen+2:preLen+1+endF-choiceFT(i)) = diaZ(choiceFT(i)+1:endF);
+end
+
 if saveFlag
     if isempty(dir(savepath))
         mkdir(savepath)
     end
-    save([savepath session '_pupil.mat'], 'qualInd', 'cueFT', 'FR','iter','errorProp');
+    save([savepath session '_pupil.mat'], 'sessionPupilCue','sessionPupilCueZ', 'sessionPupilChoice','sessionPupilChoiceZ','qualInd', 'cueFT', 'FR','iter','errorProp');
 end
 
 

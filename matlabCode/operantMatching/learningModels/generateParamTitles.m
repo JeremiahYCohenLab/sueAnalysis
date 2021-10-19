@@ -29,6 +29,10 @@ for i = 1:length(paramNames)
             titles{i} = '$\sigma$';
         case 'pe'
             titles{i} = '$\delta$';
+        case 'omega'
+            titles{i} = '\omega';
+        case 'lambda'
+            titles{i} = '\lambda';
         otherwise
             titles{i} = paramNames{i};
     end

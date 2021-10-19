@@ -44,7 +44,7 @@ for currMod = 1:length(modelNames)
     hess = zeros(size(startValues, 1), size(startValues, 2), size(startValues, 2));
     numParam = size(startValues, 2);
 
-    A=[eye(size(startValues, 2)); -eye(size(startValues, 2))];
+    A = [eye(size(startValues, 2)); -eye(size(startValues, 2))];
     if strcmp(modelNames{currMod}, 'vkf')
         lb = [lambda_range(1); v0_range(1); omega_range(1); beta_range(1)];
         ub = [lambda_range(2); v0_range(2); omega_range(2); beta_range(2)];

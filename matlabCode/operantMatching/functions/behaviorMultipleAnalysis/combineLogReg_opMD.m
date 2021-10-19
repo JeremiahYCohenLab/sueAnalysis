@@ -6,7 +6,7 @@ p = inputParser;
 p.addParameter('revForFlag', 0)
 p.addParameter('numBins', 10)
 p.addParameter('plotFlag', 1);
-p.addParameter('maxTrials', 200);
+p.addParameter('maxTrials', 600);
 p.parse(varargin{:});
 
 
@@ -127,8 +127,8 @@ end
 %glm_rwdANDtime = fitglm([combinedRewardsMatx' combinedTimesMatx'], combinedAllChoice_R,'distribution','binomial','link','logit'); rsq{5} = num2str(round(glm_rwdANDtime.Rsquared.Adjusted*100)/100);
 %glm_rwdRate = fitglm([rwdRateMatx]', combinedAllChoice_R,'distribution','binomial','link','logit'); rsq{6} = num2str(round(glm_rwd.Rsquared.Adjusted*100)/100);
 glm_rwdNoRwd = fitglm([combinedRewardsMatx' combinedNoRewardsMatx'], combinedAllChoice_R,'distribution','binomial','link','logit'); rsq{7} = num2str(round(glm_rwdNoRwd.Rsquared.Adjusted*100)/100);
-glm_auto = fitglm([combinedRewardsMatx'+combinedNoRewardsMatx'], combinedAllChoice_R,'distribution','binomial','link','logit');
-glm_seshInd = fitglm([combinedRewardsMatx' combinedNoRewardsMatx' seshInd], combinedAllChoice_R,'distribution','binomial','link','logit');
+% glm_auto = fitglm([combinedRewardsMatx'+combinedNoRewardsMatx'], combinedAllChoice_R,'distribution','binomial','link','logit');
+% glm_seshInd = fitglm([combinedRewardsMatx' combinedNoRewardsMatx' seshInd], combinedAllChoice_R,'distribution','binomial','link','logit');
 %glm_all = fitglm([combinedRewardsMatx' combinedNoRewardsMatx' combinedChoicesMatx'], combinedAllChoice_R, 'distribution','binomial','link','logit');
 [fitresult, gof] = singleExpFit(glm_rwdNoRwd.Coefficients.Estimate(2:tMax+1), (1:tMax)');
 
