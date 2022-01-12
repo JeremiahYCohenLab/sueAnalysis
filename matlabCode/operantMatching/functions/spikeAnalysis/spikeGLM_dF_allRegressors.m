@@ -13,7 +13,7 @@ p.addParameter('stepSize', 100)
 p.addParameter('tb', 1)% in s
 p.addParameter('tf', 2.5)% in s
 p.addParameter('saveFigFlag', 0);
-p.addParameter('focusWin', [300 1800]);
+p.addParameter('focusWin', [300 1300]);
 p.parse(varargin{:});
 
 paramNames = getParamNames_dF(p.Results.modelName, 1);
@@ -103,7 +103,7 @@ else
 end
 rightSide = zeros(length(choice),1);
 rightSide(os.lickR_Inds) = 1;
-????????choiceConf = 2*t.probChoice - 1;
+choiceConf = 2*t.probChoice - 1;
 pe = t.pe;
 dawExp = double(t.probChoice <= 0.5);
 hmm = double(os.hmmStates==1)';
@@ -264,10 +264,11 @@ for i = 1:length(clust)
     end
     
     %% bin no.spike by target regressor
-    glm = figure;
-    screen = get(0,'Screensize');
-    screen(4) = screen(4) - 100;
-    set(glm, 'Position', screen);
+%     glm = figure;
+%     screen = get(0,'Screensize');
+%     screen(4) = screen(4) - 100;
+%     set(glm, 'Position', screen);
+    glm=figure2('position',[0 0 800 1600]);
     numBins = 10; % bins in target
     colors = cool(length(regressors));
     colorR = [1 0 1];

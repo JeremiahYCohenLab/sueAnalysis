@@ -6,7 +6,7 @@ p.addParameter('revForFlag',0)
 p.addParameter('plotFlag', 0)
 p.addParameter('binSize', 10000);
 p.addParameter('numBins', 20);
-p.addParameter('maxTrials', 400);
+p.addParameter('maxTrials', 1000);
 p.parse(varargin{:});
 
 [root, sep] = currComputer();
@@ -75,6 +75,7 @@ for i = 1: length(dayList)
     allRewards(logical(allReward_L)) = 1;
     timeInSesh = ([behSessionData(responseInds).CSon] - behSessionData(1).CSon) / (1000 * behSessionData(responseInds(end)).CSon - behSessionData(responseInds(1)).CSon);
     changeChoice = [0 abs(diff(allChoices)) > 0];
+%     fprintf([sessionName '\n'])
     s = behAnalysisNoPlot_opMD(sessionName);
     hmmStates = s.hmmStates(1:length(responseInds));
     timeBtwn = s.timeBtwn(1:length(responseInds));
@@ -183,9 +184,9 @@ for i = 1: length(dayList)
 end
 
 %linear regression model
-glm_rwdLick = fitlm([rwdMatx'], combinedLickLat);
-glm_rwdLickAll = fitlm([rwdMatx' noRwdMatx' combinedTimeInSesh' combinedChangeChoice' preITI'], combinedLickLat);
-tbl = table(combinedPreLick', rwdMatx(1,:)', noRwdMatx(1,:)', preITI',combinedLickLat', 'VariableNames', {'pre', 'rwd1', 'nRwd1', 'preITI', 'lickLat'});
+glm_rwdLick = fitlm([rwdMatx'], combinedLickLatZ);
+glm_rwdLickAll = fitlm([rwdMatx' noRwdMatx' combinedTimeInSesh' combinedChangeChoice' preITI'], combinedLickLatZ);
+tbl = table(combinedPreLick', combinedChangeChoice', rwdMatx(1,:)', noRwdMatx(1,:)', preITI',combinedLickLatZ', 'VariableNames', {'pre', 'sw', 'rwd1', 'nRwd1', 'preITI', 'lickLat'});
 mdl = stepwiselm(tbl,'interactions');
 
 if p.Results.plotFlag

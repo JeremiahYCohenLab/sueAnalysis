@@ -9,8 +9,8 @@ p.addParameter('maxTrial', 1000);
 p.addParameter('modelName','5params')
 p.addParameter('regressors', '1+pe+biasSide+pe*biasSide')
 p.addParameter('binSize', 500)% in ms
-p.addParameter('stepSize', 200)
-p.addParameter('tb', 1.5)% in s 1.7
+p.addParameter('stepSize', 250)
+p.addParameter('tb', 1.7)% in s 1.7
 p.addParameter('tf', 1.5)% in s
 p.addParameter('saveFigFlag', 1);
 p.parse(varargin{:});
@@ -91,7 +91,7 @@ for ani = 1:length(animalNames)
         %% behavior preparation 
         % parse behavior
         os = behAnalysisNoPlot_opMD(session);
-        lickInds = os.lickInds;
+%         lickInds = os.lickInds;
         choice = os.allChoices';
         choice(choice<0) = 0;
         outcome = abs(os.allRewards)';
@@ -103,6 +103,7 @@ for ani = 1:length(animalNames)
         % switch
         svs = zeros(length(os.responseInds),1);
         svs(os.changeChoice_Inds) = 1;
+        svsNext = [svs(2:end); NaN];
         [t,~,noSession] = getStanModelParams_samps(p.Results.modelName, [path sampFile '.mat'], 2000, 'sessionName', session);
         if noSession
             fprintf(['no good behavior in ' session '\n']);
@@ -167,9 +168,9 @@ for ani = 1:length(animalNames)
             peBar = t.peBar;
             pePe = t.pePe;
             scPe = pe.*(1-peBar);
-            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, lickInds, scPe, aN, peBar, pePe);
+            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, scPe, aN, peBar, pePe);
         else
-            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, lickInds);
+            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext);
         end
         names = tbl.Properties.VariableNames;
         % zscore all regressors
@@ -344,12 +345,12 @@ for k = 1:length(midPoints)
     end
 end
 
-for i = 1:length(midPoints)
-    titleStr = sprintf('From %d To %d', edges(i), edges(i+1));
-    figure;
-    scatterAll(squeeze(populationCoeffs(i,:,:))', regressors,7,'m');
-    suptitle(titleStr)
-end  
+% for i = 1:length(midPoints)
+%     titleStr = sprintf('From %d To %d', edges(i), edges(i+1)); 
+%     figure;
+%     scatterAll(squeeze(populationCoeffs(i,:,:))', regressors,7,'m');
+%     suptitle(titleStr)
+% end  
 
 
 

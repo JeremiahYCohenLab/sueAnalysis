@@ -1,0 +1,127 @@
+[33mcommit 0f1288c9a5659506c73f42044c2e824874f5db9e[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Wed Jan 12 17:18:57 2022 -0500
+
+    Delete RNN packge:wq
+
+[33mcommit 78f6c3830079a7fa9c2a65be64bb4c780d399663[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Wed Jan 12 16:43:22 2022 -0500
+
+    update 2022-01-1
+
+[33mcommit 86fae6f9daf0e19e2a922b3edc46bd921a824024[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Wed Jan 12 16:18:13 2022 -0500
+
+    2022-01-12 update
+
+[33mcommit cd3935d447ab05e64dc1c0da3087758a98ecb4aa[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Tue Oct 19 00:37:49 2021 -0400
+
+    added pupil analysis
+
+[33mcommit b7fb989320a0fe87df511d78abf1afc0fbb49d6c[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Fri Jun 11 20:14:01 2021 -0400
+
+    population neuron analysis
+
+[33mcommit ceca37aced830f78600391b55d33e1a4f08c6826[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Sat May 1 09:29:30 2021 -0400
+
+    batch qualtity check
+
+[33mcommit 37af72b582802ca6886542a5429397590fd84296[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Mon Apr 26 13:44:26 2021 -0400
+
+    04262021 update
+
+[33mcommit d7b7506541805df72acb7ce4d238f461ae1e000c[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Sat Mar 27 19:49:45 2021 -0400
+
+    spike raster update
+
+[33mcommit 2df09c326e1b1ff3c9e95c035192ea73c07faf3f[m
+Merge: d6f12ee cfe5d4b
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Thu Jan 14 21:22:00 2021 -0500
+
+    Merge branch 'master' of https://github.com/JeremiahYCohenLab/sueAnalysis
+
+[33mcommit d6f12ee8ca7780aa91337299a472f7d586f3b8dd[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Thu Jan 14 20:55:38 2021 -0500
+
+    spike detection
+
+[33mcommit cfe5d4b5f3b3d76ac28bea90f69606a89622482a[m
+Author: unknown <zhixiaosu@gmail.com>
+Date:   Thu Jan 14 20:50:53 2021 -0500
+
+    stage2 analysis
+
+[33mcommit 0d128727fe9c28a1cd424cb053676f135e8a0fed[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Wed Oct 28 15:01:04 2020 -0400
+
+    currComputer
+
+[33mcommit a6612505c9454495b94a33dd129968871d63a18f[m
+Merge: 5ab01ea b5a16e0
+Author: unknown <zhixiaosu@gmail.com>
+Date:   Sun Oct 25 19:25:14 2020 -0400
+
+    Merge branch 'master' of https://github.com/JeremiahYCohenLab/sueAnalysis
+
+[33mcommit 5ab01ea53f4a3aabcb8319e54878057a8e09e626[m
+Author: unknown <zhixiaosu@gmail.com>
+Date:   Sun Oct 25 19:17:33 2020 -0400
+
+    behavior code for stage2
+
+[33mcommit 5d4f854c53e6882be931536e85d860b696c76470[m
+Author: unknown <zhixiaosu@gmail.com>
+Date:   Sun Oct 25 19:14:01 2020 -0400
+
+    laser recalibration
+
+[33mcommit b5a16e0e2f010fa41af557f2a832d460654d84ef[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Sun Oct 25 19:07:57 2020 -0400
+
+    pupil analysis and drug inhibition
+
+[33mcommit ee151083a6171a011e15262fc5b41f29aca05acd[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Tue Mar 3 17:56:49 2020 -0500
+
+    pupil time align
+
+[33mcommit 2f9ca52f60df52fe9d1cb7e72081b75843bacbf6[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Fri Feb 21 14:41:50 2020 -0500
+
+    adjusted for rwdDelay
+
+[33mcommit 75cfe124585e7e002e39161a53072f6a81e94e93[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Wed Feb 19 17:10:52 2020 -0500
+
+    modified for rwdDelay
+
+[33mcommit 4d7d9fd03e53806517059f0856ad8fc4bd64212a[m
+Author: ZhixiaoSu <zhixiaosu@gmail.com>
+Date:   Wed Jan 15 20:08:27 2020 -0500
+
+    Added h1 tag
+
+[33mcommit afd570f68eb9a7ca966d63c6f32e07112775e7a2[m
+Author: ZhixiaoSu <37242111+ZhixiaoSu@users.noreply.github.com>
+Date:   Wed Jan 15 20:01:22 2020 -0500
+
+    Create README.md

@@ -18,6 +18,7 @@ sessionData.licksL = [];
 sessionData.licksR = [];
 sessionData.rewardL = [];
 sessionData.rewardR = [];
+sessionData.responseTime = [];
 sessionData.rewardTime = [];
 sessionData.rewardProbL = [];
 sessionData.rewardProbR = [];
@@ -120,11 +121,19 @@ for i = 1:length(sessionText)
             if currTrialInd == tEnd % run this at the last index || currTrialInd == length(sessionText)-1
                 sessionData(currTrial).licksL = allL_licks;
                 sessionData(currTrial).licksR = allR_licks;
+                if ~isempty([allL_licks allR_licks])
+                    sessionData(currTrial).respondTime = min([allL_licks allR_licks]);
+                else
+                    sessionData(currTrial).respondTime = NaN;
+                end
+                
+                
                 if ~waterDeliverFlag
                     sessionData(currTrial).rewardL = NaN;
                     sessionData(currTrial).rewardR = NaN;
                     sessionData(currTrial).rewardTime = NaN;
                 end
+                
                 if tEnd ~= length(sessionText)
                     temp = regexp(sessionText(tEnd+1), ': ', 'split');
                     sessionData(currTrial).trialEnd = str2double(temp{1}{2});

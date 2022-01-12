@@ -39,7 +39,7 @@ transformed parameters {
 model {
   // Hyperparameters
   mu_p  ~ normal(0, 1);
-  sigma ~ cauchy(0, 5);
+  sigma ~ cauchy(0, 3);
 
   // individual parameters
   aN_pr   ~ normal(0, 1);
@@ -91,14 +91,14 @@ generated quantities {
   real log_lik[N];
 
   // For posterior predictive check
-  real y_pred[N, T];
+  //real y_pred[N, T];
 
   // Set all posterior predictions to 0 (avoids NULL values)
-  for (n in 1:N) {
-    for (t in 1:T) {
-      y_pred[n, t] = -1;
-    }
-  }
+  //for (n in 1:N) {
+  //  for (t in 1:T) {
+  //    y_pred[n, t] = -1;
+  //  }
+  //}
 
   mu_aN   = Phi_approx(mu_p[1]);
   mu_aP   = Phi_approx(mu_p[2]);
@@ -110,11 +110,11 @@ generated quantities {
       vector[2] Q; // expected value
       real PE;      // prediction error
       vector[Tsesh[n]] Qdiff;
-      vector[2] cP;
+      //vector[2] cP;
 
       // Initialize values
       Q = initQ;
-      cP = initQ;
+      //cP = initQ;
 
       log_lik[n] = 0;
 
@@ -125,9 +125,9 @@ generated quantities {
         log_lik[n] += bernoulli_logit_lpmf(choice[n, t] | beta[n] * Qdiff[t] + bias[n]);
 
         // generate posterior prediction for current trial
-        cP[2] = 1 / (1 + exp(-(beta[n] * Qdiff[t] + bias[n])));
-        cP[1] = 1 - cP[2];
-        y_pred[n, t] = categorical_rng(cP);
+        //cP[2] = 1 / (1 + exp(-(beta[n] * Qdiff[t] + bias[n])));
+        //cP[1] = 1 - cP[2];
+        //y_pred[n, t] = categorical_rng(cP);
 
         if (choice[n,t] == 1) {
           PE = outcome[n, t] - Q[2];
@@ -144,7 +144,7 @@ generated quantities {
           }else{
             Q[1] += aP[n] * PE;
           }
-          Q[2] = Q[2] * aF[n];
+          Q[1] = Q[1] * aF[n];
         }
       }
     }

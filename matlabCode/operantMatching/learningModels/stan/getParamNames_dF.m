@@ -6,6 +6,20 @@ switch modelName
         paramNames = [{'aN', 'aP', 'aF', 'beta'}];
     case '5params'
         paramNames = [{'aN', 'aP', 'aF', 'beta'}];
+    case '5params_tF'
+        paramNames = [{'aN', 'aP', 'tF', 'beta'}];
+    case '5params_biaF'
+        paramNames = [{'aN', 'aP', 'aF', 'beta'}];
+    case '5params_expF'
+        paramNames = [{'aN', 'aP', 'aF', 'beta'}];
+    case '5params_k_bias'
+        paramNames = [{'a', 'aF', 'beta', 'k'}];
+    case '5params_2LR_k_bias'
+        paramNames = [{'aN', 'aP', 'beta', 'k'}];
+    case '5params_k_biForget_bias'
+        paramNames = [{'a', 'aF', 'beta', 'k'}];
+    case '5params_kExp_bias'
+        paramNames = [{'a', 'aF', 'aChoice', 'beta', 'k'}];
     case '5params_inv'
         paramNames = [{'aN', 'aP', 'aF', 'beta'}];
     case 'fiveParam_kappa'

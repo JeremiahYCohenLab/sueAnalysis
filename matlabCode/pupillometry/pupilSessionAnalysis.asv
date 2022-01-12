@@ -21,6 +21,7 @@ if isstrprop(session(end), 'alpha')
     behSessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session ' session(end) sep session '_sessionData_behav.mat'];
     pupilAlignPath = [root animalName sep sessionFolder sep 'sorted' sep 'session ' session(end) sep session '_pupil.mat'];
     pupilPath = [root animalName sep sessionFolder sep 'pupil'];
+    savePath = [root animalName sep sessionFolder sep 'figures' sep];
 else
     behSessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep session '_sessionData_behav.mat'];
     pupilAlignPath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep session '_pupil.mat'];
@@ -32,21 +33,38 @@ if exist(behSessionDataPath,'file')
 else
     behSessionData = generateSessionData_operantMatchingDecoupledRwdDelay(session);
 end
-% pupil
+if ~exist('behSessionData', 'var')
+    behSessionData = sessionData;
+end
+
+
+% pupil   
 if exist(pupilAlignPath, 'file')
     load(pupilAlignPath);
 else
-    fprintf([session ' pupil not aligned yet'])
+    fprintf([session ' pupil not aligned yet \n'])
     return
 end
 % jump the current loop if not well aligned
-if errorProp > 0.2 || isnan(errorProp)
-    fprintf([session ' pupil not well aligned'])
-    return
+if exist('eyeBlurryLate')
+    if eyeBlurryLate && errorProp > 0.7
+        fprintf([session ' pupil not well aligned \n'])
+        return
+    else
+        if ~eyeBlurryLate && errorProp > 0.5
+            fprintf([session ' pupil not well aligned \n'])
+            return
+        end
+    end
+else
+    if errorProp > 0.3
+        fprintf([session ' pupil not well aligned \n'])
+        return       
+    end
 end
 %% preparation 
 % parse behavior
-os = behAnalysisNoPlot_opMD(session);
+os = behAnalysisNoPlot_opMD(session, 'simpleFlag', 0);
 origBlockSwitch = blockSwitch(blockSwitch<=length(behSessionData));
 
 
@@ -183,11 +201,11 @@ for i = 1:length(cueFT)
 end
 %% autoCorrlation
 subplot(6,8,[19:21])
-autocorr(baseline(qualInd),'NumLags',50,'NumSTD',3);
+autocorr(baseline(qualInd),'NumLags',min([sum(qualInd)-1, 50]),'NumSTD',3);
 title('baseline autoCorr')
 xlabel('lags in trial')
 subplot(6,8,[22:24]);
-autocorr(dilation(qualInd),'NumLags',50,'NumSTD',3);
+autocorr(dilation(qualInd),'NumLags',min([sum(qualInd)-1, 50]),'NumSTD',3);
 title('dilation autoCorr')
 xlabel('lags in trial')
 %% preparation
@@ -302,6 +320,7 @@ for i = 1:size(switchMat,1)
 end
 
 glm = fitlm([rwdOrnMat(:,ismember(os.responseInds, find(qualInd>0)))', switchMat(:,ismember(os.responseInds, find(qualInd>0)))'], dilation(intersect(os.responseInds, find(qualInd>0))));
+
 %% rwdHist, switch, current outcome, interaction
 stepSize = 3; % in frames
 binSize = 6;  % in frames
@@ -349,7 +368,9 @@ if p.Results.saveFigFlag == 1
     end
     saveFigurePDF(gcf,[savePath session '_pupil.pdf'])
 end
+%% laser
 
+if 
 
 
 

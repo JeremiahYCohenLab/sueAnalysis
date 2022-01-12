@@ -7,6 +7,7 @@ p.addParameter('makeFigFlag', 0)
 p.addParameter('tMax', 10)
 p.addParameter('timeMax', 61000)
 p.addParameter('timeBins', 6)
+p.addParameter('simpleFlag', 0)
 p.parse(varargin{:});
 
 timeMax = p.Results.timeMax;
@@ -49,8 +50,14 @@ end
 
 %% Break session down into CS+ trials where animal responded
 blockSwitch = blockSwitch(blockSwitch<length(behSessionData));
-blockSwitchL = blockSwitchL(blockSwitchL<length(behSessionData));
-blockSwitchR = blockSwitchR(blockSwitchR<length(behSessionData));
+if exist('blockSwitchL', 'var')  % if the data is from stage3
+    blockSwitchL = blockSwitchL(blockSwitchL<length(behSessionData));
+    blockSwitchR = blockSwitchR(blockSwitchR<length(behSessionData));
+else
+    blockSwitchL = blockSwitch;
+    blockSwitchR = blockSwitch;
+end
+
 
 responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window
 omitInds = isnan([behSessionData.rewardTime]); 
@@ -96,9 +103,9 @@ timeBtwn(timeBtwn < 0 ) = 0;
 timeBtwn = [NaN zscore(timeBtwn(~isnan(timeBtwn)))];
 
 %% determine and plot lick latency distributions for each spout
-lickLat = [];       lickRate = [];
-lickLat_L = [];     lickRate_L = [];
-lickLat_R = [];     lickRate_R = [];
+lickLat = [];       lickRate = [];      lickRateRwd = [];
+lickLat_L = [];     lickRate_L = [];    lickRateRwd_L = [];
+lickLat_R = [];     lickRate_R = [];    lickRateRwd_R = [];
 lickSide = NaN(1,length(behSessionData));
 for i = 1:length(behSessionData)
     if ~isnan(behSessionData(i).rewardTime)
@@ -106,18 +113,20 @@ for i = 1:length(behSessionData)
         if ~isnan(behSessionData(i).rewardL)
             lickSide(i) = -1;
             lickLat_L = [lickLat_L behSessionData(i).respondTime - behSessionData(i).CSon];
-            
+         
             lickRateTemp = length(find(behSessionData(i).licksL < behSessionData(i).rewardTime))/(0.001*rwdDelay);
+            lickRateRwdTemp = sum(behSessionData(i).licksL >= behSessionData(i).rewardTime & behSessionData(i).licksL < behSessionData(i).rewardTime+1000)/(0.001 * 1000); 
             lickRate = [lickRate lickRateTemp];
-            lickRate_L = [lickRate_L lickRateTemp];
+            lickRateRwd = [lickRateRwd lickRateRwdTemp];
 
         elseif ~isnan(behSessionData(i).rewardR)
             lickSide(i) = 1;
             lickLat_R = [lickLat_R behSessionData(i).respondTime - behSessionData(i).CSon];   
             
             lickRateTemp = length(find(behSessionData(i).licksR < behSessionData(i).rewardTime))/(0.001*rwdDelay);
+            lickRateRwdTemp = sum(behSessionData(i).licksR >= behSessionData(i).rewardTime & behSessionData(i).licksR < behSessionData(i).rewardTime+1000)/(0.001 * 1000); 
             lickRate = [lickRate lickRateTemp];
-            lickRate_R = [lickRate_R lickRateTemp];  
+            lickRateRwd = [lickRateRwd lickRateRwdTemp];
 
         end
     end
@@ -142,27 +151,22 @@ lickLatLogZ(indsL) = zscore(lickLat_Llog);
 
 %% Z scored lick rate (eliminates trials with impossible lick rates)
 
-
-responseRateInds = find(lickRate < 15);
-
-corrLickRate = lickRate(lickRate < 15);
-corrLickRate_R = lickRate_R(lickRate_R < 15);
-corrLickRate_L = lickRate_L(lickRate_L < 15);
-corrLickRate_R = zscore(corrLickRate_R);
-corrLickRate_L = zscore(corrLickRate_L);
-lickRateChoice = allChoices(responseRateInds);
-
-L = 1;
-R = 1;
-for j = 1:length(lickRateChoice)                     %put z scored lick rates back in trial order
-    if lickRateChoice(j) == 1
-        corrLickRate(j) = corrLickRate_R(R);
-        R = R + 1;
-    elseif lickRateChoice(j) == -1
-        corrLickRate(j) = corrLickRate_L(L);
-        L = L + 1;
-    end
-end
+realID = lickRate<20 & lickRateRwd < 20 ; % take 20Hz as the max lickRate
+responseRateInds = find(lickRate < 20 & lickRateRwd < 20);
+lickRateZ = NaN(1,length(allChoices));
+lickRate(~realID) = NaN;
+lickRateRwdZ = NaN(1,length(allChoices));
+lickRateRwd(~realID) = NaN;
+indsR = allChoices == 1 & realID;
+indsL = allChoices == -1 & realID;
+lickRate_R = zscore(lickRate(indsR));
+lickRate_L = zscore(lickRate(indsL));
+lickRateRwd_R = zscore(lickRateRwd(indsR));
+lickRateRwd_L = zscore(lickRateRwd(indsL));
+lickRateZ(indsR) = lickRate_R;
+lickRateZ(indsL) = lickRate_L;
+lickRateRwdZ(indsR) = lickRateRwd_R;
+lickRateRwdZ(indsL) = lickRateRwd_L;
 
 
 %%
@@ -182,14 +186,62 @@ lickR_Inds = lick_Inds(Rlicks(lick_Inds));
 % Lick L trials
 Llicks = allChoices == -1;
 lickL_Inds = lick_Inds(Llicks(lick_Inds));
+%% change vs stay
+% stay/switch
+changeChoice = [false abs(diff(allChoices)) > 0];
+changeChoice_Inds = find(changeChoice == 1);
+stayChoice_Inds = find(changeChoice == 0);
+stayChoice_Inds = stayChoice_Inds(stayChoice_Inds~=1);
+%%  
+if sum(strcmp(fields(behSessionData),'laser'))>0
+    laser = [behSessionData.laser];
+    laser = laser(responseInds);
+else
+    laser = zeros(size(responseInds));
+end
+%% decide if stop here with simple outputs
+if p.Results.simpleFlag
+    s = struct;
+
+    s.allChoices = allChoices;
+    s.allRewards = allRewards;
+    s.allNoRewards = allNoRewards;
+    s.blockSwitch = blockSwitch;
+    s.lickLat = lickLat;
+    s.lickLatInds = find(realID>0);
+    s.responseInds = responseInds;
+    s.lickLatZ = lickLatZ;
+    s.lickLatLogZ = lickLatLogZ;
+    s.responseRateInds = responseRateInds; 
+    s.CSplus = CSplus_Inds;
+    s.CSminus = CSminus_Inds;
+    s.lickR_Inds = lickR_Inds;
+    s.lickL_Inds = lickL_Inds;
+    s.rwd_Inds = find(allRewards~=0);
+    s.nrwd_Inds = find(allRewards==0);
+    s.changeChoice_Inds = changeChoice_Inds;
+    s.stayChoice_Inds = stayChoice_Inds;
+    s.rwdDelay = rwdDelay;
+    s.timeBtwn = timeBtwn;
+    s.lickRate = lickRate;
+    s.lickRateZ = lickRateZ;
+    s.lickRateRwd = lickRateRwd;
+    s.lickRateRwdZ = lickRateRwdZ;
+    if sum(strcmp(fields(behSessionData),'hmm'))>0
+        hmmStates = [behSessionData.hmm];
+        s.hmmStates = hmmStates;
+    end
+    s.laser = laser;
+    return
+end
+
+
 %% hmm states
 if sum(strcmp(fields(behSessionData),'hmm'))>0
     hmmStates = [behSessionData.hmm];
 else
     [~, hmmStates] = fitHmmOpt(sessionName);
 end
-
-
 %% linear regression model by trial
 
 rwdMatx = [];
@@ -205,7 +257,7 @@ for i = 1:p.Results.tMax
 end
 
 glm_rwd = fitglm([rwdMatx]', allChoice_R,'distribution','binomial','link','logit'); 
-glm_choice = fitglm([choiceMatx]', allChoice_R, 'distribution','binomial','link','logit');
+% glm_choice = fitglm([choiceMatx]', allChoice_R, 'distribution','binomial','link','logit');
 % glm_rwdANDchoice = fitglm([rwdMatx; choiceMatx]', allChoice_R, 'distribution','binomial','link','logit');
 
 
@@ -225,19 +277,14 @@ rwdHx_R = conv(allReward_R,expConv);
 rwdHx_R = rwdHx_R(1:end-(length(expConv)-1));
 
 %from choice model
-expFitChoice = singleExpFit(glm_choice.Coefficients.Estimate(2:end));
-expConvChoice = expFitChoice.a*exp(-(1/expFitChoice.b)*(1:10)); %generate kernel
-expConvChoice = expConvChoice./sum(expConvChoice);
-allChoices_L = +(allChoices == -1);                                       % + converts to double from logical
-allChoices_R = +(allChoices == 1);
-choiceHx = conv(allChoices,expConvChoice,'full');
-choiceHx = choiceHx(1:end-(length(expConvChoice)-1));
-choiceHx = [0 choiceHx(1:end-1)];  
-
-% stay/switch
-changeChoice = [false abs(diff(allChoices)) > 0];
-changeChoice_Inds = find(changeChoice == 1);
-stayChoice_Inds = find(changeChoice == 0);
+% expFitChoice = singleExpFit(glm_choice.Coefficients.Estimate(2:end));
+% expConvChoice = expFitChoice.a*exp(-(1/expFitChoice.b)*(1:10)); %generate kernel
+% expConvChoice = expConvChoice./sum(expConvChoice);
+% allChoices_L = +(allChoices == -1);                                       % + converts to double from logical
+% allChoices_R = +(allChoices == 1);
+% choiceHx = conv(allChoices,expConvChoice,'full');
+% choiceHx = choiceHx(1:end-(length(expConvChoice)-1));
+% choiceHx = [0 choiceHx(1:end-1)];  
 %% linear regression model by time
 
 timeBinSize = (p.Results.timeMax - 1000)/p.Results.timeBins;
@@ -426,19 +473,20 @@ if mean(lickLat(ind==1))>mean(lickLat(ind==2))
     ind = 3-ind;
 end
 ind = ind - 1;
-
 %% make output struct 
 s = struct;
-
+s.lickInds = ind;
 s.allChoices = allChoices;
 s.allRewards = allRewards;
+s.allNoRewards = allNoRewards;
 s.allRewardsBinary = allRewardsBinary;
 s.behSessionData = behSessionData;
 s.blockSwitch = blockSwitch;
-s.choiceHx = choiceHx;
+% s.choiceHx = choiceHx;
 s.choiceTimes = choiceTimes;
 s.choiceSlope = choiceSlope;
-s.corrLickRate = corrLickRate;
+% s.corrLickRate = corrLickRate;    
+% s.corrLickRateRwd = corrLickRateRwd;
 s.lickLat = lickLat;
 s.lickLatInds = find(realID>0);
 s.lickSide = lickSide;
@@ -469,7 +517,11 @@ s.timeBtwn = timeBtwn;
 s.rwdMatxForLick = rwdMatxForLick;
 s.noRwdMatxForLick = noRwdMatxForLick;
 s.choiceMatx = choiceMatx;
-s.lickInds = ind;
+s.lickRate = lickRate;
+s.lickRateZ = lickRateZ;
+s.lickRateRwd = lickRateRwd;
+s.lickRateRwdZ = lickRateRwdZ;
+s.laser = laser;
 
 
 if p.Results.revForFlag

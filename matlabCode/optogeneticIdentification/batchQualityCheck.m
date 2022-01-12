@@ -55,8 +55,9 @@ for a = 1:length(animalNames)
 end
 
 %% quality check
+savePath = [root 'allUnits\optoID\'];
 for i = 1:length(sessionList)
-    rasters = qualityCheck(sessionList{i},1,'unit',unitList{i});
+    rasters = qualityCheck(sessionList{i},0,'unit',unitList{i});
     saveFigurePDF(rasters, [savePath sep sessionList{i} '_' unitList{i} '.pdf']);
 end  
 %% opto metrices
@@ -84,7 +85,7 @@ for i = 1:length(sessionList)
      respInds = find(met.spikeProp>=0.8);
     if length(respInds)>=1
         respLat = nanmin(met.spikeLat(respInds));
-        if respLat <= 15000 && met.isiV <= 0.001 && met.distance<0.3
+        if respLat <= 20000 && met.isiV <= 0.001 && met.distance<0.3
             baselineFreq = [baselineFreq met.baseline];
 %             firstSpikeFreq = [firstSpikeFreq mean(met.spikeNum(:,1))];
             firstSpikeFreq = [firstSpikeFreq 1000*mean(met.spikeNum(:,1))/20];
@@ -122,7 +123,7 @@ for i = 1:length(dayList)
     lickCatAnalysis(dayList{i}, model, col);
 end
 %% spike raster & GLM
-
+ savePath = ['F:\allUnits\spikeGLM\'];
 for i = 1:length(sessionList)
     pd = parseSessionString_df(sessionList{i}, root, sep);
     if exist([pd.nLynxFolderSession sessionList{i} '_' unitList{i} '_met.mat'],'file')
@@ -131,27 +132,33 @@ for i = 1:length(sessionList)
         met = getClusterMetric(sessionList{i}, unitList{i}, 0, 1);
     end
     respInds = find(met.spikeProp>=0.8);
-    if ~isempty(respInds)
+    if length(respInds)>=2
         respLat = nanmin(met.spikeLat(respInds));
-        if respLat <= 15000 && met.isiV <= 0.001
+        if respLat <= 20000 && met.isiV <= 0.001 && met.distance < 0.3
             [animalName, date] = strtok(sessionList{i}, 'd'); 
             animalName = animalName(2:end);
-            savePath = [root animalName sep animalName 'sorted' sep 'rasters' sep];
-            savePathGLM = [root animalName sep animalName 'sorted' sep 'glm' sep];
+%             savePath = [root animalName sep animalName 'sorted' sep 'rasters' sep];
+%             savePathGLM = [root animalName sep animalName 'sorted' sep 'glm' sep];
             if ~exist(savePath, 'dir')
                 mkdir(savePath)
             end
-            if ~exist(savePathGLM, 'dir')
-                mkdir(savePathGLM)
-            end         
-            
-%             spikeRasters_dF_choiceAlign(sessionList{i},'cellName',unitList{i});
-%             saveFigurePDF(gcf, [savePath sep sessionList{i} '_' unitList{i} 'choiceAlign' '.pdf']);
-            spikeGLM_dF_allRegressors(sessionList{i}, 'good','cellName', unitList{i},'regressors','1+pe+ outcome + rightSide*outcome');
-%             saveFigurePDF(gcf, [savePathGLM sep sessionList{i} '_' unitList{i} 'GLMChoiceAlign_pePe' '.pdf']);
+%             if ~exist(savePathGLM, 'dir')
+%                 mkdir(savePathGLM)
+%             end         
+%             
+%              spikeRasters_dF_cueAlign(sessionList{i},'cellName',unitList{i}, 'saveFigFlag', 0);
+%              saveFigurePDF(gcf, [savePath sep sessionList{i} '_' unitList{i} 'choiceAlign' '.pdf']);
+            spikeGLM_dF(sessionList{i}, 'good','cellName', unitList{i},'regressors','1+pe+ outcome + rightSide*outcome');
+            saveFigurePDF(gcf, [savePath sep sessionList{i} '_' unitList{i} 'GLMChoiceAlign_pePe' '.pdf']);
         end
     end  
 end 
+%% append pdfs
+savePath = ['F:\allUnits\spikeSimutaneous\'];
+allFiles = dir(savePath);
+allFiles = {allFiles([allFiles.bytes]>0).name}';
+allFiles = strcat(savePath, allFiles);
+append_pdfs([savePath 'combine.pdf'],allFiles{:});
 %% pupil align
 errors = ones(size(sessionList));
 for i = 1:32
@@ -160,10 +167,16 @@ for i = 1:32
         errors(i) = error;
     end       
 end
-%% simultaneuos units
+%% simultaneous units
+savePath = ['F:\allUnits\spikeSimutaneous\'];
+if ~exist(savePath, 'dir')
+    mkdir(savePath)
+end
 sessionListNoRepeat = unique(sessionList);
 for i = 1:length(sessionListNoRepeat)
     sessionUnitsPE(sessionListNoRepeat{i}, 'good');
+    saveFigurePDF(gcf, [savePath sep sessionListNoRepeat{i} 'SimUnits' '.pdf']);
+    close all;
 end
 %%
 

@@ -285,6 +285,6 @@ for i = 1:length(sortedFiles)
     screen = get(0,'Screensize');
     screen(4) = screen(4) - 100;
     set(rasters, 'Position', screen)
-    saveFigurePDF(rasters,[savePath sep session '_' cellName '_' p.Results.Session 'ID'])
+%     saveFigurePDF(rasters,[savePath sep session '_' cellName '_' p.Results.Session 'ID'])
 end
   

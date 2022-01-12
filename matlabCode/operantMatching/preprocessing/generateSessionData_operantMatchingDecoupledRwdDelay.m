@@ -161,7 +161,7 @@ for i = 1:length(sessionText)
                 blockSwitch = [blockSwitch currTrial+1];
                 blockSwitchL = [blockSwitchL currTrial+1];
             end
-        end
+             end
         if regexp(sessionText{currTrialInd},'R Block Switch at Trial ')
             if currTrial ~= 1
                 blockSwitch = [blockSwitch currTrial+1];

@@ -1,5 +1,6 @@
 function sessionPspikeAllUnits(session, varargin)
 %task and model parameters
+%calculate neuron correlations
 p = inputParser;
 % default parameters if none given
 p.addParameter('plotFlag', 1);

@@ -39,7 +39,7 @@ transformed parameters {
 model {
   // Hyperparameters
   mu_p  ~ normal(0, 1);
-  sigma ~ cauchy(0, 1);
+  sigma ~ cauchy(0, 0.2);
 
   // individual parameters
   aN_pr   ~ normal(0, 1);
@@ -89,16 +89,17 @@ generated quantities {
 
   // For log likelihood calculation
   real log_lik[N];
+  real log_likMean[N];
 
   // For posterior predictive check
-  real y_pred[N, T];
+  //real y_pred[N, T];
 
   // Set all posterior predictions to 0 (avoids NULL values)
-  for (n in 1:N) {
-    for (t in 1:T) {
-      y_pred[n, t] = -1;
-    }
-  }
+  //for (n in 1:N) {
+    //for (t in 1:T) {
+      //y_pred[n, t] = -1;
+    //}
+  //}
 
   mu_aN   = Phi_approx(mu_p[1]);
   mu_aP   = Phi_approx(mu_p[2]);
@@ -129,7 +130,7 @@ generated quantities {
 
         // generate posterior prediction for current trial
 
-        y_pred[n, t] = categorical_rng(softmax(beta[n] * Q_bias));
+        //y_pred[n, t] = categorical_rng(softmax(beta[n] * Q_bias));
 
         if (choice[n,t] == 1) {
           PE = outcome[n, t] - Q[2];
@@ -149,6 +150,8 @@ generated quantities {
           Q[2] = Q[2] * aF[n];
         }
       }
+      log_likMean[n] = log_lik[n]/Tsesh[n];
+
     }
   }
 }

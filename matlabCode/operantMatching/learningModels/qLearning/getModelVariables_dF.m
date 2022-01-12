@@ -116,6 +116,8 @@ switch modelName
 %% most recent
     case '5params'
         [t.LH, t.probChoice, t.Q, t.pe] = qLearningModel_5params(params, choice, outcome);
+    case '5params_k_bias'
+        [t.LH, t.probChoice, t.Q, t.pe] = qLearningModel_5params_k(params, choice, outcome);
     case 'fiveParam_ph_bias'
         [t.LH, t.probChoice, t.Q, t.pe, t.alpha] = qLearningModel_5params_ph_bias(params, choice, outcome);
     case 'sixParam_ph_bias'

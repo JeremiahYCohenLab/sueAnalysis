@@ -98,10 +98,11 @@ p.KeepUnmatched = true;
 p.FunctionName = 'stan';
 p.addParamValue('fit',[],@(x) isa(x,'StanFit') || isa(x,'StanModel'));
 p.addParamValue('method','sample');
-p.addParamValue('iter',2000,@(x) isscalar(x) && (x>0));
+p.addParameter('iter',2000,@(x) isscalar(x) && (x>0));
 p.addParamValue('warmup',[],@(x) isscalar(x) && (x>=0));
 p.addParamValue('refresh',[],@(x) isscalar(x) && (x>0));
 p.addParamValue('algorithm','');
+p.addParamValue('control', []);
 p.parse(varargin{:});
 
 if isempty(p.Results.fit)
@@ -124,6 +125,11 @@ if ~isempty(p.Results.iter)
       model.iter = p.Results.iter;
    end
 end
+
+if ~isempty(p.Results.control)
+    model.set('control', p.Results.control);
+end
+
 if isempty(p.Results.refresh)
    model.refresh = max(round(model.iter/10),1);
 else

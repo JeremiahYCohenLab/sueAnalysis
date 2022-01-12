@@ -85,8 +85,10 @@ allRewards(logical(allReward_R)) = 1;
 allRewards(logical(allReward_L)) = -1;
 
 %% 
-figure
-set(gcf, 'Position', get(0,'Screensize'))
+figure;
+screenSize = get(0,'Screensize');
+screenSize(4) = screenSize(4) - 100;
+set(gcf, 'Position', screenSize)
 suptitle(sessionName)
 
 
@@ -194,7 +196,7 @@ for i = find(changeChoice == 1)
         changeHistogram = [changeHistogram temp];
         changeHistogram_LtoR = [changeHistogram_LtoR temp];
         if i - goBack > 0
-            changeTimeHistogram_LtoR = [changeTimeHistogram_LtoR (sessionData(responseInds(i)).CSon - sessionData(responseInds(i-goBack)).rewardTime)];
+            changeTimeHistogram_LtoR = [changeTimeHistogram_LtoR (sessionData(respondInds(i)).CSon - sessionData(respondInds(i-goBack)).rewardTime)];
         end
     elseif allChoices(i) == -1 %if a left lick
         temp = 0;
@@ -206,7 +208,7 @@ for i = find(changeChoice == 1)
         changeHistogram = [changeHistogram temp];
         changeHistogram_RtoL = [changeHistogram_RtoL temp];
         if i - goBack > 0
-            changeTimeHistogram_RtoL = [changeTimeHistogram_RtoL (sessionData(responseInds(i)).CSon - sessionData(responseInds(i-goBack)).rewardTime)];
+            changeTimeHistogram_RtoL = [changeTimeHistogram_RtoL (sessionData(respondInds(i)).CSon - sessionData(respondInds(i-goBack)).rewardTime)];
         end
     end
 end
@@ -679,8 +681,9 @@ if lickFlag
     ylabel('Peak Lick Rate Z-Score')
     xlabel('Rewarded Trials')
 
-
-    set(gcf, 'Position', get(0,'Screensize'))
+    screenSize = get(0,'Screensize');
+    screenSize(4) = screenSize(4) - 100;
+    set(gcf, 'Position', screenSize)
 
     savePath = [root animalName sep sessionFolder sep  'figures' sep];
     if isempty(dir(savePath))

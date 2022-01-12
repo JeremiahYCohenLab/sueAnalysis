@@ -11,7 +11,7 @@ bin1 = 1;
 bin2 = 40;
 
 [root, sep] = currComputer();
-paramNames = getParamNames_dF(modelName, 0);
+paramNames = getParamNames_dF(modelName, 1);
 numParams = length(paramNames);
 
 %get info for plotting
@@ -178,6 +178,8 @@ if p.Results.plotFlag
     end    
     
     dFig = figure;
+    paramNames = getParamNames_dF(modelName,0);
+    numParams = length(paramNames);
     for currPy = 1:numParams*2
         if currPy <= numParams
             tmpY = eval(['samps.mu_' paramNames{currPy}]);

@@ -314,12 +314,8 @@ classdef StanFit < handle
          else
             file = p.Results.file;
          end
-         
-         if mstan.check_ver(self.model.stan_version,'2.8.0')
-            command = 'stansummary';
-         else
-            command = 'print';
-         end
+
+         command = 'print';
          
          if ischar(file)
             command = [self.model.stan_home filesep 'bin' filesep command ' --sig_figs='...
@@ -363,6 +359,7 @@ classdef StanFit < handle
             while nansum(self.loaded) ~= numel(self.loaded)
                % pause() in some Matlab versions leaks memory
                java.lang.Thread.sleep(0.05*1000);
+            
             end
          end
       end

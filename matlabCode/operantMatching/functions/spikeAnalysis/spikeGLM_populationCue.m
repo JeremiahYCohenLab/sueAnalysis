@@ -91,7 +91,7 @@ for ani = 1:length(animalNames)
         %% behavior preparation 
         % parse behavior
         os = behAnalysisNoPlot_opMD(session);
-        lickInds = os.lickInds;
+%         lickInds = os.lickInds;
         choice = os.allChoices';
         choice(choice<0) = 0;
         outcome = abs(os.allRewards)';
@@ -167,9 +167,9 @@ for ani = 1:length(animalNames)
             peBar = t.peBar;
             pePe = t.pePe;
             scPe = pe.*(1-peBar);
-            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, lickInds, scPe, aN, peBar, pePe);
+            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, scPe, aN, peBar, pePe);
         else
-            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, lickInds);
+            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs);
         end
         names = tbl.Properties.VariableNames;
         % zscore all regressors

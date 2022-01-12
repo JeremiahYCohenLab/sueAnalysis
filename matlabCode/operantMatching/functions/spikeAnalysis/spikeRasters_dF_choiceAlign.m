@@ -185,12 +185,6 @@ boxKern = ones(1,60000);                                       %smooth rewards o
 sessionRwdsSmooth = conv(session_rwdsArray, boxKern);
 sessionRwdsSmooth = sessionRwdsSmooth(1:(end-(length(boxKern)-1)));
 
-
-%% Generate smoothed choice-history values       
-[choiceHx_Sorted,choiceHx_Inds] = sort(s.choiceHx);                                          %sort by choice history
-choiceHx_Lims = [find(choiceHx_Sorted < -0.9999, 1) find(choiceHx_Sorted > 0.9999, 1)];           %find where choice hist is all L or all R
-
-
 %% Generate smoothed reward-history values over trials
 
 [~,rwdHx_Inds] = sort(s.rwdHx);

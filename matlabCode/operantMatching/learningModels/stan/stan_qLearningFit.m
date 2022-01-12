@@ -8,14 +8,15 @@ p.addParameter('nonfixedParams', 0);
 p.addParameter('fixedParams', []);
 % p.addParameter('paramNames',{'aNmin', 'aP', 'aF', 'aPE', 'v', 'beta'}); % animal level
 % p.addParameter('modelName', '7params_absPePeAN_scale_int_bias_ord');
-p.addParameter('modelName', '5params');
+p.addParameter('modelName', '5params_k_bias');
 % p.addParameter('modelName', 'vkf_fixV_kappa');
 p.addParameter('iter', 10000);
 p.addParameter('warmup', []);
 p.addParameter('saveFlag', 1);
 p.addParameter('maxTrial', 1000);
-p.addParameter('numChains', 6);
+p.addParameter('numChains', 8);
 p.addParameter('simFlag', 0);
+p.addParameter('control', struct('delta', 0.85))
 p.parse(varargin{:});
 
 paramNames = getParamNames_dF(p.Results.modelName,0);
@@ -93,7 +94,9 @@ else
         mkdir(savePath);
     end
     [~, dayList, ~] = xlsread([root xlFile], sheet);
-    [~,col] = find(contains(dayList, category) == 1);
+    col = cell(1,size(dayList,2));
+    col(:) = {category};
+    col = cellfun(@strcmp, dayList(1,:), col)>0;
     % [~,col] = find(~cellfun(@isempty,strfind(dayList, category)) == 1);
     dayList = dayList(2:end,col);
     endInd = find(cellfun(@isempty,dayList),1);
@@ -104,7 +107,7 @@ else
     for i = 1:length(dayList)
         sessionName = dayList{i};
         filename = [sessionName '.asc'];
-        %fprintf([sessionName '\n']);
+%         fprintf([sessionName '\n']);
         behSessionData = loadBehavioralData(filename, p.Results.revForFlag);
         behavStruct = parseBehavioralData(behSessionData, p.Results.maxTrial);
 
@@ -129,7 +132,7 @@ else
     for i = 1:N
         choice(i, 1:Tsesh(i)) = choiceTmp{i};
         outcome(i, 1:Tsesh(i)) = outcomeTmp{i};
-        ITI(i, 1:Tsesh(i)) = ITItemp{i};
+        ITI(i, 1:Tsesh(i)) = ITItemp{i}/1000; % convert from ms to s
     end
     choice = choice(:,1:min([T p.Results.maxTrial]));
     outcome = outcome(:,1:min([T p.Results.maxTrial]));
@@ -155,7 +158,7 @@ else
     filePath = 'C:\Users\zhixi\Documents\gitRepositories\sueAnalysis\matlabCode\operantMatching\learningModels\stan\';
 end
 fit = stan('file',[filePath fullName],'data',session_dat,'verbose',true,...
-            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath, 'chains', p.Results.numChains, 'refresh', 200);
+            'iter', p.Results.iter, 'warmup', warmup, 'working_dir', savePath, 'chains', p.Results.numChains, 'refresh', 200, 'control', p.Results.control);
 %read command line output to stall matlab until stan is finished processing
 doneFlag = 0;
 diary([savePath 'diaryTmp.txt']); diary off;
@@ -186,10 +189,10 @@ end
 if isfield(samples, 'y_pred')
     samples = rmfield(samples, 'y_pred');
 end
-%[~, tbl] = fit.print();
+[~, summary] = fit.print();
 
 %generate best estimates of parameters
-paramEsts = [];
+ paramEsts = [];
 if p.Results.nonfixedParams
     tmp = eval(['samples.mu_' p.Results.nonfixedParams]);
     [n,e] = histcounts(tmp, 50);
@@ -230,13 +233,21 @@ else
     purp = [0.7 0 1];
     colors = [linspace(blue(1),purp(1),numParams)', linspace(blue(2),purp(2),numParams)', linspace(blue(3),purp(3),numParams)'];
     for i = 1:numParams
-        subplot(1,numParams,i); hold on;
+        subplot(1,numParams+1,i); hold on;
         histogram(eval(['samples.mu_' paramNames{paramInds(i)}]) , 100,...
             'Normalization', 'Probability', 'FaceColor', colors(i,:), 'EdgeColor', 'none')
 %         line([paramEsts(i) paramEsts(i)], [0 0.05], 'color', [0 0 0]);
         set(gca,'tickdir', 'out') 
         title(paramNames{paramInds(i)})
     end
+    subplot(1,numParams+1,numParams+1); hold on;
+    sumLL = mean(samples.log_lik, 2);
+    histogram(sumLL , 100,...
+        'Normalization', 'Probability', 'FaceColor', [0.5 0.5 0.5], 'EdgeColor', 'none')
+%         line([paramEsts(i) paramEsts(i)], [0 0.05], 'color', [0 0 0]);
+    set(gca,'tickdir', 'out') 
+    title('logLL')
+    
 end
 titleTxt = strrep([sheet ' - ' p.Results.modelName], '_', ' ');
 suptitle(titleTxt);
@@ -296,7 +307,7 @@ if p.Results.saveFlag
         end
         saveFigurePDF(pFig,[savePath sheet category '_' p.Results.modelName  '_posteriors'])
         saveFigurePDF(dFig,[savePath sheet category '_' p.Results.modelName  '_divergence'])
-        save([savePath saveFile], sampFile, 'paramEsts', 'dayList');
+        save([savePath saveFile], sampFile, 'paramEsts', 'dayList', 'summary');
         
     end
     %save([savePath saveFile], sampFile, 'paramEsts', 'dayList', 'tbl');

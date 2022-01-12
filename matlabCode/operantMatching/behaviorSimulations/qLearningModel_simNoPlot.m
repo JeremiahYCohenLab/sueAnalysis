@@ -1,4 +1,4 @@
-function [allRewards, allChoices, blockProbs, blockSwitch] = qLearningModel_simNoPlot(varargin)
+function [t, allRewards, allChoices, blockProbs, blockSwitch] = qLearningModel_simNoPlot(varargin)
 %
 %
 % Simulate dynamic foraging task with temporally-forgetting Q learning model
@@ -13,18 +13,18 @@ a.addParameter('blockLength', [20 35]);
 a.addParameter('rwdProbs', [90 50 10]);
 a.addParameter('ITIparam', 0.3);
 a.addParameter('params', [0.0596149,0.305917,0.642195,3.31916,0.1]);
-a.addParameter('tForgetFlag', false);
 a.addParameter('randomSeed', 1);
 a.parse(varargin{:});
 
 alphaNPE = a.Results.params(1);
 alphaPPE = a.Results.params(2);
-if a.Results.tForgetFlag == true;
-    tForget = a.Results.params(3);
-else
-    alphaForget = a.Results.params(3);
-end
+alphaForget = a.Results.params(3);
 beta = a.Results.params(4);
+if length(a.Results.params) == 5
+    bias = a.Results.params(5);
+else
+    bias = 0;
+end
 
 %initialize task class
 switch a.Results.taskType
@@ -45,10 +45,10 @@ Q = [0 0; NaN(a.Results.maxTrials-1, 2)]; % initialize Q values as 0
 allChoices = ones(1, a.Results.maxTrials);
 allRewards = zeros(1, a.Results.maxTrials);
 
-for currT = 1:p.MaxTrials - 1    
+for currT = 1:p.MaxTrials
     % Select action
-    pLeft = 1/(1 + exp(-beta*diff(Q(currT, :))));
-    if binornd(1, pLeft) == 0 % left choice selected probabilistically
+    pRight = logistic(beta*diff(Q(currT, :)) + bias);
+    if binornd(1, pRight) == 0 % left choice selected probabilistically
         p.inputChoice([1 0]);
         allChoices(currT) = -1;
         allRewards(currT) = p.AllRewards(currT, 1) * -1;
@@ -78,7 +78,8 @@ end
 switch a.Results.taskType
     case 'decoupled'
         blockSwitch = sort(unique([p.BlockSwitchL p.BlockSwitchR]));
-        blockSwitch = blockSwitch(blockSwitch < p.MaxTrials-1) + 1;
+        blockSwitch = blockSwitch(blockSwitch < p.MaxTrials) + 1;
+        blockSwitch(1) = 1;
         blockProbs = p.BlockProbs;
     case 'coupled'
         blockSwitch = p.BlockSwitch(p.BlockSwitch < p.MaxTrials-1) + 1;
@@ -93,7 +94,7 @@ switch a.Results.taskType
         blockSwitch = p.BlockSwitch(p.BlockSwitch < p.MaxTrials-1) + 1;
         blockProbs = p.BlockProbs;
 end
-    
 
+t.Q = Q;
 
 end

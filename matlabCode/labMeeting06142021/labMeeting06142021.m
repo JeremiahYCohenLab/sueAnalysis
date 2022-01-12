@@ -56,7 +56,7 @@ ylabel('\beta coeffs')
 
 %% reinforcement learning models
 % generative vs non-generative models 
-iteration = 200;
+iteration = 20;
 runs = 200;
 maxTrial = 300;
 paramNames = {'aN','aP','aF','beta'};
@@ -64,7 +64,7 @@ paramNames = {'aN','aP','aF','beta'};
 params = zeros(iteration, 4);
 params(:,1) = betarnd(3, 5, iteration,1); % aN
 params(:,2) = betarnd(5, 2, iteration,1); % aP
-params(:,3) = betarnd(4, 2, iteration,1); % aF
+params(:,3) = betarnd(2, 2, iteration,1); % aF
 params(:,4) = normrnd(4, 2, iteration,1); % beta
 params(params(:,4)<1,4) = 2; % beta
 
@@ -109,10 +109,10 @@ psim = [];
 pfit = [];
 for sim = 1:iteration
     %simulation
-    [outcome, choice] = qLearningModel_simNoPlot('params', params(sim,:),'randomSeed', sim,'maxTrials', maxTrial);
+    [~, outcome, choice] = qLearningModel_simNoPlot('params', params(sim,:),'randomSeed', sim,'maxTrials', maxTrial);
     choice(choice<0) = 0;
     outcome = abs(outcome);
-   [~,ptemp,Qtemp] = qLearningModel_4params(params(sim,:), choice, abs(outcome));
+   [~,ptemp,Qtemp] = qLearningModel_4params(params(sim,:), choice, outcome);
     Qsim = [Qsim; Qtemp];
     psim = [psim; ptemp];
     %%

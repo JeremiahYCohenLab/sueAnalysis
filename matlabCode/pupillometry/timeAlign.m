@@ -9,7 +9,8 @@ iter = 0;
 errorProp = NaN;
 csFT = NaN;
 ratioMax = NaN;
-ledLLThresh = 0.9999;
+ledLLThresh = 0.8;
+positionThresh = 0.9999999999;
 ledDisThresh = 80;
 %% training set
 [root,sep] = currComputer;
@@ -30,6 +31,7 @@ end
 if exist(behSessionDataPath,'file')
     load(behSessionDataPath)
 else
+%     behSessionDate = generateSessionData_behav_operantMatching_RwdDelay(session);
     behSessionData = generateSessionData_operantMatchingDecoupledRwdDelay(session);
 end
 
@@ -40,7 +42,7 @@ else
     savepath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep];
 end
 
-iterMax = 0.2*length(behSessionData);
+iterMax = 0.10*length(behSessionData);
 %% load diameter and position
 videopath = [root animalName sep sessionFolder sep 'pupil'];
 list = dir(videopath);
@@ -57,12 +59,12 @@ end
 positionRaw = csvread([videopath sep position],3,0);
 
 %% Align time by finding maximum projection
-ratio = 20.5:0.01:21.5;
+ratio =[20.5:0.01:21.5];
 %ledLL = sign(positionRaw(:,16).*positionRaw(:,10) - ledLLThresh);
 ledLL = sign(positionRaw(:,16) - ledLLThresh);
 %% led position
-ledx = sum(double(ledLL > 0).*positionRaw(:,14))/sum(ledLL > 0);
-ledy = sum(double(ledLL > 0).*positionRaw(:,15))/sum(ledLL > 0);
+ledx = mean(positionRaw(positionRaw(:,16)>positionThresh,14));
+ledy = mean(positionRaw(positionRaw(:,16)>positionThresh,15));
 dis = sqrt((positionRaw(:,14)-ledx).^2 + (positionRaw(:,15)-ledy).^2);
 ledLL(dis > ledDisThresh) = -1; % exlude led too far away. (likely to be false positive)
 ledQual = positionRaw(:,10);
@@ -129,7 +131,7 @@ while length(error) > errorRate*length(csT) && iter < iterMax
     [ratioMax, ~, ~] = timeProjectionOpti2(ledLL, csT, startFrame, startTrial);   
 
     % calculate error number
-    cskernel = ones(1, round(0.5 * ratioMax));
+    cskernel = ones(1, round(0.5* ratioMax));
     [~, csF, csFT] = timeProjection(ledLL, csT, startFrame, startTrial, ratioMax);
     
     for j = 1:length(csT)
@@ -257,18 +259,20 @@ postLen = round(10*FR);
 sessionPupilCue = nan(length(cueFT),preLen+postLen+1);
 sessionPupilCueZ = nan(length(cueFT),preLen+postLen+1);
 for i = 1:length(cueFT)
-    startF = max([1, cueFT(i)-preLen]);
-    if i==length(cueFT)
-        endF = min([length(ledLL), cueFT(i)+postLen]);
-    else
-        endF = min([cueFT(i)+postLen, cueFT(i+1)]);
-    end
+    if cueFT(i)~=0
+        startF = max([1, cueFT(i)-preLen]);
+        if i==length(cueFT)
+            endF = min([length(ledLL), cueFT(i)+postLen]);
+        else
+            endF = min([cueFT(i)+postLen, cueFT(i+1)]);
+        end
 
-    sessionPupilCue(i, preLen+1-(cueFT(i)-startF):preLen+1) = dia(startF:cueFT(i));
-    sessionPupilCue(i, preLen+2:preLen+1+endF-cueFT(i)) = dia(cueFT(i)+1:endF);
-    
-    sessionPupilCueZ(i, preLen+1-(cueFT(i)-startF):preLen+1) = diaZ(startF:cueFT(i));
-    sessionPupilCueZ(i, preLen+2:preLen+1+endF-cueFT(i)) = diaZ(cueFT(i)+1:endF);
+        sessionPupilCue(i, preLen+1-(cueFT(i)-startF):preLen+1) = dia(startF:cueFT(i));
+        sessionPupilCue(i, preLen+2:preLen+1+endF-cueFT(i)) = dia(cueFT(i)+1:endF);
+
+        sessionPupilCueZ(i, preLen+1-(cueFT(i)-startF):preLen+1) = diaZ(startF:cueFT(i));
+        sessionPupilCueZ(i, preLen+2:preLen+1+endF-cueFT(i)) = diaZ(cueFT(i)+1:endF);
+    end
 end
 
 responseInds = find(~isnan([behSessionData.rewardTime]));
@@ -296,7 +300,8 @@ if saveFlag
     if isempty(dir(savepath))
         mkdir(savepath)
     end
-    save([savepath session '_pupil.mat'], 'sessionPupilCue','sessionPupilCueZ', 'sessionPupilChoice','sessionPupilChoiceZ','qualInd', 'cueFT', 'FR','iter','errorProp');
+    eyeBlurryLate = 0;
+    save([savepath session '_pupil.mat'], 'eyeBlurryLate', 'sessionPupilCue','sessionPupilCueZ', 'sessionPupilChoice','sessionPupilChoiceZ','qualInd', 'cueFT', 'FR','iter','errorProp');
 end
 
 

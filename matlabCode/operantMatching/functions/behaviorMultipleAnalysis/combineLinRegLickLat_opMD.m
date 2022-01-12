@@ -42,7 +42,7 @@ for i = 1: length(dayList)
             behSessionData = sessionData;
         end
     else
-        [behSessionData, ~] = generateSessionData_operantMatchingDecoupled(sessionName);
+        [behSessionData, ~] = generateSessionData_operantMatchingDecoupledRwdDelay(sessionName);
     end
     
     %%generate reward matrix for tMax trials

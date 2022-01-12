@@ -10,7 +10,7 @@ p.addParameter('regressors', '1+pe+biasSide+pe:biasSide')
 p.addParameter('binSize', 300)% in ms
 p.addParameter('stepSize', 100)
 p.addParameter('tb', 1)% in s
-p.addParameter('tf', 3)% in s
+p.addParameter('tf', 5)% in s
 p.addParameter('saveFigFlag', 1);
 p.addParameter('plotAgainst', 'pe')
 p.addParameter('focusWindow', [300 1300]);

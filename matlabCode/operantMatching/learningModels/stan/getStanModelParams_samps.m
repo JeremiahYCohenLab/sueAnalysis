@@ -35,7 +35,9 @@ for currP = 1:length(paramNames)
         tmp = eval(['samples.' paramNames{currP}]);
         tmp = tmp(:,sessionInd);
     else
-        tmp = eval(['samples.mu_' paramNames{currP}]);
+        if ~strcmp(paramNames{currP}, 'bias')
+            tmp = eval(['samples.mu_' paramNames{currP}]);
+        end
     end
     params(:,currP) = tmp(inds);
 end

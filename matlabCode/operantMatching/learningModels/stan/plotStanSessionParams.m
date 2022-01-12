@@ -38,6 +38,19 @@ for aI = 1:numAnimals
     structName = [animals{aI} p.Results.beh '_' p.Results.modelName];
     samps = mdl.(structName);
     numSesh = length(mdl.dayList);
+    dates = zeros(size(mdl.dayList));
+    for i = 1:length(dates)
+        tmp = mdl.dayList{i};
+        tmp = str2double(tmp(end-3:end));
+        if isnan(tmp)
+            tmp = mdl.dayList{i};
+            tmp = str2double(tmp(end-4:end-1));
+        end
+        dates(i) = tmp;
+    end
+
+    [~, ind] = sort(dates);
+    ind(ind) = 1:length(dates);
 
     avgParams = nan(numSesh, numParams);
     for currS = 1:numSesh
@@ -88,20 +101,40 @@ for aI = 1:numAnimals
     if p.Results.plotFlag
         figure;
         for currP = 1:numParams
-            subplot(1,numParams+3,currP)
+            subplot(2,numParams+3,currP)
             histogram(avgParams(:,currP), 5, 'facecolor', colors(currP,:))
             if strcmp(paramNames{currP}, 'aPE') || strcmp(paramNames{currP}, 'v')
-                xlabel(['log(' titles{currP} ')'])
+                title(['log(' titles{currP} ')'])
             else
-                xlabel(titles{currP})
+                title(titles{currP})
             end
             set(gca, 'tickdir', 'out', 'box', 'off')
             if currP == 1
                 ylabel('count')
             end
+            
+            subplot(2, numParams+3, currP+numParams+3)
+            scatter(ind, avgParams(:, currP), 10, colors(currP,:), 'filled');
+            [rho, pval] = corr(ind, avgParams(:, currP));
+            xlabel('days')
+            title(sprintf('%0.2f p:%0.2f', rho, pval));
+            
         end
-
-        subplot(1,numParams+3,[numParams+1:numParams+3])
+        
+        subplot(2,numParams+3, [2*numParams+4]);
+        if sum(contains(fieldnames(samps),'log_likMean'))>0
+            scatter(ind, mean([samps.log_likMean]), 10, [0.3, 0.3, 0.3], 'filled');
+            xlabel('days')
+            title('trialLL');
+        end
+        
+        subplot(2,numParams+3, [2*numParams+5]);
+        sumLL = mean(samps.log_lik,2);
+         histogram(sumLL , 100, 'Normalization', 'Probability', 'FaceColor', [0.5 0.5 0.5], 'EdgeColor', 'none')
+        set(gca,'tickdir', 'out') 
+        title('meanLL/session')
+        
+        subplot(2,numParams+3,[numParams+1:numParams+3])
         [rho, pVal] = corr(avgParams);
         imagesc(rho);
         colormap(cool(256));
@@ -122,15 +155,15 @@ for aI = 1:numAnimals
         xtickangle(20)
         ytickangle(45)
 
-        titleTxt = [animals{aI} ' ' strrep([p.Results.modelName], '_', ' ')];
+        titleTxt = [animals{aI} ' ' p.Results.beh ' ' strrep([p.Results.modelName], '_', ' ')];
         suptitle(titleTxt);
-        set(gcf,'Renderer', 'Painters', 'position', [-1928 278 1924 566])
+        set(gcf,'Renderer', 'Painters', 'position', [-1928 278 1924 1066])
 
         if p.Results.saveFigFlag
             saveFigurePDF(gcf,[savePath animals{aI} p.Results.beh '_' p.Results.modelName '_parameters.pdf']);
         end
         
-         dFig = figure;
+        dFig = figure;
         for currPy = 1:numParams + size(samps.sigma,2)
             if currPy <= numParams
                 tmpY = eval(['samps.mu_' paramNames{currPy}]);
