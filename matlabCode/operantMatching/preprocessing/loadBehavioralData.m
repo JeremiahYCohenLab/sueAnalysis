@@ -33,7 +33,7 @@ else
     sortedFolderLocation = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep];
 end
 sortedFolder = dir(sortedFolderLocation);
-sessionDataInd = contains({sortedFolder.name},'_behav.mat') & contains({sortedFolder.name},suptitleName); 
+sessionDataInd = contains({sortedFolder.name},'sessionData_behav.mat') & contains({sortedFolder.name},suptitleName); 
 if any(sessionDataInd) % check if there is a file with suptitleName prefix and _behav.mat suffix
     load([sortedFolderLocation sortedFolder(sessionDataInd).name])
     if exist('sessionData') & ~exist('behSessionData')

@@ -83,11 +83,7 @@ pseudoTRcounts = false;
 verbose = false;
 [numStates, checkTr] = size(guessTR);
 
-if guessE(1,1) * guessE(1,2) == 0
-    startState = 'oit';
-else
-    startState = 'ore';
-end
+startState = 'ore';
 
 if checkTr ~= numStates
     error(message('stats:hmmtrain:BadTransitions'));
@@ -234,12 +230,11 @@ for iteration = 1:maxiter
             loglik = loglik + logPseq;
 %             postlik = loglik + log(normpdf(guessE(1,1), 0.5, 0.20)) ...
 %                 + log(normpdf((guessTR(1,2) - guessTR(1,3))/(guessTR(1,2) - guessTR(1,3)), 0, 0.5));
-            if  strcmp(startState,'oit') % adding prior 
-                postlik = loglik + log(betapdf(guessE(3,1), 1.5, 1.5)); 
-            else
-                postlik = loglik + log(betapdf(guessE(1,1), 1.5, 1.5));
-            end
-            
+            %% add prior
+%             postlik = loglik + log(betapdf(guessE(1,1), 1.5, 1.5)) + log(betapdf(guessTR(2,2),6,1.5)) + log(betapdf(guessTR(3,3),6,1.5)) + log(betapdf(guessTR(1,1),2,3));
+%             postlik = loglik + log(betapdf(guessE(1,1), 1.5, 1.5))+ log(betapdf(guessTR(1,1),2,3));
+            postlik = loglik + log(betapdf(guessE(1,1), 1.5, 1.5));
+%%            
             logf = log(fs);
             logb = log(bs);
             logGE = log(guessE);

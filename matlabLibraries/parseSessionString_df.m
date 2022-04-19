@@ -20,11 +20,12 @@ if contains(fileOrFolder,'.asc') % input is .asc file
     behavioralDataPath = [root animalName sep sessionFolder sep 'behavior' sep filename];
     suptitleName = filename(1:strfind(filename,'.asc')-1);
     saveFigName = suptitleName;
+    videopath = [root animalName sep sessionFolder sep 'pupil'];
 else % input is the folder
-    sessionFolder = fileOrFolder;
-    [animalName, date] = strtok(sessionFolder, 'd');
+    [animalName, date] = strtok(fileOrFolder, 'd'); 
+    animalName = animalName(2:end); 
     date = date(2:9);
-    animalName = animalName(2:end);
+    sessionFolder = ['m' animalName 'd' date];
     filepath = [root animalName sep sessionFolder sep 'behavior' sep];
     allFiles = dir(filepath);
     fileInd = contains({allFiles.name},[fileOrFolder '.asc']) | contains({allFiles.name},[fileOrFolder '.asc']);
@@ -35,6 +36,7 @@ else % input is the folder
         suptitleName = [];
     end
     saveFigName = sessionFolder(~(sessionFolder==sep));
+    videopath = [root animalName sep sessionFolder sep 'pupil'];
 end
 sortedFolderLocation = [root animalName sep sessionFolder sep 'sorted' sep];
 
@@ -48,6 +50,7 @@ pathData.saveFigFolder = [root animalName sep sessionFolder sep 'figures' sep];
 pathData.baseFolder = [root animalName sep sessionFolder sep];
 pathData.behavioralDataPath = behavioralDataPath;
 pathData.date = date;
+pathData.videopath = videopath;
 
 if isdir([pathData.baseFolder 'neuralynx'])
     pathData.nLynxFolder = [pathData.baseFolder 'neuralynx' sep];

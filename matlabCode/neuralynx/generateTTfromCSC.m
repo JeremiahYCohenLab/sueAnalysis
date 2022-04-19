@@ -16,8 +16,8 @@ p.addParameter('ThresholdFactor', 3);
 p.addParameter('RefractorySamples', 20); % Neuralynx gives 24 samples before looking for new spike
 p.addParameter('AnalyzeSpecificTTs', 4);
 p.addParameter('RescaleCSCs_Flag', false);
-p.addParameter('changeReference',false);
-p.addParameter('newReference',16)
+p.addParameter('changeReference',true);
+p.addParameter('newReference',13)
 p.addParameter('flipSign',false)
 % p.addParameter('CSCscaleFactor', []);
 % p.addParameter('CSCstoScale', []);

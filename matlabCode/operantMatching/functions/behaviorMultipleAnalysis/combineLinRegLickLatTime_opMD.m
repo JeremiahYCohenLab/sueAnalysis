@@ -41,6 +41,7 @@ latAndTime = [];
 
 for i = 1: length(dayList)
     sessionName = dayList{i};
+    clear behSessionData
     [animalName, date] = strtok(sessionName, 'd'); 
     animalName = animalName(2:end);
     date = date(1:9);
@@ -58,6 +59,10 @@ for i = 1: length(dayList)
     else
         fprintf([sessionName '\n']);
         [behSessionData, ~] = generateSessionData_operantMatchingDecoupledRwdDelay(sessionName);        
+    end
+    
+    if ~exist('behSessionData', 'var')
+        behSessionData = sessionData;
     end
     responseInds = find(~isnan([behSessionData.rewardTime])); 
     responseInds = responseInds(1:min(length(responseInds),p.Results.maxTrials));   

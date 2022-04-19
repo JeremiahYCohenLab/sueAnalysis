@@ -1,4 +1,4 @@
-  function spikeRasters_dF_choiceAlign(sessionName, varargin)
+open s  function spikeRasters_dF_choiceAlign(sessionName, varargin)
 
 p = inputParser;
 % default parameters if none given

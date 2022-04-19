@@ -676,32 +676,25 @@ for i = 1:length(clust)
     
     
     if ismember(animalName, {'ZS059','ZS060','ZS062'})
-        z(18) = subplot(8,7,44); hold on;
-%     mySDF_rwd_lick = allTrial_lickMatx_slide(s.responseInds(s.rwd_Inds),:);
-%     mySDF_noRwd_lick = allTrial_lickMatx_slide(s.responseInds(s.nrwd_Inds),:);
-%     plotFilled(slideTime, mySDF_rwd_lick,[0 0 1])
-%     plotFilled(slideTime, mySDF_noRwd_lick,[0.7 0 1])
-%     line([0 0], [0 maxLick], 'color', 'r')
-%     legend('rwd', '', 'noRwd', '')
-%     title('lick: rwd vs noRwd')
-%     ylim([0 maxLick]);
-        mySDF_shortPreRwd_spike = allTrial_spikeMatx_slide(s.responseInds(intersect(find(s.lickInds==0), s.rwd_Inds+1)),:);
-        mySDF_longPreRwd_spike = allTrial_spikeMatx_slide(s.responseInds(intersect(find(s.lickInds==1), s.rwd_Inds+1)),:);
-        plotFilled(slideTime, mySDF_shortPreRwd_spike,[0 0 1])
-        plotFilled(slideTime, mySDF_longPreRwd_spike,[0.7 0 1])
-        line([0 0], [0 maxLick], 'color', 'r')
-        title('shortAfterRwd vs longAfterRwd')
-        ylim([0 maxFreq]);
+%         z(18) = subplot(8,7,44); hold on;
 
-         subplot(8,7,51); hold on;
-
-        mySDF_shortPreNoRwd_spike = allTrial_spikeMatx_slide(s.responseInds(intersect(find(s.lickInds==0), s.nrwd_Inds+1)),:);
-        mySDF_longPreNoRwd_spike = allTrial_spikeMatx_slide(s.responseInds(intersect(find(s.lickInds==1), s.nrwd_Inds+1)),:);
-        plotFilled(slideTime, mySDF_shortPreNoRwd_spike,[0 0 1])
-        plotFilled(slideTime, mySDF_longPreNoRwd_spike,[0.7 0 1])
-        line([0 0], [0 maxLick], 'color', 'r')
-        title('shortAfterNoRwd vs longAfterNoRwd')
-        ylim([0 maxFreq]);
+%         mySDF_shortPreRwd_spike = allTrial_spikeMatx_slide(s.responseInds(intersect(find(s.lickInds==0), s.rwd_Inds+1)),:);
+%         mySDF_longPreRwd_spike = allTrial_spikeMatx_slide(s.responseInds(intersect(find(s.lickInds==1), s.rwd_Inds+1)),:);
+%         plotFilled(slideTime, mySDF_shortPreRwd_spike,[0 0 1])
+%         plotFilled(slideTime, mySDF_longPreRwd_spike,[0.7 0 1])
+%         line([0 0], [0 maxLick], 'color', 'r')
+%         title('shortAfterRwd vs longAfterRwd')
+%         ylim([0 maxFreq]);
+% 
+%          subplot(8,7,51); hold on;
+% 
+%         mySDF_shortPreNoRwd_spike = allTrial_spikeMatx_slide(s.responseInds(intersect(find(s.lickInds==0), s.nrwd_Inds+1)),:);
+%         mySDF_longPreNoRwd_spike = allTrial_spikeMatx_slide(s.responseInds(intersect(find(s.lickInds==1), s.nrwd_Inds+1)),:);
+%         plotFilled(slideTime, mySDF_shortPreNoRwd_spike,[0 0 1])
+%         plotFilled(slideTime, mySDF_longPreNoRwd_spike,[0.7 0 1])
+%         line([0 0], [0 maxLick], 'color', 'r')
+%         title('shortAfterNoRwd vs longAfterNoRwd')
+%         ylim([0 maxFreq]);
 
 
         z(20) = subplot(8,7,[43 50]); hold on;
@@ -716,45 +709,127 @@ for i = 1:length(clust)
     end
     
     % CSplus vs CSminus
-    z(19) = subplot(8,7,[30 37]); hold on;
-    mySDF_CSplus_spike = allTrial_spikeMatx_slide(s.responseInds,:);
-    mySDF_CSminus_spike = allTrial_spikeMatx_slide(CSminus_Inds,:);
-    plotFilled(slideTime, mySDF_CSplus_spike,[0 0 1])
-    plotFilled(slideTime, mySDF_CSminus_spike,[0.7 0 1])
-    line([0 0], [0 maxLick], 'color', 'r')
-    legend('CSplus', '', 'CSminus', '')
-    title('CSplus vs CSminus')
-    ylim([0 maxFreq]);
+%     z(19) = subplot(8,7,[30 37]); hold on;
+%     mySDF_CSplus_spike = allTrial_spikeMatx_slide(s.responseInds,:);
+%     mySDF_CSminus_spike = allTrial_spikeMatx_slide(CSminus_Inds,:);
+%     plotFilled(slideTime, mySDF_CSplus_spike,[0 0 1])
+%     plotFilled(slideTime, mySDF_CSminus_spike,[0.7 0 1])
+%     line([0 0], [0 maxLick], 'color', 'r')
+%     legend('CSplus', '', 'CSminus', '')
+%     title('CSplus vs CSminus')
+%     ylim([0 maxFreq]);
     
     % FA vs CR
-%     
-%     if ~isempty(setdiff(CSplus_Inds,lickInds))
-%         mySDF_miss_spike = allTrial_spikeMatx_slide(setdiff(CSplus_Inds,lickInds),:);
-%         mySDF_CR_spike = allTrial_spikeMatx_slide(setdiff(CSminus_Inds,lickInds),:);
-%         if size(mySDF_CR_spike,1)>1 
-%             plotFilled(slideTime, mySDF_CR_spike,[0 0 1])
-%         else
-%             if size(mySDF_CR_spike,1)>0
-%                 plot(slideTime, mySDF_CR_spike, 'color', [0 0 1])
-%             end
-%         end
-%             
-%         if size(setdiff(CSplus_Inds,lickInds))>1 
-%             plotFilled(slideTime, mySDF_miss_spike,[0.7 0 1])
-%             line([0 0], [0 maxLick], 'color', 'r')
-%             legend('CR', '', 'miss', '')
-%         else
-%             if size(setdiff(CSplus_Inds,lickInds))>0
-%                plot(slideTime, mySDF_miss_spike, 'color', [0.7 0 1])
-%             end
-%             line([0 0], [0 maxLick], 'color', 'r')
-%             legend('CR', '', 'miss')            
-%         end
-%         title('CR vs miss')
-%         ylim([0 maxFreq]); 
-%     end
+    subplot(8,7,[44]); hold on;
+    if ~isempty(setdiff(CSplus_Inds,lickInds))
+        mySDF_miss_spike = allTrial_spikeMatx_slide(setdiff(CSplus_Inds,lickInds),:);
+        mySDF_CR_spike = allTrial_spikeMatx_slide(setdiff(CSminus_Inds,lickInds),:);
+        if size(mySDF_CR_spike,1)>1 
+            plotFilled(slideTime, mySDF_CR_spike,[0 0 1])
+        else
+            if size(mySDF_CR_spike,1)>0
+                plot(slideTime, mySDF_CR_spike, 'color', [0 0 1])
+            end
+        end
+            
+        if size(setdiff(CSplus_Inds,lickInds),2)>1 
+            plotFilled(slideTime, mySDF_miss_spike,[0.7 0 1])
+            line([0 0], [0 maxLick], 'color', 'r')
+            legend('CR', '', 'miss', '')
+        else
+            if size(setdiff(CSplus_Inds,lickInds))>0
+               plot(slideTime, mySDF_miss_spike, 'color', [0.7 0 1])
+            end
+            line([0 0], [0 maxLick], 'color', 'r')
+            legend('CR', '', 'miss')            
+        end
+        title('CR vs miss')
+        ylim([0 maxFreq]); 
+    end
     
+    %% hit vs FA
+    subplot(8,7,[51]); hold on;
+    if ~isempty(setdiff(lickInds, CSplus_Inds))
+        mySDF_FA_spike = allTrial_spikeMatx_slide(setdiff(lickInds, CSplus_Inds),:);
+        mySDF_hit_spike = allTrial_spikeMatx_slide(s.responseInds,:);
+        plotFilled(slideTime, mySDF_hit_spike,[0.7 0 1])
+        if size(mySDF_FA_spike,1)>1 
+            plotFilled(slideTime, mySDF_FA_spike,[0 0 1])
+            
+        else
+            if size(mySDF_FA_spike,1)>0
+                plot(slideTime, mySDF_FA_spike, 'color', [0 0 1])
+            end
+        end
+        
+        line([0 0], [0 maxLick], 'color', 'r')
+        legend('hit', '', 'FA')
+        
+        title('FA vs hit')
+        ylim([0 maxFreq]); 
+    end
+    %% hit vs miss
+    subplot(8,7,[37]); hold on;
+    if ~isempty(setdiff(CSplus_Inds, lickInds))
+        plotFilled(slideTime, mySDF_hit_spike,[0.7 0 1])
+        if size(mySDF_miss_spike,1)>1 
+            plotFilled(slideTime, mySDF_miss_spike,[0 0 1])
+            
+        else
+            if size(mySDF_FA_spike,1)>0
+                plot(slideTime, mySDF_miss_spike, 'color', [0 0 1])
+            end
+        end
+        
+        line([0 0], [0 maxLick], 'color', 'r')
+        legend('hit', '', 'miss')
+        
+        title('hit vs miss')
+        ylim([0 maxFreq]); 
+    end    
+  
+    %% CR vs FA
+    subplot(8,7,30);
+    if ~isempty(setdiff(lickInds, CSplus_Inds)) % if there's false alarm
+        if size(mySDF_CR_spike,1)>1 
+            plotFilled(slideTime, mySDF_CR_spike,[0 0 1])
+        else
+            if size(mySDF_CR_spike,1)>0
+                plot(slideTime, mySDF_CR_spike, 'color', [0 0 1])
+            end
+        end
+            
+        if size(mySDF_FA_spike,1)>1 
+            plotFilled(slideTime, mySDF_FA_spike,[0.7 0 1])
+            line([0 0], [0 maxLick], 'color', 'r')
+        else
+            if size(mySDF_FA_spike,1)>0
+               plot(slideTime, mySDF_FA_spike, 'color', [0.7 0 1])
+            end
+            line([0 0], [0 maxLick], 'color', 'r')          
+        end
+        if size(mySDF_CR_spike,1)>1
+            legend('CR', '', 'FA')  
+        else
+            if size(mySDF_CR_spike,1)==1
+                legend('CR', 'FA')
+            else
+                legend('FA')
+            end
+        end
+        title('CR vs FA')
+        ylim([0 maxFreq]); 
+    end  
     
+%%    
+%     mySDF_rwd_lick = allTrial_lickMatx_slide(s.responseInds(s.rwd_Inds),:);
+%     mySDF_noRwd_lick = allTrial_lickMatx_slide(s.responseInds(s.nrwd_Inds),:);
+%     plotFilled(slideTime, mySDF_rwd_lick,[0 0 1])
+%     plotFilled(slideTime, mySDF_noRwd_lick,[0.7 0 1])
+%     line([0 0], [0 maxLick], 'color', 'r')
+%     legend('rwd', '', 'noRwd', '')
+%     title('lick: rwd vs noRwd')
+%     ylim([0 maxLick]);
     
     
     %ISI histogram

@@ -18,6 +18,7 @@ classdef RestlessBandit < handle
         BlockSwitch_Flag = true;
         NewBlock_Flag = false;
         BlockSwitch = [];
+        PersevCount = []; 
         Trial
         MaxTrials
         RandomSeed
@@ -44,12 +45,12 @@ classdef RestlessBandit < handle
             obj.BlockSwitch = 1;            
             obj.BlockEnd = randi([min(obj.BlockLength) max(obj.BlockLength)]) + obj.Trial;
             obj.BlockSwitch = [obj.BlockSwitch obj.BlockEnd];
+            obj.PersevCount = [0 0];
         end
         function obj = inputChoice(obj, currChoice)
             % increment trial
             obj.Trial = obj.Trial + 1;
-            
-            
+
             % turn off flag used for plotting block switches
             if obj.BlockSwitch_Flag == true & obj.Trial > 1
                 obj.BlockSwitch_Flag = false;
@@ -60,14 +61,42 @@ classdef RestlessBandit < handle
                 obj.BlockSwitch_Flag = false;
             end 
             
-            % currChoice needs to be a 1x2 binary vector for [L R] choice
+            % perserve check before input of current choice
+            if obj.PersevCount(1,1) >= 4 && obj.RewardProbabilities(1,1) == 10
+                obj.BlockEnd = obj.BlockEnd + obj.PersevCount(1,1);
+                obj.BlockSwitch(end) = obj.BlockEnd;
+                obj.PersevCount(1,1) = 0;
+                obj.NewBlock_Flag = false;
+            elseif obj.PersevCount(1,2) >= 4 && obj.RewardProbabilities(1,2) == 10
+                obj.BlockEnd = obj.BlockEnd + obj.PersevCount(1,2);
+                obj.BlockSwitch(end) = obj.BlockEnd;
+                obj.PersevCount(1,2) = 0;
+                obj.NewBlock_Flag = false;
+            end
+            
+            % generate new block
             if obj.NewBlock_Flag == true
-                obj.BlockEnd = randi([min(obj.BlockLength) max(obj.BlockLength)]) + obj.Trial;
+                obj.BlockEnd = randi([min(obj.BlockLength) max(obj.BlockLength)]) + obj.Trial - 1;
                 obj.BlockSwitch = [obj.BlockSwitch obj.BlockEnd];
                 obj.RewardProbabilities = obj.RewardProbabilities(2:-1:1); % switch reward probabilities
                 obj.NewBlock_Flag = false;
                 obj.BlockSwitch_Flag = true;
             end
+            % persevAdd code
+            if all(currChoice == [1 0]) && obj.RewardProbabilities(1,1) == 10
+                obj.PersevCount = [obj.PersevCount(1,1) + 1 0];
+            elseif all(currChoice == [0 1]) && obj.RewardProbabilities(1,2) == 10
+                obj.PersevCount(1,:) = [0 obj.PersevCount(1,2) + 1];
+            end
+            % currChoice needs to be a 1x2 binary vector for [L R] choice
+            if obj.NewBlock_Flag == true
+                obj.BlockEnd = randi([min(obj.BlockLength) max(obj.BlockLength)]) + obj.Trial - 1;
+                obj.BlockSwitch = [obj.BlockSwitch obj.BlockEnd];
+                obj.RewardProbabilities = obj.RewardProbabilities(2:-1:1); % switch reward probabilities
+                obj.NewBlock_Flag = false;
+                obj.BlockSwitch_Flag = true;
+            end
+            
             
             % input choice
             Rwd_rand = randi([0 99]);

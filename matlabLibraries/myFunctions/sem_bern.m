@@ -4,9 +4,10 @@ function sem = sem_bern(events)
 % INPUTS
 %       events, 1 for success, 0 for fail
 % OUTPUTS
-%       sem: standard error of the mean
+%       sem: standard error of the mean, without nan
 
-p = sum(events)./length(events);
+
+p = mean(events,'omitnan');
 q = 1 - p;
 
-sem = sqrt((p.*q)./length(events));
+sem = sqrt((p.*q)./sum(~isnan(events)));

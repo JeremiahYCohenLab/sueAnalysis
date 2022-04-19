@@ -100,6 +100,10 @@ for ani = 1:length(animalNames)
         responseInds = os.responseInds(1:min(length(choice), maxTrial)); 
         preRwd = [NaN abs(os.allRewards(1:end-1))]';
         %% behavior
+        % correct (hit CR) and wrong (miss, FA)
+        correct = zeros(size(outcome));
+        correct(setxor(find(os.CSplus>0), find(~isnan(os.lickSide)>0))) = 1;
+        
         % switch
         svs = zeros(length(os.responseInds),1);
         svs(os.changeChoice_Inds) = 1;

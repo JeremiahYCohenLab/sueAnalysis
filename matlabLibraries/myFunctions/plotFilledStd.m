@@ -10,8 +10,8 @@ function hOut = plotFilledStd(x, data, color, figHandle)
 %       hOut: handle to plot command
 
 y = nanmean(data);
-yU = y + std(data);
-yL = y - std(data);
+yU = y + std(data,'omitnan');
+yL = y - std(data,'omitnan');
 
 if nargin < 3
     subplot(figHandle)

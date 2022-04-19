@@ -49,25 +49,15 @@ else
 end
 
 %% Break session down into CS+ trials where animal responded
-blockSwitch = blockSwitch(blockSwitch<length(behSessionData));
-if exist('blockSwitchL', 'var')  % if the data is from stage3
-    blockSwitchL = blockSwitchL(blockSwitchL<length(behSessionData));
-    blockSwitchR = blockSwitchR(blockSwitchR<length(behSessionData));
-else
-    blockSwitchL = blockSwitch;
-    blockSwitchR = blockSwitch;
-end
-
 
 responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window
 omitInds = isnan([behSessionData.rewardTime]); 
 
-origBlockSwitch = blockSwitch;
-tempBlockSwitch = blockSwitch;
-for i = 2:length(blockSwitch)
-    subVal = sum(omitInds(tempBlockSwitch(i-1):tempBlockSwitch(i)));
-    blockSwitch(i:end) = blockSwitch(i:end) - subVal;
-end
+blockProbs = [[behSessionData.rewardProbL]; [behSessionData.rewardProbR]]';
+blockProbs = blockProbs(responseInds,:);
+blockSwitchL = [1; find(blockProbs(2:end,1)~= blockProbs(1:end-1,1)) + 1];
+blockSwitchR = [1; find(blockProbs(2:end,2)~= blockProbs(1:end-1,2)) + 1];
+blockSwitch = unique([blockSwitchL; blockSwitchR]);
 
 rwdDelay = mode([behSessionData(responseInds).rewardTime] - [behSessionData(responseInds).respondTime]);
 allReward_R = [behSessionData(responseInds).rewardR]; 
@@ -129,6 +119,16 @@ for i = 1:length(behSessionData)
             lickRateRwd = [lickRateRwd lickRateRwdTemp];
 
         end
+    else
+        lickTemp = [behSessionData(i).licksL, behSessionData(i).licksR];
+        if min(lickTemp) <= behSessionData(i).CSon + 2000
+            if min(behSessionData(i).licksL) < min(behSessionData(i).licksR)
+                lickSide(i) = -1;
+            else
+                lickSide(i) = 1;
+            end
+        end
+        
     end
  end
 
@@ -199,14 +199,22 @@ if sum(strcmp(fields(behSessionData),'laser'))>0
 else
     laser = zeros(size(responseInds));
 end
-%% decide if stop here with simple outputs
-if p.Results.simpleFlag
+
+%% find vol
     s = struct;
+if sum(cellfun(@(x) strcmp(x, 'vol'), fieldnames(behSessionData)))~=0
+    vol = [behSessionData.vol];
+    vol = vol(responseInds);
+    s.vol = vol;
+end
+
+%% decide if stop here with simple outputs
 
     s.allChoices = allChoices;
     s.allRewards = allRewards;
     s.allNoRewards = allNoRewards;
     s.blockSwitch = blockSwitch;
+    s.blockProbs = blockProbs;
     s.lickLat = lickLat;
     s.lickLatInds = find(realID>0);
     s.responseInds = responseInds;
@@ -230,17 +238,15 @@ if p.Results.simpleFlag
     if sum(strcmp(fields(behSessionData),'hmm'))>0
         hmmStates = [behSessionData.hmm];
         s.hmmStates = hmmStates;
+    else
+        [~, hmmStates] = fitHmmOpt(sessionName, 0);
+        s.hmmStates = hmmStates;
     end
     s.laser = laser;
+    s.lickSide = lickSide;
+    
+if p.Results.simpleFlag
     return
-end
-
-
-%% hmm states
-if sum(strcmp(fields(behSessionData),'hmm'))>0
-    hmmStates = [behSessionData.hmm];
-else
-    [~, hmmStates] = fitHmmOpt(sessionName);
 end
 %% linear regression model by trial
 
@@ -474,26 +480,10 @@ if mean(lickLat(ind==1))>mean(lickLat(ind==2))
 end
 ind = ind - 1;
 %% make output struct 
-s = struct;
-s.lickInds = ind;
-s.allChoices = allChoices;
-s.allRewards = allRewards;
-s.allNoRewards = allNoRewards;
-s.allRewardsBinary = allRewardsBinary;
+% s.lickInds = ind;
 s.behSessionData = behSessionData;
-s.blockSwitch = blockSwitch;
-% s.choiceHx = choiceHx;
 s.choiceTimes = choiceTimes;
 s.choiceSlope = choiceSlope;
-% s.corrLickRate = corrLickRate;    
-% s.corrLickRateRwd = corrLickRateRwd;
-s.lickLat = lickLat;
-s.lickLatInds = find(realID>0);
-s.lickSide = lickSide;
-s.responseInds = responseInds;
-s.lickLatZ = lickLatZ;
-s.lickLatLogZ = lickLatLogZ;
-s.responseRateInds = responseRateInds; 
 s.rwdHx = rwdHx;
 s.rwdHxTimeChoice = rwdHxTimeChoice;
 s.rwdSlope = rwdSlope;
@@ -503,25 +493,11 @@ s.rwdTimeMatxBin = rwdTimeMatxBin;
 s.sessionRwds = sessionRwds;
 s.timeBinSize = timeBinSize;
 s.timeMax = p.Results.timeMax;
-s.CSplus = CSplus_Inds;
-s.CSminus = CSminus_Inds;
-s.lickR_Inds = lickR_Inds;
-s.lickL_Inds = lickL_Inds;
-s.rwd_Inds = find(allRewards~=0);
-s.nrwd_Inds = find(allRewards==0);
-s.hmmStates = hmmStates;
-s.changeChoice_Inds = changeChoice_Inds;
-s.stayChoice_Inds = stayChoice_Inds;
-s.rwdDelay = rwdDelay;
-s.timeBtwn = timeBtwn;
 s.rwdMatxForLick = rwdMatxForLick;
 s.noRwdMatxForLick = noRwdMatxForLick;
 s.choiceMatx = choiceMatx;
-s.lickRate = lickRate;
-s.lickRateZ = lickRateZ;
-s.lickRateRwd = lickRateRwd;
-s.lickRateRwdZ = lickRateRwdZ;
-s.laser = laser;
+
+
 
 
 if p.Results.revForFlag

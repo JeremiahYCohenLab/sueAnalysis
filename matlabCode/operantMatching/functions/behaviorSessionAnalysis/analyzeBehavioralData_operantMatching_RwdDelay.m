@@ -1,4 +1,4 @@
-function [allRewards, allChoices, glm_rwd, glm_choice, glm_rwdANDchoice, choiceSlope, rwdSlope, lickLat_short, blockSwitch, blockProbs] = analyzeBehavioralData_operantMatching(fileOrFolder, saveFigFlag ,lickFlag)
+function [allRewards, allChoices, glm_rwd, glm_choice, glm_rwdANDchoice, choiceSlope, rwdSlope, lickLat_short, blockSwitch, blockProbs] = analyzeBehavioralData_operantMatching_RwdDelay(fileOrFolder, saveFigFlag ,lickFlag)
 
 % [allRewards, allChoices, glm_rwd, glm_choice, glm_rwdANDchoice] = analyzeBehavioralData_operantMatching(fileOrFolder, saveFigFlag)
 % INPUTS
@@ -22,39 +22,35 @@ end
 % addpath(genpath(currPath(1:tmp(end)))); 
 
 [root, sep] = currComputer();
+sessionName = fileOrFolder;
+[animalName, date] = strtok(sessionName, 'd'); 
+animalName = animalName(2:end);
+date = date(1:9);
+sessionFolder = ['m' animalName date];
 
-if ~isempty(strfind(fileOrFolder,'.asc')) % input is .asc file
-    filename = fileOrFolder;
-    [animalName, date] = strtok(filename, 'd'); 
-    animalName = animalName(2:end);
-    date = date(1:9);
-    sessionFolder = ['m' animalName date];
-    behavioralDataPath = [root animalName sep sessionFolder sep 'behavior' sep filename];
-    sessionName = filename(1:strfind(filename,'.asc')-1);
-    saveFigName = sessionName;
-else % input is the folder
-    sessionFolder = fileOrFolder;
-    animalName = strtok(sessionFolder, 'd');
-    animalName = animalName(2:end);
-    filepath = [root animalName sep sessionFolder sep 'behavior' sep];
-    allFiles = dir(filepath);
-    fileInd = ~cellfun(@isempty,strfind({allFiles.name},'.asc'));
-    behavioralDataPath = [filepath allFiles(fileInd).name];
-    sessionName = allFiles(fileInd).name;
-    saveFigName = sessionFolder(~(sessionFolder==sep));
+if isstrprop(sessionName(end), 'alpha')
+    behSessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session ' sessionName(end) sep sessionName '_sessionData_behav.mat'];
+else
+    behSessionDataPath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep sessionName '_sessionData_behav.mat'];
+end
+
+if exist(behSessionDataPath,'file')
+    load(behSessionDataPath)
+else
+    [sessionData, blockSwitch, blockProbs] = generateSessionData_behav_operantMatching_RwdDelay(sessionName);
 end
 
 sortedFolderLocation = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep];
 sortedFolder = dir(sortedFolderLocation);
-if any(~cellfun(@isempty,strfind({sortedFolder.name},'_behav.mat')))
-    sessionDataInd = ~cellfun(@isempty,strfind({sortedFolder.name},'_behav.mat'));
-    load([sortedFolderLocation sortedFolder(sessionDataInd).name])
-    if ~exist('sessionData')
-        sessionData = behSessionData;
-    end 
-else
-    [sessionData, blockSwitch, blockProbs] = generateSessionData_behav_operantMatching_RwdDelay(fileOrFolder);
-end
+% if any(~cellfun(@isempty,strfind({sortedFolder.name},'_behav.mat')))
+%     sessionDataInd = ~cellfun(@isempty,strfind({sortedFolder.name},'_behav.mat'));
+%     load([sortedFolderLocation sortedFolder(sessionDataInd).name])
+%     if ~exist('sessionData')
+%         sessionData = behSessionData;
+%     end 
+% else
+%     [sessionData, blockSwitch, blockProbs] = generateSessionData_behav_operantMatching_RwdDelay(fileOrFolder);
+% end
 
 
 %% Break session down into CS+ trials where animal responded
@@ -62,12 +58,10 @@ end
 responseInds = find(~isnan([sessionData.rewardTime]));
 omitInds = isnan([sessionData.rewardTime]);
 
-origBlockSwitch = blockSwitch; % because I change blockSwitch below and need original below
-tempBlockSwitch = blockSwitch;
-for i = 2:length(blockSwitch)
-    subVal = sum(omitInds(tempBlockSwitch(i-1):tempBlockSwitch(i)));
-    blockSwitch(i:end) = blockSwitch(i:end) - subVal;
-end
+origBlockSwitch = blockSwitch;
+rwdProbs = [sessionData.rewardProbR];
+rwdProbs = rwdProbs(responseInds);
+blockSwitch = [1 find(rwdProbs(1:end-1)~=rwdProbs(2:end))];
 
 allReward_R = [sessionData(responseInds).rewardR]; 
 allReward_L = [sessionData(responseInds).rewardL]; 
@@ -397,8 +391,10 @@ xlim([0 currTime]);
 lickLat = [];       lickRate = [];
 lickLat_L = [];     lickRate_L = [];
 lickLat_R = [];     lickRate_R = [];
+a = 0;
 for i = 1:length(sessionData)
-    if ~isempty(sessionData(i).respondTime)
+    if ~isempty(sessionData(i).rewardTime)
+        a = a+1;
         lickLat = [lickLat sessionData(i).respondTime - sessionData(i).CSon];
         if ~isnan(sessionData(i).rewardL)
             lickLat_L = [lickLat_L sessionData(i).respondTime - sessionData(i).CSon];
@@ -482,7 +478,7 @@ if saveFigFlag == 1
     end
 
     % sessionFolder(~(sessionFolder==sep)) removes the separator (/ or \) in the filename before saving
-    saveFigurePDF(gcf,[savepath sep saveFigName '_behavior'])
+    saveFigurePDF(gcf,[savepath sep sessionName '_behavior'])
 end
 
 %%

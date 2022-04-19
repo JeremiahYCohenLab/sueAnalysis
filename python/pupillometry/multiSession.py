@@ -8,6 +8,7 @@ file = r'F:\inhibitionAll.xlsx'
 sheet  = 'allInhibition'
 col = 'inhibitionNrwd'
 cdnn = 'edgeHiddenLEDinPupil-ZS-2021-05-19'
+cdnn = 'pupilEdge-Katie-2021-12-08'
 
 import pandas as pd
 import deeplabcut
@@ -16,6 +17,7 @@ file = r'J:\PSpupil.xlsx'
 sheet  = 'PS02pupil'
 col = 'all'
 cdnn = 'edgeHiddenLEDinPupil-ZS-2021-05-19'
+cdnn = 'pupilEdge-Katie-2021-12-08'
 
 df = pd.read_excel(file, sheet_name = sheet, usecols = [col])
 

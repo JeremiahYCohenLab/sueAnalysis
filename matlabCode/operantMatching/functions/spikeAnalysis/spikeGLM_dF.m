@@ -5,10 +5,10 @@ p = inputParser;
 p.addParameter('cellName', ['all']);
 p.addParameter('plotFlag', 1);
 p.addParameter('maxTrial', 1000);
-p.addParameter('modelName', '7params_absPePeAN_scale_int_bias_ord');
+p.addParameter('modelName', '5params');
 p.addParameter('regressors', '1+pe+biasSide+pe:biasSide')
-p.addParameter('binSize', 300)% in ms
-p.addParameter('stepSize', 100)
+p.addParameter('binSize', 1000)% in ms
+p.addParameter('stepSize', 200)
 p.addParameter('tb', 1)% in s
 p.addParameter('tf', 5)% in s
 p.addParameter('saveFigFlag', 1);
@@ -269,7 +269,8 @@ for i = 1:length(clust)
             if ~isempty(sigIndEarly) % if any significance
                 peEffect = sum(squeeze(abs(coeff(sigIndEarly,peInd+1,1))),2);
                 [~,maxInd] = max(peEffect);
-                startTime = max(midPoints(sigIndEarly(maxInd)) - 0.5*width, 1000*p.Results.tb + os.rwdDelay);
+%                 startTime = max(midPoints(sigIndEarly(maxInd)) - 0.5*width, 1000*p.Results.tb + os.rwdDelay);
+                startTime = 1000*p.Results.tb + os.rwdDelay;
             else 
                 startTime = 1000*p.Results.tb + os.rwdDelay;
             end

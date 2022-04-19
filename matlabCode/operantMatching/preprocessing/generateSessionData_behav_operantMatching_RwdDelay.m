@@ -22,6 +22,7 @@ sessionData.respondTime = [];
 sessionData.rewardTime = [];
 sessionData.rewardProbL = [];
 sessionData.rewardProbR = [];
+sessionData.laser = [];
 
 blockSwitch = 1;
 blockProbs = {};
@@ -38,6 +39,7 @@ for i = 1:length(sessionText)
     if ~isempty(regexp(sessionText{i},'Trial ', 'once')) && isempty(find(regexp(sessionText{i},'Trial ') > 3, 1)) % trial begin 
         temp1 = regexp(sessionText{i},'('); temp2 = regexp(sessionText{i},')');
         currTrial = str2double(sessionText{i}(temp1(1)+1:temp2(1)-1)); % current trial is in between parentheses
+        sessionData(currTrial).laser = 0;
         
         tBegin = i; % first index of trial is where the text says 'Trial '
         
@@ -109,6 +111,10 @@ for i = 1:length(sessionText)
                     sessionData(currTrial).rewardTime = str2double(temp{1}{2});
                     waterDeliverFlag = true;
                 end
+            end
+            
+            if strfind(sessionText{currTrialInd},'LASER')
+                sessionData(currTrial).laser = 1;
             end
 %             if strfind(sessionText{currTrialInd},'AUTOMATIC WATER L DELIVERED')
 %                 temp = regexp(sessionText(currTrialInd), ': ', 'split');

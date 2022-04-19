@@ -36,6 +36,8 @@ for sess = 1:length(dayList)
         continue
     end
     t = inferModelVar(dayList{sess}, params, model);
+    Q = t.Q;
+%     Q(:,2) = Q(:,2) + mean(params(:,5))/mean(params(:,4));
     combinePe = [combinePe; t.pe];
     combineBias = [combineBias; (mean(params(:,end))/mean(params(:,betaInd)))*ones(length(os.responseInds),1)];
     combineV = [combineV; t.Q];
@@ -70,7 +72,7 @@ end
     end
     
     % plot exploit
-    vOIT = combineV(combineHmmExp<1,2) - combineV(combineHmmExp<1,1)% + combineBias(combineHmmExp<1,1);
+    vOIT = combineV(combineHmmExp<1,2) - combineV(combineHmmExp<1,1);% + combineBias(combineHmmExp<1,1);
     choicesOIT = combineChoices(combineHmmExp<1);
     edges = linspace(min(vOIT), max(vOIT), p.Results.numBins+1);
 %     edges = binEqualSize(vOIT,p.Results.numBins);
@@ -89,10 +91,35 @@ end
         end
     end
     
+    
+    
     figure2;
     hold on;
     errorbar(vOITMean, choiceOITMean, choiceOITSem, 'color', 'b', 'LineWidth', 2);
     errorbar(vOREMean, choiceOREMean, choiceORESem, 'color', 'm', 'LineWidth', 2);
     title([sheet ' ' col ' ' model]);
+    
+    %% plot all
+    vOIT = combineV(:,2) - combineV(:,1);% + combineBias(combineHmmExp<1,1);
+    choicesOIT = combineChoices;
+    edges = linspace(min(vOIT), max(vOIT), p.Results.numBins+1);
+%     edges = binEqualSize(vOIT,p.Results.numBins);
+    choiceOITMean = zeros(p.Results.numBins,1);
+    choiceOITSem = zeros(p.Results.numBins,1);
+    vOITMean = zeros(p.Results.numBins,1);
+    for k = 1:(length(edges)-1)
+        if k < (length(edges)-1)
+            vOITMean(k) = mean(vOIT(vOIT>=edges(k) & vOIT < edges(k+1)));
+            choiceOITMean(k) = mean(choicesOIT(vOIT>=edges(k) & vOIT < edges(k+1)));
+            choiceOITSem(k) = sem_bern(choicesOIT(vOIT>=edges(k) & vOIT < edges(k+1)));
+        else
+            vOITMean(k) = mean(vOIT(vOIT>=edges(k) & vOIT <= edges(k+1)));
+            choiceOITMean(k) = mean(choicesOIT(vOIT>=edges(k) & vOIT <= edges(k+1)));
+            choiceOITSem(k) = sem_bern(choicesOIT(vOIT>=edges(k) & vOIT <= edges(k+1)));            
+        end
+    end
+    figure;
+     errorbar(vOITMean, choiceOITMean, choiceOITSem, 'color', 'b', 'LineWidth', 2);
+     title([sheet ' ' col ' ' model 'allChoices'])
     
 end

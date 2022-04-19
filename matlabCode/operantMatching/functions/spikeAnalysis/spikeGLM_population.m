@@ -8,10 +8,10 @@ p.addParameter('maxTrial', 1000);
 % p.addParameter('modelName','7params_absPePeAN_scale_int_bias_ord')
 p.addParameter('modelName','5params')
 p.addParameter('regressors', '1+pe+biasSide+pe*biasSide')
-p.addParameter('binSize', 500)% in ms
+p.addParameter('binSize', 1000)% in ms
 p.addParameter('stepSize', 250)
 p.addParameter('tb', 1.7)% in s 1.7
-p.addParameter('tf', 1.5)% in s
+p.addParameter('tf', 2)% in s
 p.addParameter('saveFigFlag', 1);
 p.parse(varargin{:});
 populationSig = []; % the matrix with 1 for positive beta, -1 for negative beta
@@ -40,7 +40,7 @@ for ani = 1:length(animalNames)
     subFolders = unitsInfo(2:end,9);
 
     drift = unitsInfo(2:end,10);
-    drift = contains(drift, 'drift')|contains(drift, 'Drift');
+    drift = contains(drift, 'drift')|contains(drift, 'Drift')|contains(drift, 'duplicate')|contains(drift, 'Duplicate');
     quality = nums(:,1);
     sessionList = sessionList(quality<=0.05 & ~drift);
     unitList = unitList(quality<=0.05 & ~drift);
@@ -77,7 +77,7 @@ for ani = 1:length(animalNames)
         continue
     else 
         respLat = nanmin(met.spikeLat(respInds));
-        if respLat > 15000 || met.isiV > 0.001 || met.distance>0.3 
+        if respLat > 15000 || met.isiV > 0.001 || met.distance>0.3 || isnan(met.distance) || isempty(met.distance)
             continue
         end
     end
@@ -104,6 +104,8 @@ for ani = 1:length(animalNames)
         svs = zeros(length(os.responseInds),1);
         svs(os.changeChoice_Inds) = 1;
         svsNext = [svs(2:end); NaN];
+        svsWhenNrwd = svsNext;
+        svsWhenNrwd(os.rwd_Inds) = NaN;
         [t,~,noSession] = getStanModelParams_samps(p.Results.modelName, [path sampFile '.mat'], 2000, 'sessionName', session);
         if noSession
             fprintf(['no good behavior in ' session '\n']);
@@ -163,14 +165,30 @@ for ani = 1:length(animalNames)
         rightSide = zeros(size(pe));
         rightSide(os.allChoices>0)=1;
         preITI = os.timeBtwn';
+        % consecutive no rewards
+        conNrwds = zeros(size(pe));
+        for j = 1:length(choice)
+            if outcome(j) == 0
+                k = 1;
+                while j-k>0 
+                    if outcome(j-k)==0
+                        k = k+1;
+                    else
+                        break
+                    end
+                end                
+                conNrwds(j) = k;
+            end
+        end
+        
         if contains(p.Results.modelName, '7params_absPePeAN_scale_int_bias_ord')
             aN = t.aN;
             peBar = t.peBar;
             pePe = t.pePe;
             scPe = pe.*(1-peBar);
-            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, scPe, aN, peBar, pePe);
+            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, svsWhenNrwd, conNrwds, scPe, aN, peBar, pePe);
         else
-            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext);
+            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, svsWhenNrwd, conNrwds);
         end
         names = tbl.Properties.VariableNames;
         % zscore all regressors
@@ -337,8 +355,8 @@ for k = 1:length(midPoints)
         tmpSig = populationSig(k,j,:);
         nonSig = tmpTStats(tmpSig == 0);
         Sig = tmpTStats(tmpSig ~= 0);
-        histogram(nonSig, bins, 'FaceColor', [0.5 0.5 0.5]);
-        histogram(Sig, bins, 'FaceColor', colors(j,:));
+        histogram(nonSig, bins, 'FaceColor', [0.5 0.5 0.5], 'Normalization', 'probability');
+        histogram(Sig, bins, 'FaceColor', colors(j,:),  'Normalization', 'probability');
         if k == 1
             ylabel(regressors{j})
         end

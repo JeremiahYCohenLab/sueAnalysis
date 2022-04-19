@@ -38,80 +38,18 @@ function [behSessionData, states, trans_fit, emis_fit] = fitHmmOpt(sessionName,p
     allChoices(~isnan(allReward_R)) = 2;
     allChoices(~isnan(allReward_L)) = 1;
 
-    %% fit hmm OIT start
-    trans_guess = [0.6, 0, 0.4;...
-                 0, 0.6, 0.4;...
-                 0.3, 0.3, 0.4];
-    emis_guess = [1, 0;...
-                0, 1;
-                0.5, 0.5];
-    if allChoices(1) == 2
-        allChoices = 3 - allChoices;
-        [trans_est_oit,emis_est_oit, postlik_oit] = hmmtrainPrior(allChoices,trans_guess,emis_guess); % should be done separately for each session because of bias.
-        allChoices = 3 - allChoices;
-        emis_est_oit = emis_est_oit(:,[2,1]);
-    else
-        [trans_est_oit,emis_est_oit, postlik_oit] = hmmtrainPrior(allChoices,trans_guess,emis_guess); % should be done separately for each session because of bias.
-    end
-
-    %% fit hmm ORE start
+    %% fit hmm
     trans_guess = [0.4, 0.3, 0.3;...
-                  0.4, 0.6, 0;...
-                  0.4, 0, 0.6];
-    emis_guess = [0.5, 0.5;
-                 1, 0;...
-                 0, 1];
-    [trans_est_ore,emis_est_ore, postlik_ore] = hmmtrainPrior(allChoices,trans_guess,emis_guess); % should be done separately for each session because of bias.
-    
-    %% compare
-    bias_t = trans_est_oit(1,1)* trans_est_oit(2,2);
-    bias_e = trans_est_ore(2,2)* trans_est_ore(3,3);
-    
-    if postlik_oit(end)>postlik_ore(end)
-%     if bias_t >= bias_e
-        emis_fit = emis_est_oit([3,1,2],:);
-        trans_fit([2,3],[2,3]) = trans_est_oit([1,2],[1,2]);
-        trans_fit(1,1) = trans_est_oit(3,3);
-        trans_fit([2,3],1) = trans_est_oit([1,2],3);
-        trans_fit(1,[2,3]) = trans_est_oit(3,[1,2]);
-        choice = 'oit';
-    else
-        emis_fit = emis_est_ore;
-        trans_fit = trans_est_ore;
-        choice = 'ore';
-    end
-    % correction 
-%     bias = abs(emis_fit(1,1)-0.5);
-%     emis_fit(1,:) =  2 * bias * [0.5,0.5] + (1 - 2 * bias)*emis_fit(1,:);
-%     tbias = abs(trans_fit(1,2) - trans_fit(1,3));
-%     trans_fit(1,2) = tbias * 0.5*(1 - trans_fit(1,1)) + (1 - tbias)*trans_fit(1,2);
-%     trans_fit(1,3) = tbias * 0.5*(1 - trans_fit(1,1)) + (1 - tbias)*trans_fit(1,3);
+                   0.2, 0.8, 0;...
+                   0.2, 0, 0.8];
+    emis_guess = [0.5, 0.5;...
+                0, 1;
+                1, 0];
 
-    % correction average
-%     if trans_fit(1,1) > 0.5
-%         trans_fit(1,1) = 0.5 * (trans_fit(1,1) + 0.5);
-%         trans_fit(1,[2,3]) = (1 - trans_fit (1,1) )*trans_fit(1,[2,3])/sum(trans_fit(1,[2,3]));
-%     end
-%     if trans_fit(2,2) < 0.5
-%         trans_fit(2,:) = [0.45, 0.55, 0];
-%     end
-%     if trans_fit(3,3) < 0.5
-%         trans_fit(3,:) = [0.45, 0, 0.55];
-%     end
-%     
-%     emis_fit(1,:) =  [0.25,0.25] + 0.5 * emis_fit(1,:);
-%     trans_fit(1,[2,3]) = 0.5 * 0.5 * (1 - trans_fit(1,1)) + 0.5 * trans_fit(1,[2,3]);
-%         
+    [trans_est,emis_est] = hmmtrainPrior(allChoices,trans_guess,emis_guess); % should be done separately for each session because of bias. 
+    %% compare
     % fit
-    statestemp = hmmviterbi(allChoices,trans_fit,emis_fit);
-    % flip
-    if allChoices(1) == 2 && strcmp(choice,'oit')
-        states(statestemp == 1) = 1;
-        states(statestemp == 2) = 3;
-        states(statestemp == 3) = 2;
-    else
-        states = statestemp;
-    end
+    states = hmmviterbi(allChoices,trans_est,emis_est);
    
 
     %append to behavior
@@ -186,11 +124,14 @@ if plotFlag == 1
     ylabel('<-- L       R  -->')
     title('Opt');
     text(1,1.2,lastwarn);
-    text(1,2,choice);
 %% plot block length distribution
     subplot(3,4,5);hold on; 
     histogram(isiLen, 0.5:1:max(isiLen)+0.5, 'Normalization', 'probability');
     plot(linspace(0.5, max(isiLen) + 0.5,500),fitcurve1, 'LineWidth',2);
     plot(linspace(0.5, max(isiLen) + 0.5,500),fitcurve2, 'LineWidth',2);
     text(0.25*max(isiLen), 0.7*max(lenDistri/sum(lenDistri)), sprintf(' b = %s \n bs = %s \n bl = %s', num2str(round(b,2)), num2str(round(bs,2)), num2str(round(bl,2))));
+    
+    screen = get(0,'Screensize');
+    screen(4) = screen(4) - 100;
+    set(gcf, 'Position', screen)    
 end 

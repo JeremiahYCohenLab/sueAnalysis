@@ -3,7 +3,7 @@ function [t, allRewards, allChoices, blockProbs, blockSwitch] = qLearningModel_s
 %
 % Simulate dynamic foraging task with temporally-forgetting Q learning model
 % 
-% 
+%
 %task and model parameters
 a = inputParser;
 % default parameters if none given

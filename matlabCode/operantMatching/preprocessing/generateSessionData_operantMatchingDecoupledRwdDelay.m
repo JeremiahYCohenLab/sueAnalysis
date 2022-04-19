@@ -32,6 +32,7 @@ behSessionData.rewardTime = [];
 behSessionData.rewardProbL = [];
 behSessionData.rewardProbR = [];
 behSessionData.allLicks = [];
+behSessionData.laser = [];
 
 blockSwitch = 1;
 blockSwitchL = 1;
@@ -42,6 +43,8 @@ for i = 1:length(sessionText)
     if regexp(sessionText{i},'L Trial ') % trial begin 
         temp1 = regexp(sessionText{i},'('); temp2 = regexp(sessionText{i},')');
         currTrial = str2double(sessionText{i}(temp1(1)+1:temp2(1)-1)); % current trial is in between parentheses
+        behSessionData(currTrial).laser = 0;
+        
         tBegin = i; % first index of trial is where the text says 'L Trial '
         
         tCSFlag = false;
@@ -131,13 +134,16 @@ for i = 1:length(sessionText)
                     waterDeliverFlag = true;
                 end
             end
-
+            
+            if strfind(sessionText{currTrialInd},'LASER')
+                behSessionData(currTrial).laser = 1;
+            end
             
             if currTrialInd == tEnd % run this at the last index || currTrialInd == length(sessionText)-1
                 behSessionData(currTrial).licksL = allL_licks;
                 behSessionData(currTrial).licksR = allR_licks;
                 if ~isempty([allL_licks allR_licks])
-                    behSessionData(currTrial).respondTime = min([allL_licks allR_licks]);
+                    behSessionData(currTrial).respondTime = min([allL_licks(allL_licks>=behSessionData(currTrial).CSon) allR_licks(allR_licks>=behSessionData(currTrial).CSon)]);
                 else
                     behSessionData(currTrial).respondTime = NaN;
                 end
@@ -161,7 +167,7 @@ for i = 1:length(sessionText)
                 blockSwitch = [blockSwitch currTrial+1];
                 blockSwitchL = [blockSwitchL currTrial+1];
             end
-             end
+        end
         if regexp(sessionText{currTrialInd},'R Block Switch at Trial ')
             if currTrial ~= 1
                 blockSwitch = [blockSwitch currTrial+1];

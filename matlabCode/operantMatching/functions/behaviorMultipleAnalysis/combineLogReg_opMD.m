@@ -30,6 +30,7 @@ tMax = p.Results.numBins;
  
 
 for i = 1: length(dayList)
+    clear behSessionData
     sessionName = dayList{i};
     [animalName, date] = strtok(sessionName, 'd'); 
     animalName = animalName(2:end);
@@ -52,6 +53,9 @@ for i = 1: length(dayList)
         [behSessionData, ~] = generateSessionData_operantMatching(sessionName);
     else
         [behSessionData, ~, ~, ~] = generateSessionData_operantMatchingDecoupledRwdDelay(sessionName);
+    end
+    if ~exist('behSessionData', 'var')
+        behSessionData = sessionData;
     end
     behSessionData = behSessionData(1:min(length(behSessionData), p.Results.maxTrials));
     responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window
@@ -118,6 +122,12 @@ for i = 1:length(dayList)-1
     tmpInd = tmpInd + seshLength(i) + 100;
 end
 
+sw = [0 double(allChoices(1:end-1)~=allChoices(2:end))];
+
+swPredtemp = [];
+for j = 1:round(0.5*tMax)
+    rwdMatxTmp(j,:) = [NaN(1,j) allRewards(1:end-j)];
+end
 
 
 %logistic regression models

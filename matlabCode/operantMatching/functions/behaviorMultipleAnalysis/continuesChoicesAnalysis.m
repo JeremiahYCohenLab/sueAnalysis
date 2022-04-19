@@ -1,9 +1,10 @@
+function continuesChoicesAnalysis(xlFile, sheet, col, varargin)
 %% settings
-xlFile = 'inhibitionAll.xlsx';
-sheet = 'allinhibition';
-col = 'inhibition';
+p = inputParser;
+% default parameters if none given
+p.addParameter('modelName', '5params');
+p.parse(varargin{:});
 modelName = '5params';
-[root, sep] = currComputer();
 dayList = getDayList(xlFile, sheet, col);
 %% without model
 len = 2:5;
@@ -14,6 +15,7 @@ lickRatesNoRwd = cell(1,length(len));
 lcChoice = cell(1,length(len));
 wsChoice = cell(1,length(len));
 lickLatsAfterNoRwd = cell(1,length(len));
+stays = cell(1,length(len));
 % 
 for sess = 1:length(dayList)
     os = behAnalysisNoPlot_opMD(dayList{sess},'simpleFlag',1);
@@ -26,13 +28,13 @@ for sess = 1:length(dayList)
         % generate choice and reward history
         choicesHis = conv(os.allChoices, ones(1,len(i)));
         choicesHis = choicesHis(1:end-(len(i)-1));
-        rewardsHis = conv(os.allRewards, ones(1,len(i)-1));
+        rewardsHis = conv(abs(os.allRewards), ones(1,len(i)-1));
         rewardsHis = rewardsHis(1:end-(len(i)-2));
         noRewardsHis = conv(os.allNoRewards, ones(1,len(i)-1));
         noRewardsHis = noRewardsHis(1:end-(len(i)-2));
         % detect len consecutive choices and len-1 consecutive rewards
         conChoicesInds = find(abs(choicesHis)>=len(i));
-        conPreRewardInds = find(abs(rewardsHis)>=(len(i)-1))+1;
+        conPreRewardInds = find(rewardsHis>=(len(i)-1))+1;
         lickInds{i} = intersect(conChoicesInds, conPreRewardInds); 
         lickNoRwdInds{i} = intersect(conChoicesInds, intersect(conPreRewardInds, os.nrwd_Inds)); 
         lickRwdInds{i} = intersect(conChoicesInds, intersect(conPreRewardInds, os.rwd_Inds)); 
@@ -63,7 +65,7 @@ meanRatesNoRwd = cellfun(@(x) mean(x, 'omitnan'), lickRatesNoRwd);
 meanRatesRwd = cellfun(@(x) mean(x, 'omitnan'), lickRatesRwd);
 meanLc = cellfun(@(x) mean(x, 'omitnan'), lcChoice);
 meanWs = cellfun(@(x) mean(x, 'omitnan'), wsChoice);
-
+meanPstay = cellfun(@(x) mean(x, 'omitnan'), stays);
 semLats = cellfun(@(x) sem(x), lickLats);
 semRates = cellfun(@(x) sem(x), lickRates);
 semRatesNoRwd = cellfun(@(x) sem(x), lickRatesNoRwd);
@@ -71,6 +73,7 @@ semRatesRwd = cellfun(@(x) sem(x), lickRatesRwd);
 semDiff = sqrt(semRatesNoRwd.^2 + semRatesRwd.^2);
 semLc = cellfun(@(x) sem_bern(x), lcChoice);
 semWs = cellfun(@(x) sem_bern(x), wsChoice);
+semPs = cellfun(@(x) sem_bern(x), stays);
 
 meanLatsNoRwdStay = zeros(1,length(len));
 semLatsNoRwdsStay = zeros(1,length(len));
@@ -89,27 +92,35 @@ suptitle([sheet '  ' col])
 subplot(4,6,1); hold on;
 plot(len, meanLats, 'c', 'lineWidth', 2);
 patch([len flip(len)], [meanLats + semLats, flip(meanLats - semLats)], 'c', 'FaceAlpha', 0.4, 'EdgeColor', 'none');
-title('lickLat')
+title('lickLat N st-rwd')
+xlabel('No. st rwds+1')
 
 subplot(4,6,2); hold on;
 plot(len, meanRates, 'color', [0.5 0.5 1], 'lineWidth', 2);
 patch([len flip(len)], [meanRates + semRates, flip(meanRates - semRates)], [0.5 0.5 1], 'FaceAlpha', 0.4, 'EdgeColor', 'none');
 title('lickRate')
+title('lickRate N st-rwd')
+xlabel('No. st rwds+1')
 
 subplot(4,6,3); hold on;
 plot(len, meanRatesRwd, 'm', 'lineWidth', 2);
 patch([len flip(len)], [meanRatesRwd + semRatesRwd, flip(meanRatesRwd - semRatesRwd)], 'm', 'FaceAlpha', 0.4, 'EdgeColor', 'none');
 title('lickRateRwd')
+title('lickRate rwd N st-rwd')
+xlabel('No. st rwds+1')
 
 subplot(4,6,4); hold on;
 plot(len, meanRatesNoRwd, 'b', 'lineWidth', 2);
 patch([len flip(len)], [meanRatesNoRwd + semRatesNoRwd, flip(meanRatesNoRwd - semRatesNoRwd)], 'b', 'FaceAlpha', 0.4, 'EdgeColor', 'none');
 title('lickRateNoRwd')
+title('lickRate noRwd N st-rwd')
+xlabel('No. st rwds+1')
 
 subplot(4,6,5); hold on;
 plot(len, meanRatesRwd - meanRatesNoRwd, 'r', 'lineWidth', 2);
 patch([len flip(len)], [meanRatesRwd - meanRatesNoRwd + semDiff, flip(meanRatesRwd - meanRatesNoRwd - semDiff)], 'r', 'FaceAlpha', 0.4, 'EdgeColor', 'none');
 title('lickRateRwd-NoRwd')
+xlabel('No. st rwds+1')
 
 subplot(4,6,[6 12]); hold on;
 plot(len, meanLatsNoRwdStay, 'b', 'lineWidth', 2);
@@ -119,17 +130,26 @@ patch([len flip(len)], [meanLatsNoRwdSwitch + semLatsNoRwdsSwitch, flip(meanLats
 
 plot(len, meanLats, 'color', [0.5 0.5 0.5], 'lineWidth', 2);
 patch([len flip(len)], [meanLats + semLats, flip(meanLats - semLats)], [0.5 0.5 0.5], 'FaceAlpha', 0.4, 'EdgeColor', 'none');
-title('lickLatsAfterNoRwd')
+title('lickLatsAfterNoRwd-by choice')
+legend({'stay', '', 'switch', '', 'pre'})
+xlabel('No. st rwds+1')
 
 subplot(4,6,7); hold on;
-plot(len, meanLc, 'b', 'lineWidth', 2);
-patch([len flip(len)], [meanLc + semLc, flip(meanLc - semLc)], 'b', 'FaceAlpha', 0.4, 'EdgeColor', 'none');
-title('lc')
+plot(len, meanPstay, 'b', 'lineWidth',2);
+patch([len flip(len)], [meanPstay + semPs, flip(meanPstay - semPs)], 'b', 'FaceAlpha', 0.4, 'EdgeColor', 'none');
+title('P(stay)')
+xlabel('No. st rwds+1')
 
 subplot(4,6,8); hold on;
+plot(len, meanLc, 'b', 'lineWidth', 2);
+patch([len flip(len)], [meanLc + semLc, flip(meanLc - semLc)], 'b', 'FaceAlpha', 0.4, 'EdgeColor', 'none');
+title('P(sw|noRwd)')
+xlabel('No. st rwds')
+subplot(4,6,9); hold on;
 plot(len, meanWs, 'r', 'lineWidth', 2);
 patch([len flip(len)], [meanWs + semWs, flip(meanWs - semWs)], 'r', 'FaceAlpha', 0.4, 'EdgeColor', 'none');
-title('ws')
+title('P(st|rwd)')
+xlabel('No. st rwds+1')
 %% with model
 numSamps = 200;
 combinePe = [];
@@ -165,7 +185,7 @@ for sess = 1:length(dayList)
     combineSw = [combineSw, switches];
 end
 %% bin pe, plot lickRate after stay
-numBins = 20;
+numBins = 12;
 combinePeStay = combinePe(combineSw<1);
 combineLickRatesRwdStay = combineLickRatesRwd(combineSw<1);
 edges = unique([linspace(min(combinePeStay), 0, 0.5*numBins+1), linspace(0, max(combinePeStay), 0.5*numBins+1)]);
@@ -189,12 +209,15 @@ end
 subplot(4,6,13); hold on;
 plot(peMeans(peMeans<0), rateMeans(peMeans<0), 'b', 'lineWidth', 2);
 patch([peMeans(peMeans<0); flip(peMeans(peMeans<0))], [rateMeans(peMeans<0) + rateSems(peMeans<0); flip(rateMeans(peMeans<0) - rateSems(peMeans<0))], 'b', 'FaceAlpha', 0.4, 'EdgeColor', 'none');
-title('lickRateNoRwd-pe')
+title('lickRate-stay-noRwd')
+xlabel('pe')
 
 subplot(4,6,14); hold on;
 plot(peMeans(peMeans>0), rateMeans(peMeans>0), 'm', 'lineWidth', 2);
 patch([peMeans(peMeans>0); flip(peMeans(peMeans>0))], [rateMeans(peMeans>0) + rateSems(peMeans>0); flip(rateMeans(peMeans>0) - rateSems(peMeans>0))], 'm', 'FaceAlpha', 0.4, 'EdgeColor', 'none');
-title('lickRateRwd-pe')
+title('lickRate-stay-rwd')
+xlabel('pe')
+
 
 %% bin pe, plot lickRate after switch
 numBins = 12;
@@ -209,10 +232,10 @@ peMeans = zeros(numBins,1);
 for k = 1:numBins
     if k < numBins
         rateTemp = combineLickRatesRwdSwitch(combinePeSwitch >= edges(k) & combinePeSwitch < edges(k+1));
-        peMeans(k) = mean(combinePeSwitch(combinePeSwitch >= edges(k) & combinePeSwitch < edges(k+1)));
+        peMeans(k) = mean(combinePeSwitch(combinePeSwitch >= edges(k) & combinePeSwitch < edges(k+1)), 'omitnan');
     else
         rateTemp = combineLickRatesRwdSwitch(combinePeSwitch >= edges(k) & combinePeSwitch <= edges(k+1));
-        peMeans(k) = mean(combinePeSwitch(combinePeSwitch >= edges(k) & combinePeSwitch <= edges(k+1)));
+        peMeans(k) = mean(combinePeSwitch(combinePeSwitch >= edges(k) & combinePeSwitch <= edges(k+1)), 'omitnan');
     end
     rateMeans(k) = mean(rateTemp, 'omitnan');
     rateSems(k) = sem(rateTemp);
@@ -221,12 +244,14 @@ end
 subplot(4,6,15); hold on;
 plot(peMeans(peMeans<0), rateMeans(peMeans<0), 'b', 'lineWidth', 2);
 patch([peMeans(peMeans<0); flip(peMeans(peMeans<0))], [rateMeans(peMeans<0) + rateSems(peMeans<0); flip(rateMeans(peMeans<0) - rateSems(peMeans<0))], 'b', 'FaceAlpha', 0.4, 'EdgeColor', 'none');
-title('lickRateNoRwd-pe')
+title('lickRate-sw-noRwd')
+xlabel('pe')
 
 subplot(4,6,16); hold on;
 plot(peMeans(peMeans>0), rateMeans(peMeans>0), 'm', 'lineWidth', 2);
 patch([peMeans(peMeans>0); flip(peMeans(peMeans>0))], [rateMeans(peMeans>0) + rateSems(peMeans>0); flip(rateMeans(peMeans>0) - rateSems(peMeans>0))], 'm', 'FaceAlpha', 0.4, 'EdgeColor', 'none');
-title('lickRateRwd-pe')
+title('lickRate-sw-rwd')
+xlabel('pe')
 %% bin choiceConf, plot lickLat and lickRate before
 
 %% bin Qc, plot lickLat and lickRate before

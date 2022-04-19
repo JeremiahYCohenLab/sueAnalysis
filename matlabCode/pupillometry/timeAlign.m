@@ -1,17 +1,17 @@
-function [errorProp,csFT, qualInd, ratioMax] = timeAlign(session, plotFlag)
-%% calculate time projection of behavior time onto pupil time 
-saveFlag = 1;
+function [errorProp,csFT, qualInd, ratioMax] = timeAlign(session, plotFlag, saveFlag)
+%% default time window is -2s to 10s to cue time
+% calculate time projection of behavior time onto pupil time 
 unblockedError = false; 
 iterMaxReach = false;
 errorRate = 0.05;
-errorThresh = 2; %no. of frames allowed for mis-alignment
+errorThresh = 3; %no. of frames allowed for mis-alignment
 iter = 0;
 errorProp = NaN;
 csFT = NaN;
 ratioMax = NaN;
-ledLLThresh = 0.8;
+ledLLThresh = 0.80;
 positionThresh = 0.9999999999;
-ledDisThresh = 80;
+ledDisThresh = 100;
 %% training set
 [root,sep] = currComputer;
    
@@ -42,11 +42,12 @@ else
     savepath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep];
 end
 
-iterMax = 0.10*length(behSessionData);
+iterMax = 0.1*length(behSessionData);
 %% load diameter and position
 videopath = [root animalName sep sessionFolder sep 'pupil'];
 list = dir(videopath);
-expression = ['^' session 'DLC' '\w*' '200000.csv' '$'];
+expression = ['^' session 'DLC' '\w*' '100000.csv' '$'];
+expressionSkeleton = ['^' session 'DLC' '\w*' 'shuffle1_100000_skeleton.csv' '$'];
 if isempty(find(~cellfun(@isempty, cellfun(@(x) regexp(x, expression), {list.name}, 'UniformOutput', false)), 1))
    fprintf([session ' no pupil video \n'])
    return
@@ -237,17 +238,30 @@ FR = ratioMax;
 
 %% load diameter
 % load diameter
-expressionSkeleton = ['^' session 'DLC' '\w*' 'shuffle1_200000_skeleton.csv' '$'];
 skeleton = list(~cellfun(@isempty, cellfun(@(x) regexp(x, expressionSkeleton), {list.name}, 'UniformOutput', false))).name;
 diaRaw = csvread([videopath sep skeleton], 2, 0);
 qualF(end) = 1; % make sure not having a lot of NaN
 dia = interp1(find(qualF>0),diaRaw(qualF,2),1:length(diaRaw(:,2)));
 
-% % zscore based on reliability
-% m = sum(dia'.* positionRaw(:,4).*positionRaw(:,7))/sum(positionRaw(:,4).*positionRaw(:,7));
-% sd = sum((dia' - m).^2.*positionRaw(:,4).*positionRaw(:,7))/(sum(positionRaw(:,4).*positionRaw(:,7))-1);
-% sd = sqrt(sd);
-% diaZ = (dia-m)/sd;
+% realign to continuous time
+% put realigned pupil frame back to linear time
+diaRealign = NaN(1,cueFT(1)-1 + ceil(FR/1000 * (behSessionData(end).CSon + 10000 - behSessionData(1).CSon)));
+diaRealign(1:cueFT(1)-1) = dia(1:cueFT(1)-1); % quality before cue is usually good
+for j = 1:length(cueFT)
+    if qualInd(j)
+        startF = cueFT(1) + round(FR/1000*(behSessionData(j).CSon - behSessionData(1).CSon));
+        if j~=length(cueFT)
+            endF = cueFT(1) + round(FR/1000*(behSessionData(j+1).CSon - behSessionData(1).CSon));
+        else
+            endF = min(cueFT(1) + round(FR/1000*(behSessionData(j).CSon + 10000 - behSessionData(1).CSon)), length(diaRealign));
+        end
+
+        if cueFT(j)+endF-startF > length(dia) % in case pupil ended early
+            endF = length(dia)+startF-cueFT(j);
+        end
+        diaRealign(startF:endF) = dia(cueFT(j):cueFT(j)+endF-startF); 
+    end      
+end
 
 % zscoring
 diaZ = dia;
@@ -301,7 +315,7 @@ if saveFlag
         mkdir(savepath)
     end
     eyeBlurryLate = 0;
-    save([savepath session '_pupil.mat'], 'eyeBlurryLate', 'sessionPupilCue','sessionPupilCueZ', 'sessionPupilChoice','sessionPupilChoiceZ','qualInd', 'cueFT', 'FR','iter','errorProp');
+    save([savepath session '_pupil.mat'], 'eyeBlurryLate', 'sessionPupilCue','sessionPupilCueZ', 'sessionPupilChoice','sessionPupilChoiceZ','qualInd', 'cueFT', 'FR','iter','errorProp', 'dia', 'diaRealign');
 end
 
 

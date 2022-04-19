@@ -1,0 +1,6 @@
+function fitobject = fitSigmoid(x,y)
+    myfittype = fittype('1./(1+exp(-x/a))',...
+    'dependent',{'y'},'independent',{'x'},...
+    'coefficients',{'a'});
+    fitobject = fit(x,y,myfittype,'Start',[0.03]);
+end
