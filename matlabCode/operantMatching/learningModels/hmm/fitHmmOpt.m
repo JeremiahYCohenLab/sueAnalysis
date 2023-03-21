@@ -50,7 +50,7 @@ function [behSessionData, states, trans_fit, emis_fit] = fitHmmOpt(sessionName,p
     %% compare
     % fit
     states = hmmviterbi(allChoices,trans_est,emis_est);
-   
+    
 
     %append to behavior
     for i = 1:length(responseInds)

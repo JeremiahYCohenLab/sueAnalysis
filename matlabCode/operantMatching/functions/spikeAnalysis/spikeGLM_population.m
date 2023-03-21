@@ -7,11 +7,11 @@ p.addParameter('plotFlag', 1);
 p.addParameter('maxTrial', 1000);
 % p.addParameter('modelName','7params_absPePeAN_scale_int_bias_ord')
 p.addParameter('modelName','5params')
-p.addParameter('regressors', '1+pe+biasSide+pe*biasSide')
+p.addParameter('regressors', '1 + outcome + Qchosen + rightSide')
 p.addParameter('binSize', 1000)% in ms
 p.addParameter('stepSize', 250)
 p.addParameter('tb', 1.7)% in s 1.7
-p.addParameter('tf', 2)% in s
+p.addParameter('tf', 3)% in s
 p.addParameter('saveFigFlag', 1);
 p.parse(varargin{:});
 populationSig = []; % the matrix with 1 for positive beta, -1 for negative beta
@@ -25,6 +25,11 @@ maxTrial = p.Results.maxTrial;
 time = -1000*p.Results.tb:1000*p.Results.tf;
 midPoints = (0.5*p.Results.binSize + 1):p.Results.stepSize:(length(time)-0.5*p.Results.binSize);
 slideTime = midPoints - p.Results.tb*1000;
+allSessions = {};
+allUnits = {};
+allPe = {};
+allChoices = {};
+allSpikes = {};
 %% animal loop 
 for ani = 1:length(animalNames)
     % load model fitting results
@@ -59,7 +64,7 @@ for ani = 1:length(animalNames)
         fprintf([session unit '\n']);
     % paths
         pd = parseSessionString_df(session, root, sep);
-        neuralynxDataPath = [pd.sortedFolder 'session' sep session '_sessionData_nL.mat'];
+        neuralynxDataPath = [pd.sortedFolder session '_sessionData_nL.mat'];
         unitMetDir = [pd.nLynxFolderSession session '_' unit '_met.mat'];
         sortedFolderLocation = [pd.sortedFolder 'session' sep];
     % decide is good behavior
@@ -91,12 +96,22 @@ for ani = 1:length(animalNames)
         %% behavior preparation 
         % parse behavior
         os = behAnalysisNoPlot_opMD(session);
-%         lickInds = os.lickInds;
+        if length(os.behSessionData)~=length(sessionData)
+            fprintf([session ' error \n'])
+            return
+        end
+%         lickInds = os.lickInds
         choice = os.allChoices';
         choice(choice<0) = 0;
         outcome = abs(os.allRewards)';
         choice = choice(1:min(length(choice), maxTrial));
         outcome = outcome(1:length(choice));
+        outcomeL = outcome;
+        outcomeL(outcomeL==0) = -1;
+        outcomeR = outcome;
+        outcomeR(outcomeR==0) = -1;
+        outcomeL(choice==1) = 0;
+        outcomeR(choice==0) = 0;
         responseInds = os.responseInds(1:min(length(choice), maxTrial)); 
         preRwd = [NaN abs(os.allRewards(1:end-1))]';
         %% behavior
@@ -164,6 +179,7 @@ for ani = 1:length(animalNames)
         lickLat = os.lickLatLogZ';
         rightSide = zeros(size(pe));
         rightSide(os.allChoices>0)=1;
+        rightSide(os.allChoices<=0)=-1;
         preITI = os.timeBtwn';
         % consecutive no rewards
         conNrwds = zeros(size(pe));
@@ -186,16 +202,18 @@ for ani = 1:length(animalNames)
             peBar = t.peBar;
             pePe = t.pePe;
             scPe = pe.*(1-peBar);
-            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, svsWhenNrwd, conNrwds, scPe, aN, peBar, pePe);
+            tbl = table(outcome, outcomeL, outcomeR, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, svsWhenNrwd, conNrwds, scPe, aN, peBar, pePe);
         else
-            tbl = table(outcome, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, svsWhenNrwd, conNrwds);
+            tbl = table(outcome, outcomeL, outcomeR, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, svsWhenNrwd, conNrwds);
         end
         names = tbl.Properties.VariableNames;
         % zscore all regressors
         for cols = 1:length(names)
             tmp = tbl.(names{cols});
-            tmp(~isnan(tmp)) = zscore(tmp(~isnan(tmp)));
-            tbl.(names{cols}) = tmp;
+            if ~isempty(setdiff(tmp(~isnan(tmp)), [0 1 -1 NaN]))
+                tmp(~isnan(tmp)) = zscore(tmp(~isnan(tmp)));
+                tbl.(names{cols}) = tmp;
+            end
         end
         
         prevSession = session;
@@ -203,6 +221,8 @@ for ani = 1:length(animalNames)
 
 
     %% create spike and lick cell
+    allSessions = [allSessions; session];
+    allUnits = [allUnits; unit];
     spikeFields = fields(sessionData);
     clust = find(contains(spikeFields,unit));
     allTrial_spike_choice = {};
@@ -312,7 +332,10 @@ for ani = 1:length(animalNames)
         coeffs = [coeffs; coeffsTmp];
         
     end
-
+    allPe = [allPe; pe];
+    allChoices = [allChoices; choice];
+    focusInd = find(slideTime>301,1);
+    allSpikes = [allSpikes; allTrial_spikeMatx_slide(:,focusInd)];
     populationSig = cat(3, populationSig, sigs);
     populationTStats  = cat(3,populationTStats, tStats);
     populationCoeffs  = cat(3,populationCoeffs, coeffs);
@@ -323,7 +346,7 @@ end
 regressors = lm.CoefficientNames(2:end);
 tFig = figure;
 screen = get(0,'Screensize');
-screen(4) = screen(4) - 100;
+screen(4) = screen(4) - 100;slideTime
 set(tFig, 'Position', screen)
 suptitle('tStats distribution')
 colors = cool(length(regressors));

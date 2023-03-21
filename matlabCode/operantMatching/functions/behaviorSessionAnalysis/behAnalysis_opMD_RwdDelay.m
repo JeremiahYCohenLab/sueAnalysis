@@ -1,7 +1,7 @@
 function behAnalysis_opMD_RwdDelay(sessionName, varargin)
 p = inputParser;
 p.addParameter('maxTrials', 600)
-p.addParameter('lickFlag',1)
+p.addParameter('lickFlag',0)
 p.addParameter('saveFigFlag',1)
 p.addParameter('coupledFlag',0)
 p.parse(varargin{:})
@@ -34,10 +34,17 @@ omitInds = isnan([behSessionData.rewardTime]);
 
 origBlockSwitch = blockSwitch;
 tempBlockSwitch = blockSwitch;
-for i = 2:length(blockSwitch)
-    subVal = sum(omitInds(tempBlockSwitch(i-1):tempBlockSwitch(i)));
-    blockSwitch(i:end) = blockSwitch(i:end) - subVal;
-end
+% for i = 2:length(blockSwitch)
+%     subVal = sum(omitInds(tempBlockSwitch(i-1):tempBlockSwitch(i)));
+%     blockSwitch(i:end) = blockSwitch(i:end) - subVal;
+% end
+
+pL = [behSessionData(responseInds).rewardProbL];
+pR = [behSessionData(responseInds).rewardProbR];
+blockSwitchL = [1 find(pL(1:end-1) ~= pL(2:end))+1];
+blockSwitchR = [1 find(pR(1:end-1) ~= pR(2:end))+1];
+
+blockSwitch = unique([blockSwitchL blockSwitchR]);
 
 allReward_R = [behSessionData(responseInds).rewardR]; 
 allReward_L = [behSessionData(responseInds).rewardL];  

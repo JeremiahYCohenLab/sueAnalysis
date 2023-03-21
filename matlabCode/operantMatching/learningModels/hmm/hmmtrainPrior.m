@@ -232,8 +232,8 @@ for iteration = 1:maxiter
 %                 + log(normpdf((guessTR(1,2) - guessTR(1,3))/(guessTR(1,2) - guessTR(1,3)), 0, 0.5));
             %% add prior
 %             postlik = loglik + log(betapdf(guessE(1,1), 1.5, 1.5)) + log(betapdf(guessTR(2,2),6,1.5)) + log(betapdf(guessTR(3,3),6,1.5)) + log(betapdf(guessTR(1,1),2,3));
-%             postlik = loglik + log(betapdf(guessE(1,1), 1.5, 1.5))+ log(betapdf(guessTR(1,1),2,3));
-            postlik = loglik + log(betapdf(guessE(1,1), 1.5, 1.5));
+%             postlik = loglik + log(betapdf(guessE(1,1), 3, 3))+ log(betapdf(guessTR(1,1),3,3));
+            postlik = loglik + log(betapdf(guessE(1,1), 10, 10));
 %%            
             logf = log(fs);
             logb = log(bs);

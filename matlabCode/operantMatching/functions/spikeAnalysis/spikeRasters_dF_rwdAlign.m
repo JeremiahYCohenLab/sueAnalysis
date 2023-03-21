@@ -188,10 +188,10 @@ yLimMax = max([length(blockR) length(blockL) length(s.lickR_Inds) length(s.lickL
 
 
 %lick side x outcome
-[~,lickRrwd_Inds,~] = intersect(s.rwd_Inds, s.lickR_Inds);
-[~,lickRnoRwd_Inds,~] = intersect(s.nrwd_Inds, s.lickR_Inds);
-[~,lickLrwd_Inds,~] = intersect(s.rwd_Inds, s.lickL_Inds);
-[~,lickLnoRwd_Inds,~] = intersect(s.nrwd_Inds, s.lickL_Inds);
+% [~,lickRrwd_Inds,~] = intersect(s.rwd_Inds, s.lickR_Inds);
+% [~,lickRnoRwd_Inds,~] = intersect(s.nrwd_Inds, s.lickR_Inds);
+% [~,lickLrwd_Inds,~] = intersect(s.rwd_Inds, s.lickL_Inds);
+% [~,lickLnoRwd_Inds,~] = intersect(s.nrwd_Inds, s.lickL_Inds);
 
 
 %% smooth rewards over time
@@ -217,8 +217,8 @@ choiceHx_Lims = [find(choiceHx_Sorted < -0.9999, 1) find(choiceHx_Sorted > 0.999
 [~,rwdHx_Inds] = sort(s.rwdHx);
 
 %outcome indices for rwd hist
-[~,rwdHxRwd_Inds,~] = intersect(rwdHx_Inds, s.rwd_Inds); 
-[~,rwdHxNoRwd_Inds,~] = intersect(rwdHx_Inds, s.nrwd_Inds); 
+[rwdHxRwd_Inds] = ismember(rwdHx_Inds, s.rwd_Inds); 
+[rwdHxNoRwd_Inds] = ismember(rwdHx_Inds, s.nrwd_Inds); 
 
 %for tercile analysis
 tercile = floor(length(rwdHx_Inds)/3);

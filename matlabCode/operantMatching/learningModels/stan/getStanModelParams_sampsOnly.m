@@ -4,7 +4,7 @@ function [params, modelName, ll, noSession] = getStanModelParams_sampsOnly(anima
 p = inputParser;
 % default parameters if none given
 p.addParameter('biasFlag',1)
-p.addParameter('sessionParamsFlag', 0)
+p.addParameter('sessionParamsFlag', 1)
 p.addParameter('sessionName', [])
 p.addParameter('plotFlag', 0)
 p.parse(varargin{:});
@@ -61,8 +61,9 @@ if p.Results.plotFlag
     end
 end
 end 
-    
-    
+%% compare 
+
+
     
     
     

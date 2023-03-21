@@ -1,4 +1,4 @@
-    function spikeGLM_dF(session, col, varargin)
+function spikeGLM_dF(session, col, varargin)
 %task and model parameters
 p = inputParser;
 % default parameters if none given
@@ -7,15 +7,17 @@ p.addParameter('plotFlag', 1);
 p.addParameter('maxTrial', 1000);
 p.addParameter('modelName', '5params');
 p.addParameter('regressors', '1+pe+biasSide+pe:biasSide')
-p.addParameter('binSize', 1000)% in ms
-p.addParameter('stepSize', 200)
+p.addParameter('binSize', 300)% in ms
+p.addParameter('stepSize', 100)
 p.addParameter('tb', 1)% in s
-p.addParameter('tf', 5)% in s
+p.addParameter('tf', 2)% in s
 p.addParameter('saveFigFlag', 1);
 p.addParameter('plotAgainst', 'pe')
 p.addParameter('focusWindow', [300 1300]);
+p.addParameter('numBins', 6);
 p.parse(varargin{:});
 
+numBins = p.Results.numBins; % bins in pe
 paramNames = getParamNames_dF(p.Results.modelName, 1);
 maxTrial = p.Results.maxTrial;
 cellName = p.Results.cellName;
@@ -256,7 +258,6 @@ for i = 1:length(clust)
     %% bin no.spike by target regressor and plot
 
         eval(['target =' p.Results.plotAgainst ';']);
-        numBins = 10; % bins in pe
         width = 1000; %in ms
 
         % decide start of the time windows
@@ -291,10 +292,14 @@ for i = 1:length(clust)
             startTimeLate = solenoidTimeEnd + 1000*p.Results.tb;
             endTimeLate  = min(startTimeLate+width, 1000*(p.Results.tb+p.Results.tf));
         end
+        startTime = 1000*p.Results.tb + os.rwdDelay;
+        endTime  = min(startTime+width, solenoidTimeStart+1000*p.Results.tb);
         spikeCounts = nansum(allTrial_spikeMatx_choice(:,startTime:endTime),2)*1000/(width);
         spikeCountsLate = nansum(allTrial_spikeMatx_choice(:,startTimeLate:endTimeLate),2)*1000/(width);
         %% caculate on both sides
-        edges = binEqualSize(target, numBins);
+%         edges = binEqualSize(target, numBins);
+        edges = linspace(min(target)-0.001, max(target)+0.001, numBins+1);
+        edges(0.5*numBins+1) = 0;
         spikeMeans = zeros(numBins,1);
         spikeSems = zeros(numBins,1);
         targetMeans = zeros(numBins,1);
@@ -321,6 +326,8 @@ for i = 1:length(clust)
         spikeCountsL = spikeCounts(os.lickL_Inds);
         spikeCountsLLate = spikeCountsLate(os.lickL_Inds);
         edgesL = binEqualSize(targetL, numBins);
+        edgesL = linspace(min(targetL)-0.001, max(targetL)+0.001, numBins+1);
+        edgesL(0.5*numBins+1) = 0;
         spikeMeansL = zeros(numBins,1);
         spikeSemsL = zeros(numBins,1);
         spikeMeansLLate = zeros(numBins,1);
@@ -347,6 +354,8 @@ for i = 1:length(clust)
         spikeCountsR = spikeCounts(os.lickR_Inds);
         spikeCountsRLate = spikeCountsLate(os.lickR_Inds);
         edgesR = binEqualSize(targetR, numBins);
+        edgesR = linspace(min(targetR)-0.001, max(targetR)+0.001, numBins+1);
+        edgesR(0.5*numBins+1) = 0;
         spikeMeansR = zeros(numBins,1);
         spikeSemsR = zeros(numBins,1);
         targetMeansR = zeros(numBins,1);
@@ -440,5 +449,7 @@ for i = 1:length(clust)
     if p.Results.saveFigFlag == 1 
         saveFigurePDF(GLM,[savepath sep session '_' spikeFields{clust(i)} 'GLM'])
     end
+    
+    
     
 end

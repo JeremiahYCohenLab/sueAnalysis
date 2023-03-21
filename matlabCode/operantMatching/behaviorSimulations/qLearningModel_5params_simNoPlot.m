@@ -37,11 +37,12 @@ Q = [0 0; NaN(maxTrial-1, 2)]; % initialize Q values as 0
 
 allChoices = ones(1, maxTrial);
 allRewards = zeros(1, maxTrial);
-
+probChosen = zeros(1, maxTrial);
 for currT = 1:maxTrial
     % Select action
     pRight = logistic(beta*diff(Q(currT, :)) + bias);
     if binornd(1, pRight) == 0 % left choice selected probabilistically
+        probChosen(currT) = 1 - pRight;
         p.inputChoice([1 0]);
         allChoices(currT) = -1;
         allRewards(currT) = p.AllRewards(currT, 1) * -1;
@@ -53,6 +54,7 @@ for currT = 1:maxTrial
         end
         Q(currT + 1, 2) = Q(currT, 2)*alphaForget;
     else
+        probChosen(currT) = pRight;
         p.inputChoice([0 1]);
         allChoices(currT) = 1;
         allRewards(currT) = p.AllRewards(currT, 2);
@@ -89,5 +91,6 @@ switch a.Results.taskType
 end
 
 t.Q = Q;
+t.probChoice = probChosen;
 
 end

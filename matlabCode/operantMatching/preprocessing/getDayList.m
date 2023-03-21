@@ -1,6 +1,6 @@
 function dayList = getDayList(xlFile, sheet, col)
     [root, sep] = currComputer();
-    [~, dayList, ~] = xlsread([root xlFile], sheet);
+    [~, dayList, ~] = xlsread([root xlFile '.xlsx'], sheet);
     cate = cell(1,size(dayList,2));
     cate(:) = {col};
     cate = cellfun(@strcmp, dayList(1,:), cate)>0;

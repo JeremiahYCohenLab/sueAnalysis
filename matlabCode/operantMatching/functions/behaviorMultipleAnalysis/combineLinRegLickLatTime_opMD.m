@@ -3,21 +3,15 @@ function [glm_rwdLick, rwdMatx, noRwdMatx, combinedPreLick, combinedLickLatZ] = 
 p = inputParser;
 % default parameters if none given
 p.addParameter('revForFlag',0)
-p.addParameter('plotFlag', 0)
-p.addParameter('binSize', 10000);
-p.addParameter('numBins', 20);
+p.addParameter('plotFlag', 1)
+p.addParameter('binSize', 5000);
+p.addParameter('numBins', 15);
 p.addParameter('maxTrials', 1000);
 p.parse(varargin{:});
 
 [root, sep] = currComputer();
 
-[~, dayList, ~] = xlsread([root xlFile], animal);
-[~,col] = find(~cellfun(@isempty,strfind(dayList, category)) == 1);
-dayList = dayList(2:end,col);
-endInd = find(cellfun(@isempty,dayList),1);
-if ~isempty(endInd)
-    dayList = dayList(1:endInd-1,:);
-end
+dayList = getDayList(xlFile, animal, category);
 
 binSize = p.Results.binSize;
 timeMax = binSize * p.Results.numBins + 1000;
@@ -81,7 +75,7 @@ for i = 1: length(dayList)
     timeInSesh = ([behSessionData(responseInds).CSon] - behSessionData(1).CSon) / (1000 * behSessionData(responseInds(end)).CSon - behSessionData(responseInds(1)).CSon);
     changeChoice = [0 abs(diff(allChoices)) > 0];
 %     fprintf([sessionName '\n'])
-    s = behAnalysisNoPlot_opMD(sessionName);
+    s = behAnalysisNoPlot_opMD(sessionName, 'simpleFlag', 1);
     hmmStates = s.hmmStates(1:length(responseInds));
     timeBtwn = s.timeBtwn(1:length(responseInds));
     %% determine lick latency distributions for each spout
@@ -190,7 +184,7 @@ end
 
 %linear regression model
 glm_rwdLick = fitlm([rwdMatx'], combinedLickLatZ);
-glm_rwdLickAll = fitlm([rwdMatx' noRwdMatx' combinedTimeInSesh' combinedChangeChoice' preITI'], combinedLickLatZ);
+glm_rwdLickAll = fitlm([rwdMatx' noRwdMatx' combinedTimeInSesh' combinedChangeChoice' combinedPreLick'], combinedLickLatZ);
 tbl = table(combinedPreLick', combinedChangeChoice', rwdMatx(1,:)', noRwdMatx(1,:)', preITI',combinedLickLatZ', 'VariableNames', {'pre', 'sw', 'rwd1', 'nRwd1', 'preITI', 'lickLat'});
 mdl = stepwiselm(tbl,'interactions');
 

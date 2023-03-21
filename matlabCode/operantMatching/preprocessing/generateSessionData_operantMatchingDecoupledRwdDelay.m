@@ -135,7 +135,7 @@ for i = 1:length(sessionText)
                 end
             end
             
-            if strfind(sessionText{currTrialInd},'LASER')
+            if ~isempty(strfind(sessionText{currTrialInd},'LASER')) || ~isempty(strfind(sessionText{currTrialInd},'Laser'))
                 behSessionData(currTrial).laser = 1;
             end
             
@@ -155,7 +155,7 @@ for i = 1:length(sessionText)
                     behSessionData(currTrial).rewardTime = NaN;
                 end
                 if tEnd ~= length(sessionText)
-                    temp = regexp(sessionText(tEnd+3), ': ', 'split');
+                    temp = regexp(sessionText(tEnd+2), ': ', 'split');
                     behSessionData(currTrial).trialEnd = str2double(temp{1}{2});
                 else
                     behSessionData(currTrial).trialEnd = NaN;

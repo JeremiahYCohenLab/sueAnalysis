@@ -1,4 +1,4 @@
-open s  function spikeRasters_dF_choiceAlign(sessionName, varargin)
+function spikeRasters_dF_choiceAlign(sessionName, varargin)
 
 p = inputParser;
 % default parameters if none given
@@ -11,7 +11,7 @@ p.addParameter('timeMax', 121000)
 p.addParameter('timeBins', 12)
 p.addParameter('tb', 1.5);
 p.addParameter('tf', 5); % in s
-p.addParameter('binSize', 150); %in ms
+p.addParameter('binSize', 200); %in ms
 p.addParameter('stepSize', 100); % in ms
 p.parse(varargin{:});
 
@@ -190,8 +190,8 @@ sessionRwdsSmooth = sessionRwdsSmooth(1:(end-(length(boxKern)-1)));
 [~,rwdHx_Inds] = sort(s.rwdHx);
 
 %outcome indices for rwd hist
-[~,rwdHxRwd_Inds,~] = intersect(rwdHx_Inds, s.rwd_Inds); 
-[~,rwdHxNoRwd_Inds,~] = intersect(rwdHx_Inds, s.nrwd_Inds); 
+[rwdHxRwd_Inds] = ismember(rwdHx_Inds, s.rwd_Inds); 
+[rwdHxNoRwd_Inds] = ismember(rwdHx_Inds, s.nrwd_Inds); 
 
 %for tercile analysis
 tercile = floor(length(rwdHx_Inds)/3);
@@ -240,7 +240,7 @@ end
 %% sort licking for sdfs
 
 for j = 1:length(s.responseInds)
-    trialDurDiff(j) = (sessionData(s.responseInds(j)).trialEnd - sessionData(s.responseInds(j)).CSon)- p.Results.tf*1000;
+    trialDurDiff(j) = (sessionData(s.responseInds(j)).trialEnd - sessionData(s.responseInds(j)).respondTime)- p.Results.tf*1000;
 end
 trialDurDiff(end) = 0;  %to account for no trialEnd timestamp on last trial
 
@@ -363,7 +363,7 @@ for i = 1:length(clust)
     % All trials
     r(1) = subplot(8,7,[1 8 15 22]); t(1) = title('All Trials');
     plotSpikeRaster(allTrial_spike_choice(i,:),'PlotType','vertline'); hold on
-    plot(repmat([-5000 10000],length(s.blockSwitch),1)', [s.blockSwitch; s.blockSwitch],'r')
+    plot(repmat([-5000 10000],length(s.blockSwitch),1)', [s.blockSwitch, s.blockSwitch]','r')
     line([s.rwdDelay s.rwdDelay], [0 length(s.responseInds)], 'color', 'r')
     
     
@@ -668,46 +668,46 @@ for i = 1:length(clust)
     ylim([0 maxFreq]);
     
     
-    if ismember(animalName, {'ZS059','ZS060','ZS062'})
-        z(18) = subplot(8,7,44); hold on;
-%     mySDF_rwd_lick = allTrial_lickMatx_slide(s.responseInds(s.rwd_Inds),:);
-%     mySDF_noRwd_lick = allTrial_lickMatx_slide(s.responseInds(s.nrwd_Inds),:);
-%     plotFilled(slideTime, mySDF_rwd_lick,[0 0 1])
-%     plotFilled(slideTime, mySDF_noRwd_lick,[0.7 0 1])
-%     line([0 0], [0 maxLick], 'color', 'r')
-%     legend('rwd', '', 'noRwd', '')
-%     title('lick: rwd vs noRwd')
-%     ylim([0 maxLick]);
-        mySDF_shortPreRwd_spike = allTrial_spikeMatx_slide(intersect(find(s.lickInds==0), s.rwd_Inds),:);
-        mySDF_longPreRwd_spike = allTrial_spikeMatx_slide(intersect(find(s.lickInds==1), s.rwd_Inds),:);
-        plotFilled(slideTime, mySDF_shortPreRwd_spike,[0 0 1])
-        plotFilled(slideTime, mySDF_longPreRwd_spike,[0.7 0 1])
-        line([0 0], [0 maxLick], 'color', 'r')
-        title('shortAndRwd vs longAndRwd')
-        ylim([0 maxFreq]);
-
-         subplot(8,7,51); hold on;
-
-        mySDF_shortPreNoRwd_spike = allTrial_spikeMatx_slide(intersect(find(s.lickInds==0), s.nrwd_Inds),:);
-        mySDF_longPreNoRwd_spike = allTrial_spikeMatx_slide(intersect(find(s.lickInds==1), s.nrwd_Inds),:);
-        plotFilled(slideTime, mySDF_shortPreNoRwd_spike,[0 0 1])
-        plotFilled(slideTime, mySDF_longPreNoRwd_spike,[0.7 0 1])
-        line([0 0], [0 maxLick], 'color', 'r')
-        title('shortAndNoRwd vs longAndNoRwd')
-        ylim([0 maxFreq]);
-
-
-        z(20) = subplot(8,7,[43 50]); hold on;
-        mySDF_one_spike = allTrial_spikeMatx_slide(s.lickInds==0,:);
-        mySDF_two_spike = allTrial_spikeMatx_slide(s.lickInds==1,:);
-        plotFilled(slideTime, mySDF_one_spike,[0 0 1])
-        plotFilled(slideTime, mySDF_two_spike,[0.7 0 1])
-        line([0 0], [0 maxLick], 'color', 'r')
-        legend('shortLicks', '', 'longLicks', '')
-        title('short vs long')
-        ylim([0 maxFreq]);
-        
-     end
+%     if ismember(animalName, {'ZS059','ZS060','ZS062'})
+%         z(18) = subplot(8,7,44); hold on;
+% %     mySDF_rwd_lick = allTrial_lickMatx_slide(s.responseInds(s.rwd_Inds),:);
+% %     mySDF_noRwd_lick = allTrial_lickMatx_slide(s.responseInds(s.nrwd_Inds),:);
+% %     plotFilled(slideTime, mySDF_rwd_lick,[0 0 1])
+% %     plotFilled(slideTime, mySDF_noRwd_lick,[0.7 0 1])
+% %     line([0 0], [0 maxLick], 'color', 'r')
+% %     legend('rwd', '', 'noRwd', '')
+% %     title('lick: rwd vs noRwd')
+% %     ylim([0 maxLick]);
+%         mySDF_shortPreRwd_spike = allTrial_spikeMatx_slide(intersect(find(s.lickInds==0), s.rwd_Inds),:);
+%         mySDF_longPreRwd_spike = allTrial_spikeMatx_slide(intersect(find(s.lickInds==1), s.rwd_Inds),:);
+%         plotFilled(slideTime, mySDF_shortPreRwd_spike,[0 0 1])
+%         plotFilled(slideTime, mySDF_longPreRwd_spike,[0.7 0 1])
+%         line([0 0], [0 maxLick], 'color', 'r')
+%         title('shortAndRwd vs longAndRwd')
+%         ylim([0 maxFreq]);
+% 
+%          subplot(8,7,51); hold on;
+% 
+%         mySDF_shortPreNoRwd_spike = allTrial_spikeMatx_slide(intersect(find(s.lickInds==0), s.nrwd_Inds),:);
+%         mySDF_longPreNoRwd_spike = allTrial_spikeMatx_slide(intersect(find(s.lickInds==1), s.nrwd_Inds),:);
+%         plotFilled(slideTime, mySDF_shortPreNoRwd_spike,[0 0 1])
+%         plotFilled(slideTime, mySDF_longPreNoRwd_spike,[0.7 0 1])
+%         line([0 0], [0 maxLick], 'color', 'r')
+%         title('shortAndNoRwd vs longAndNoRwd')
+%         ylim([0 maxFreq]);
+% 
+% 
+%         z(20) = subplot(8,7,[43 50]); hold on;
+%         mySDF_one_spike = allTrial_spikeMatx_slide(s.lickInds==0,:);
+%         mySDF_two_spike = allTrial_spikeMatx_slide(s.lickInds==1,:);
+%         plotFilled(slideTime, mySDF_one_spike,[0 0 1])
+%         plotFilled(slideTime, mySDF_two_spike,[0.7 0 1])
+%         line([0 0], [0 maxLick], 'color', 'r')
+%         legend('shortLicks', '', 'longLicks', '')
+%         title('short vs long')
+%         ylim([0 maxFreq]);
+%         
+%      end
 %     % lose-shift vs lose-stay
 %     z(20) = subplot(8,7,[44 51]); hold on;
 %     mySDF_loseStay_spike = allTrial_spikeMatx_slide(intersect(s.nrwd_Inds, s.stayChoice_Inds(2:end)-1),:);

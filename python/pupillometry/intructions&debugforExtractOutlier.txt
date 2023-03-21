@@ -12,7 +12,6 @@ Uncheck geforce experience
 Disable disabling Visual Studio Integration
 Uncheck geforce drivers if have already installed
 
-In python, there's no 'end' everthing is by tab and spacing lines. 
 
 copy pupilExt into C:\Users\zhixi\Anaconda3\envs\dlc-windowsGPU\Lib\site-packages\deeplabcut
 subsitude the local _init_ with the _init_ in this folder

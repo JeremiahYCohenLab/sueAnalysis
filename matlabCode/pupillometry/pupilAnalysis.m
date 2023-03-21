@@ -1,11 +1,11 @@
-function pupilAnalysis(session, category, varargin)
+function pupilAnalysis(animal, category, varargin)
 %task and model parameters
 p = inputParser;
 % default parameters if none given
 p.addParameter('plotFlag', 1);
 p.addParameter('maxTrial', 1000);
-p.addParameter('modelNameOld', '4params');
-p.addParameter('modelName', '4params');
+p.addParameter('modelNameOld', '5params');
+p.addParameter('modelName', '5params');
 p.addParameter('paramNames', {'aN', 'aP', 'aF', 'beta'});
 p.addParameter('binSizeFrame', 6)% need to be even number
 p.addParameter('stepSize', 250)

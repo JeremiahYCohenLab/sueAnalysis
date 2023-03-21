@@ -1,10 +1,11 @@
-function [t] = inferModelVar(session, params, modelName, varargin)
+function t = inferModelVar(session, params, modelName, varargin)
 
 
 p = inputParser;
 % default parameters if none given
 p.addParameter('biasFlag',1)
 p.addParameter('revForFlag', 0)
+p.addParameter('perturb', []);
 p.parse(varargin{:});
 
 t = struct;
@@ -18,15 +19,14 @@ choice(o.allChoices<0) = 0;
 ITI = o.timeBtwn;
 currInd = 1;
 for currS = 1:size(params,1)
-    tmp = getModelVariables_dF(modelName, params(currS, :), choice, outcome);
-
-    %get rid of any bad parameters that cause outlier variable values
-    if any(abs(tmp.pe) > 1)
-        continue
+    if isempty(p.Results.perturb)
+        tmp = getModelVariables_dF(modelName, params(currS, :), choice, outcome);
     else
+        tmp = getModelVariablesLaser_dF(modelName, params(currS, :), choice, outcome, o.laser);
+    end
+
         tmpStruct{currInd} = tmp; 
         currInd = currInd + 1;
-    end
     
 end
 

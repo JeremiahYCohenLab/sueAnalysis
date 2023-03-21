@@ -203,8 +203,8 @@ sessionRwdsSmooth = sessionRwdsSmooth(1:(end-(length(boxKern)-1)));
 [~,rwdHx_Inds] = sort(s.rwdHx);
 
 %outcome indices for rwd hist
-[~,rwdHxRwd_Inds,~] = intersect(rwdHx_Inds, s.rwd_Inds); 
-[~,rwdHxNoRwd_Inds,~] = intersect(rwdHx_Inds, s.nrwd_Inds); 
+[rwdHxRwd_Inds] = ismember(rwdHx_Inds, s.rwd_Inds); 
+[rwdHxNoRwd_Inds] = ismember(rwdHx_Inds, s.nrwd_Inds); 
 
 %for tercile analysis
 tercile = floor(length(rwdHx_Inds)/3);
@@ -385,7 +385,7 @@ for i = 1:length(clust)
     % All trials
     r(1) = subplot(8,7,[1 8 15 22]); t(1) = title('All Trials');
     plotSpikeRaster(allTrial_spike_choice(i,:),'PlotType','vertline'); hold on
-    plot(repmat([-5000 10000],length(s.blockSwitch),1)', [s.blockSwitch; s.blockSwitch],'r');
+    plot(repmat([-5000 10000],length(s.blockSwitch),1)', [s.blockSwitch, s.blockSwitch]','r');
     line([0 0], [0 length(sessionData)], 'color', 'r')
     
     
@@ -718,7 +718,10 @@ for i = 1:length(clust)
 %     legend('CSplus', '', 'CSminus', '')
 %     title('CSplus vs CSminus')
 %     ylim([0 maxFreq]);
-    
+    mySDF_CR_spike = [];
+    mySDF_FA_spike = [];
+    mySDF_miss_spike = [];
+    mySDF_hit_spike = [];
     % FA vs CR
     subplot(8,7,[44]); hold on;
     if ~isempty(setdiff(CSplus_Inds,lickInds))
@@ -798,7 +801,9 @@ for i = 1:length(clust)
                 plot(slideTime, mySDF_CR_spike, 'color', [0 0 1])
             end
         end
-            
+
+        
+     
         if size(mySDF_FA_spike,1)>1 
             plotFilled(slideTime, mySDF_FA_spike,[0.7 0 1])
             line([0 0], [0 maxLick], 'color', 'r')
@@ -808,6 +813,8 @@ for i = 1:length(clust)
             end
             line([0 0], [0 maxLick], 'color', 'r')          
         end
+
+        
         if size(mySDF_CR_spike,1)>1
             legend('CR', '', 'FA')  
         else

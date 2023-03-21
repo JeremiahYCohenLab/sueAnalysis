@@ -4,7 +4,25 @@ function paramNames = getParamNames_dF(modelName, biasFlag)
 switch modelName
     case 'fourParam'
         paramNames = [{'aN', 'aP', 'aF', 'beta'}];
+    case '4params_bias_LaserNegRPE'
+        paramNames = [{'a', 'aF', 'beta', 'diff'}];
     case '5params'
+        paramNames = [{'aN', 'aP', 'aF', 'beta'}];     
+    case '5params_biForget'
+        paramNames = [{'aN', 'aP', 'aF', 'beta'}]; 
+    case '5paramsHmm'
+        paramNames = [{'aN', 'aP', 'aF', 'betaE', 'betaT'}];
+    case '5paramsLaserNegRPE'
+        paramNames = [{'aN', 'aP', 'aF', 'beta', 'diff'}]; 
+    case '5paramsLaserNegRPERotation'
+        paramNames = [{'aN', 'aP', 'aF', 'beta', 'diff'}]; 
+    case '5paramsLaserUpdate'
+        paramNames = [{'aN', 'aP', 'aF', 'beta', 'diff'}]; 
+    case '5paramsExpForgetHmm'
+        paramNames = [{'aN', 'aP', 'aF', 'betaE', 'betaT'}];
+    case '5paramsNoPriorForgetHmm'
+        paramNames = [{'aN', 'aP', 'aF', 'betaE', 'betaT'}];
+    case '5paramsNoPriorForget'
         paramNames = [{'aN', 'aP', 'aF', 'beta'}];
     case '5params_tF'
         paramNames = [{'aN', 'aP', 'tF', 'beta'}];
@@ -14,12 +32,30 @@ switch modelName
         paramNames = [{'aN', 'aP', 'aF', 'beta'}];
     case '5params_k_bias'
         paramNames = [{'a', 'aF', 'beta', 'k'}];
+    case '5params_k_bias_biForget'
+        paramNames = [{'a', 'aF', 'beta', 'k'}];
+    case '5params_k_bias_LaserNegRPE'
+        paramNames = [{'a', 'aF', 'beta', 'k', 'diff'}];
+    case '5params_k_bias_LaserNegRPE_expPrior'
+        paramNames = [{'a', 'aF', 'beta', 'k', 'diff'}];
+    case '5params_k_bias_LaserDisengage'
+        paramNames = [{'a', 'aF', 'beta', 'k', 'diff'}];
+    case '5params_k_bias_LaserDisengageScale'
+        paramNames = [{'a', 'aF', 'beta', 'k', 'scale'}];
+    case '5params_k_bias_LaserDisengageScale_expPrior'
+        paramNames = [{'a', 'aF', 'beta', 'k', 'scale'}];        
+    case '5params_k_bias_LaserNegOnlyRPE'
+        paramNames = [{'a', 'aF', 'beta', 'k', 'diff'}];
+    case '5params_k_bias_LaserNegRPERotation'
+        paramNames = [{'a', 'aF', 'beta', 'k', 'diff'}];
     case '5params_2LR_k_bias'
         paramNames = [{'aN', 'aP', 'beta', 'k'}];
     case '5params_k_biForget_bias'
         paramNames = [{'a', 'aF', 'beta', 'k'}];
     case '5params_kExp_bias'
         paramNames = [{'a', 'aF', 'aChoice', 'beta', 'k'}];
+    case '5params_kExp_bias_LaserNegRPERotation'
+        paramNames = [{'a', 'aF', 'aChoice', 'beta', 'k', 'diff'}];
     case '5params_inv'
         paramNames = [{'aN', 'aP', 'aF', 'beta'}];
     case 'fiveParam_kappa'

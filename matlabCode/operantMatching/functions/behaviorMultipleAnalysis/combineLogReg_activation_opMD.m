@@ -7,7 +7,7 @@ p.addParameter('revForFlag', 0)
 p.addParameter('numBins', 10)
 p.addParameter('plotFlag', 1);
 p.addParameter('maxTrials', 600);
-p.parse(varargin{:});
+p.parse(varargin{:});    
 
 
 [root, sep] = currComputer();
@@ -145,7 +145,7 @@ else
 end
 
 %logistic regression models
-glm_rwd = fitglm([combinedRewardsMatx' combinedLaseredOutcome'], combinedAllChoice_R,'distribution','binomial','link','logit'); rsq{1} = num2str(round(glm_rwd.Rsquared.Adjusted*100)/100);
+glm_rwd = fitglm([combinedNoRewardsMatx' combinedLaseredOutcome'], combinedAllChoice_R,'distribution','binomial','Link','logit', 'Intercept', true); rsq{1} = num2str(round(glm_rwd.Rsquared.Adjusted*100)/100);
 %glm_rwdANDchoice = fitglm([combinedRewardsMatx' combinedChoicesMatx'], combinedAllChoice_R, 'distribution','binomial','link','logit'); rsq{2} = num2str(round(glm_rwdANDchoice.Rsquared.Adjusted*100)/100);
 %glm_time = fitglm([combinedTimesMatx]', combinedAllChoice_R,'distribution','binomial','link','logit'); rsq{4} = num2str(round(glm_time.Rsquared.Adjusted*100)/100);
 %glm_rwdANDtime = fitglm([combinedRewardsMatx' combinedTimesMatx'], combinedAllChoice_R,'distribution','binomial','link','logit'); rsq{5} = num2str(round(glm_rwdANDtime.Rsquared.Adjusted*100)/100);
@@ -191,6 +191,33 @@ if p.Results.plotFlag
     ylabel('\beta Coefficient')
     xlim([0.5 tMax+0.5])
     legend('rwd', 'no rwd', laserOutcome, 'fit')
+    title([animal ' ' category])
+    set(gca, 'tickdir', 'out')
+    set(gcf, 'renderer', 'painters')
+    
+    figure2; hold on;
+    relevInds = 2:tMax+1;
+    coefVals = glm_rwd.Coefficients.Estimate(relevInds);
+    CIbands = coefCI(glm_rwd);
+    errorL = abs(coefVals - CIbands(relevInds,1));
+    errorU = abs(coefVals - CIbands(relevInds,2));
+    errorbar((1:tMax),coefVals,errorL,errorU,'Color', [0.7 0 1],'linewidth',2)
+
+    relevInds = (tMax+2):(2*tMax+1);
+    coefVals = glm_rwd.Coefficients.Estimate(relevInds);
+    CIbands = coefCI(glm_rwd);
+    errorL = abs(coefVals - CIbands(relevInds,1));
+    errorU = abs(coefVals - CIbands(relevInds,2));
+    errorbar((1:tMax),coefVals,errorL,errorU,'r','linewidth',2)
+
+    
+    
+    line([0.5 tMax+0.5], [0 0], 'Color',[0.5 0.5 0.5],'LineStyle','--')
+
+    xlabel('Reward n Trials Back')
+    ylabel('\beta Coefficient')
+    xlim([0.5 tMax+0.5])
+    legend('rwd', laserOutcome)
     title([animal ' ' category])
     set(gca, 'tickdir', 'out')
     set(gcf, 'renderer', 'painters')

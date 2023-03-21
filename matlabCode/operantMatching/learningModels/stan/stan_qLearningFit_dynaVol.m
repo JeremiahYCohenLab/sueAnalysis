@@ -1,4 +1,4 @@
-function [paramEsts] = stan_qLearningFit_dynaVol(xlFile, sheet, category, varargin)
+function [paramEsts] = stan_qLearningFit_dynalaser(xlFile, sheet, category, varargin)
 
 p = inputParser;
 % default parameters if none given
@@ -23,10 +23,10 @@ p.parse(varargin{:});
 paramNames = getParamNames_dF(p.Results.modelName,0);
 if ~p.Results.nonfixedParams
     paramInds = 1:length(paramNames);
-    fullName = ['stan_qLearning_' p.Results.modelName 'CmpVol.stan'];
+    fullName = ['stan_qLearning_' p.Results.modelName 'Cmplaser.stan'];
 else
     paramInds = find(~contains(paramNames, p.Results.nonfixedParams));
-    fullName = ['stan_qLearning_' p.Results.modelName '_' p.Results.nonfixedParams 'CmpVol.stan'];
+    fullName = ['stan_qLearning_' p.Results.modelName '_' p.Results.nonfixedParams 'Cmplaser.stan'];
 end
 
 if contains(p.Results.modelName, 'vkf')
@@ -41,100 +41,57 @@ end
 
 [root, sep] = currComputer();
 
-if p.Results.simFlag
-    if p.Results.bernFlag
-        savePath = [root 'sim' sep 'stan' sep 'bernoulli' sep p.Results.modelName sep];
-    else
-        savePath = [root 'sim' sep 'stan' sep p.Results.modelName sep];
-    end
-    
-    if ~exist(savePath)
-        mkdir(savePath);
-    end
-    iteration = 50;
-    % generate random paramters
-    params = zeros(iteration, 4);
-    params(:,1) = 0.9*betarnd(3, 5, iteration,1)+0.1; % lambda [0 1]
-    params(:,2) = 10*betarnd(5, 2, iteration,1); % v0 [0 5]
-%     params(:,2) = 10*5/7 * ones(iteration,1); % v0 [0 5]
-    params(:,3) = 10*(0.9*betarnd(4, 2, iteration,1)+0.1); % omega [0 5]
-    params(:,4) = 0.7*betarnd(6, 3, iteration,1)+0.3; % beta [0 1]
-    params(:,5) = 0.9*betarnd(6, 3, iteration,1)+0.1; % aF/kappa [0 1]
-    % simulation
-    choice = zeros(iteration, p.Results.maxTrial);
-    outcome = zeros(iteration, p.Results.maxTrial);
-    for sim = 1:iteration
-        %simulation
-        if contains(p.Results.modelName, 'aF')
-            [~, outcomeSim, choiceSim] = vkfSim_aF('params', params(sim,:),'randomSeed', sim,'maxTrials', p.Results.maxTrial, 'plotFlag', 0);
-        else
-            if contains(p.Results.modelName, 'kappa')
-               [~, outcomeSim, choiceSim] = vkfSim_kappa('params', params(sim,:),'randomSeed', sim,'maxTrials', p.Results.maxTrial, 'plotFlag', 0); 
-            else
-                [~, outcomeSim, choiceSim] = vkfSim('params', params(sim,:),'randomSeed', sim,'maxTrials', p.Results.maxTrial, 'plotFlag', 0);
-            end
-        end
-        choiceSim(choiceSim<0) = 0;
-        outcomeSim = abs(outcomeSim);
-        choice(sim,:) = choiceSim;
-        outcome(sim,:) = outcomeSim;
-    end
-    
-    T = p.Results.maxTrial;
-    N = iteration;
-    Tsesh = p.Results.maxTrial*ones(iteration,1);
-    
-    session_dat = struct('N',N,'T',T, 'Tsesh', Tsesh, 'choice', choice, 'outcome', outcome);
+
+
+if p.Results.bernFlag
+    savePath = [root sheet sep sheet 'sorted' sep 'stan' sep 'bernoulli' sep 'compare' sep p.Results.modelName sep paramNames{p.Results.cmpParam} sep category sep];
 else
-    if p.Results.bernFlag
-        savePath = [root sheet sep sheet 'sorted' sep 'stan' sep 'bernoulli' sep 'compare' sep p.Results.modelName sep paramNames{p.Results.cmpParam} sep category sep];
-    else
-        savePath = [root sheet sep sheet 'sorted' sep 'stan' sep 'compare' sep p.Results.modelName sep paramNames{p.Results.cmpParam} sep category sep];
-    end
-    if ~exist(savePath)
-        mkdir(savePath);
-    end
-    dayList = getDayList(xlFile, sheet, category);
-
-    for i = 1:length(dayList)
-        sessionName = dayList{i};
-%         fprintf([sessionName '\n']);
-        behavStruct = behAnalysisNoPlot_opMD(sessionName, 'simpleFlag', 1);
-        
-        choiceTmp{i} = behavStruct.allChoices;
-        if p.Results.bernFlag
-            choiceTmp{i}(choiceTmp{i} == -1) = 0;
-        else
-            choiceTmp{i} = choiceTmp{i} + 1;
-            choiceTmp{i}(choiceTmp{i} == 0) = 1;
-        end
-        outcomeTmp{i} = abs(behavStruct.allRewards); 
-        ITItemp{i} = behavStruct.timeBtwn;
-        Tsesh(i,1) = length(outcomeTmp{i});
-        volTemp{i} = behavStruct.vol;
-    end
-
-    T = max(Tsesh);
-    N = length(dayList);
-    choice = zeros(N, T);
-    outcome = zeros(N, T);
-    vol = zeros(N, T);
-    ITI = zeros(N,T);
-
-    for i = 1:N
-        choice(i, 1:Tsesh(i)) = choiceTmp{i};
-        outcome(i, 1:Tsesh(i)) = outcomeTmp{i};
-        vol(i, 1:Tsesh(i)) = volTemp{i};
-        ITI(i, 1:Tsesh(i)) = ITItemp{i}/1000; % convert from ms to s
-    end
-    choice = choice(:,1:min([T p.Results.maxTrial]));
-    outcome = outcome(:,1:min([T p.Results.maxTrial]));
-    ITI = ITI(:,1:min([T p.Results.maxTrial]));
-    Tsesh(Tsesh>p.Results.maxTrial) = p.Results.maxTrial;
-    T = min([T p.Results.maxTrial]);
-    
-    session_dat = struct('N',N,'T',T, 'Tsesh', Tsesh, 'choice', choice, 'outcome', outcome, 'ITI', ITI, 'vol', vol, 'cmpParam', p.Results.cmpParam);
+    savePath = [root sheet sep sheet 'sorted' sep 'stan' sep 'compare' sep p.Results.modelName sep paramNames{p.Results.cmpParam} sep category sep];
 end
+if ~exist(savePath)
+    mkdir(savePath);
+end
+dayList = getDayList(xlFile, sheet, category);
+
+for i = 1:length(dayList)
+    sessionName = dayList{i};
+%         fprintf([sessionName '\n']);
+    behavStruct = behAnalysisNoPlot_opMD(sessionName, 'simpleFlag', 1);
+
+    choiceTmp{i} = behavStruct.allChoices;
+    if p.Results.bernFlag
+        choiceTmp{i}(choiceTmp{i} == -1) = 0;
+    else
+        choiceTmp{i} = choiceTmp{i} + 1;
+        choiceTmp{i}(choiceTmp{i} == 0) = 1;
+    end
+    outcomeTmp{i} = abs(behavStruct.allRewards); 
+    ITItemp{i} = behavStruct.timeBtwn;
+    Tsesh(i,1) = length(outcomeTmp{i});
+    laserTemp{i} = behavStruct.laser;
+end
+
+T = max(Tsesh);
+N = length(dayList);
+choice = zeros(N, T);
+outcome = zeros(N, T);
+laser = zeros(N, T);
+ITI = zeros(N,T);
+
+for i = 1:N
+    choice(i, 1:Tsesh(i)) = choiceTmp{i};
+    outcome(i, 1:Tsesh(i)) = outcomeTmp{i};
+    laser(i, 1:Tsesh(i)) = laserTemp{i};
+    ITI(i, 1:Tsesh(i)) = ITItemp{i}/1000; % convert from ms to s
+end
+choice = choice(:,1:min([T p.Results.maxTrial]));
+outcome = outcome(:,1:min([T p.Results.maxTrial]));
+ITI = ITI(:,1:min([T p.Results.maxTrial]));
+Tsesh(Tsesh>p.Results.maxTrial) = p.Results.maxTrial;
+T = min([T p.Results.maxTrial]);
+
+session_dat = struct('N',N,'T',T, 'Tsesh', Tsesh, 'choice', choice, 'outcome', outcome, 'ITI', ITI, 'laser', laser, 'cmpParam', p.Results.cmpParam);
+
 %%
 %create data structure to feed into stan model
 

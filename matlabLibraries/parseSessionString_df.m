@@ -11,24 +11,21 @@ function pathData = parseSessionString_df(fileOrFolder, root, sep)
 %       pathData
 %           Structure with sessionFolder, sortedFolder, etc...
 
+filename = fileOrFolder;
+[animalName, date] = strtok(filename, 'd'); 
+animalName = animalName(2:end);
+date = date(1:9);
+sessionFolder = ['m' animalName date];
+    
 if contains(fileOrFolder,'.asc') % input is .asc file
-    filename = fileOrFolder;
-    [animalName, date] = strtok(filename, 'd'); 
-    animalName = animalName(2:end);
-    date = date(1:9);
-    sessionFolder = ['m' animalName date];
     behavioralDataPath = [root animalName sep sessionFolder sep 'behavior' sep filename];
     suptitleName = filename(1:strfind(filename,'.asc')-1);
     saveFigName = suptitleName;
     videopath = [root animalName sep sessionFolder sep 'pupil'];
 else % input is the folder
-    [animalName, date] = strtok(fileOrFolder, 'd'); 
-    animalName = animalName(2:end); 
-    date = date(2:9);
-    sessionFolder = ['m' animalName 'd' date];
     filepath = [root animalName sep sessionFolder sep 'behavior' sep];
     allFiles = dir(filepath);
-    fileInd = contains({allFiles.name},[fileOrFolder '.asc']) | contains({allFiles.name},[fileOrFolder '.asc']);
+    fileInd = contains({allFiles.name},[fileOrFolder '.asc']);
     behavioralDataPath = [filepath allFiles(fileInd).name];
     if any(fileInd)
         suptitleName = allFiles(fileInd).name(1:end-4);
@@ -37,10 +34,20 @@ else % input is the folder
     end
     saveFigName = sessionFolder(~(sessionFolder==sep));
     videopath = [root animalName sep sessionFolder sep 'pupil'];
+    
+    if isstrprop(fileOrFolder(end), 'alpha')
+        sortedFolderLocation = [root animalName sep sessionFolder sep 'sorted' sep 'session ' fileOrFolder(end) sep];
+        lickPath = [root animalName sep sessionFolder sep 'lick ' fileOrFolder(end) sep];
+    else
+        sortedFolderLocation = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep];
+        lickPath = [root animalName sep sessionFolder sep 'lick' sep];
+    end
+
 end
-sortedFolderLocation = [root animalName sep sessionFolder sep 'sorted' sep];
+
 
 % append path information
+pathData.aniName = animalName;
 pathData.suptitleName = suptitleName;
 pathData.sessionFolder = sessionFolder;
 pathData.sortedFolder = sortedFolderLocation;
@@ -51,8 +58,9 @@ pathData.baseFolder = [root animalName sep sessionFolder sep];
 pathData.behavioralDataPath = behavioralDataPath;
 pathData.date = date;
 pathData.videopath = videopath;
+pathData.lickPath = lickPath;
 
-if isdir([pathData.baseFolder 'neuralynx'])
+if isfolder([pathData.baseFolder 'neuralynx'])
     pathData.nLynxFolder = [pathData.baseFolder 'neuralynx' sep];
     pathData.nLynxFolderOpto = [pathData.baseFolder 'neuralynx' sep 'opto' sep];
     pathData.nLynxFolderSession = [pathData.baseFolder 'neuralynx' sep 'session' sep];

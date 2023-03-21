@@ -1,4 +1,4 @@
-animalNames = {'ZS059','ZS060','ZS061','ZS062'};
+animalNames = {'ZS059', 'ZS060', 'ZS061', 'ZS062'};
 [root, sep] = currComputer();
 col = 'good';
 model = '5params';
@@ -62,8 +62,8 @@ end
 %% opto metrices
 savePath = [root animalName sep animalName 'sorted' sep 'optoMetFiles' sep];
 for i = 1:length(sessionList)
-    getClusterMetric(sessionList{i}, unitList{i}, 0, 1);
-%     saveFigurePDF(gcf, [savePath sep sessionList{i} '_' unitList{i} '.pdf']);
+    getClusterMetric(sessionList{i}, unitList{i}, 1, 1);
+    saveFigurePDF(gcf, [savePath sep sessionList{i} '_' unitList{i} '.pdf']);
 end 
 %% find longer waveform in CSC file from session recordings
 SamplingFreq = 32000;
@@ -123,9 +123,7 @@ for i = 132:length(sessionList)
     for w = 1:length(leg)
         waveforms(w,:,:) = samp(peakInds + leg(w), :)';
     end
-    
-    
-    
+
     % find samples not affected by spikes as baseline trace
     
     nospikeSamp = [];
@@ -214,7 +212,7 @@ firstSpikeLat = [];
 width = [];
 spikeLatChange = [];
 spikeFreqChange = [];
-waveforms = [];
+% waveforms = [];
 waveformsSession = [];
 maxInd = [];
 widthSess = [];
@@ -239,27 +237,24 @@ for i = 1:length(sessionList)
             spikeLatChange = [spikeLatChange (met.spikeLat(10)-met.spikeLat(1))/1000];
             spikeFreqChange = [spikeFreqChange 1000*(mean(met.spikeNum(:,10))-mean(met.spikeNum(:,1)))/met.pulseWidth];
 %             spikeFreqChange = [spikeFreqChange mean(met.spikeNum(:,10))-mean(met.spikeNum(:,1))];
-            [peak,peakCh] = max(max(met.optoWaveform));
-            [~,peakSamp] = max(met.optoWaveform(:,peakCh));
-            tempWaveform = [zeros(1, 16-peakSamp), met.optoWaveform(max(1,peakSamp-15):min(peakSamp+25,size(met.optoWaveform,1)),peakCh)', zeros(1, peakSamp+25 - size(met.optoWaveform,1))];
-            waveforms = [waveforms; tempWaveform/peak];
-            [peak,~] = max(max(metSess.waveform));
+%             [peak,peakCh] = max(max(metSess.waveform));
+%             [~,peakSamp] = max(met.optoWaveform(:,peakCh));
+%             tempWaveform = [zeros(1, 16-peakSamp), met.optoWaveform(max(1,peakSamp-15):min(peakSamp+25,size(met.optoWaveform,1)),peakCh)', zeros(1, peakSamp+25 - size(met.optoWaveform,1))];
+%             waveforms = [waveforms; tempWaveform/peak];
+            [peak,peakCh] = max(max(metSess.waveform));
             [~, minCh] = min(max(metSess.waveform));
             [~,peakSamp] = max(metSess.waveform(:,peakCh));
             tempWF = metSess.waveform(:,peakCh);
-            tempWF = tempWF(peakSamp-50:peakSamp+50);
+            tempWF = tempWF(peakSamp-20:peakSamp+50);
             maxInd = [maxInd peakSamp];
             waveformsSession = [waveformsSession; tempWF'/peak];
-            if length(maxInd)==58
-                fprintf([num2str(i), '\n'])
-            end
         end
     end 
     
 end
 %%
 % pca of spikeWaveform
-[coeff,score,latent, ~, explained, mu] = pca(zscore(waveforms, 0,2));
+% [coeff,score,latent, ~, explained, mu] = pca(zscore(waveforms, 0,2));
 
 [coeffSess,scoreSess,latentSess, ~, explainedSess, muSess] = pca(zscore(waveformsSession, 0,2));
 %% plot all waveforms
@@ -325,12 +320,12 @@ for i = 1:length(sessionList)
                     end
                 end
             end
-            if length(setdiff(lickInds,find(os.CSplus>0)))>=5 && length(setdiff(find(os.CSplus>0), lickInds))>=5           
-                spikeRasters_dF_cueAlign(sessionList{i},'cellName',unitList{i});
-                saveFigurePDF(gcf, [savePath sep sessionList{i} '_' unitList{i} 'cueAlign' '.pdf']);
-            end
-%             spikeGLM_dF_allRegressors(sessionList{i}, 'good','cellName', unitList{i},'regressors','1+pe+ outcome + rightSide*outcome');
-%             saveFigurePDF(gcf, [savePathGLM sep sessionList{i} '_' unitList{i} 'GLMChoiceAlign_pePe' '.pdf']);
+%             if length(setdiff(lickInds,find(os.CSplus>0)))>=5 && length(setdiff(find(os.CSplus>0), lickInds))>=5           
+%                 spikeRasters_dF_choiceAlign(sessionList{i},'cellName',unitList{i});
+%                 saveFigurePDF(gcf, [savePath sep sessionList{i} '_' unitList{i} 'cueAlign' '.pdf']);
+%             end
+            spikeGLM_dF(sessionList{i}, 'good','cellName', unitList{i},'regressors','1+ outcome + Qchosen');
+            saveFigurePDF(gcf, [savePathGLM sep sessionList{i} '_' unitList{i} 'GLMChoiceAlign_pePe' '.pdf']);
         end
     end  
 end 
@@ -339,7 +334,7 @@ savePath = ['F:\allUnits\pupilCorr\'];
 allFiles = dir(savePath);
 allFiles = {allFiles([allFiles.bytes]>0).name}';
 allFiles = strcat(savePath, allFiles);
-append_pdfs([savePath 'combinePupilCorr.pdf'],allFiles{:});
+append_pdfs([savePath 'pupilCombine.pdf'],allFiles{:});
 %% pupil align
 errors = ones(size(sessionList));
 for i = 1:32
@@ -380,4 +375,100 @@ for i = 101:length(sessionListGood)
     saveFigurePDF(gcf, [savePath sessionListGood{i} unitListGood{i} '_pupilCorr.pdf']);
 end
 %%
+load('F:\tmpData\catWithWFFeatures.mat')
+savePath = 'F:\allUnits\LvsR\';
+for i = 1:length(allSessions)
+    spikeLvsR_dF(allSessions{i}, 'good', 'saveFigFlag', 0,'cellName', allUnits{i}, 'width', 1000);
+    if ind(i)==1
+        sgtitle(['narrow ' allSessions{i} '-' allUnits{i}])
+    else
+        sgtitle(['wide ' allSessions{i} '-' allUnits{i}])
+    end
+    saveFigurePDF(gcf, [savePath allSessions{i} allUnits{i} '_LvsR.pdf']);
+    close(gcf)
+end
+%% waveform filtering
+allSessionWF = {};
+allUnitWF = {};
+waveformsSession = [];
+fs = 32000;
+fc = [300 6000];
+[b,a] = butter(2,fc/(fs/2),'bandpass');
+firstLat = [];
+pSpike = [];
+pSpikeLast = [];
 
+for i = 1:length(sessionList)
+    pd = parseSessionString_df(sessionList{i}, root, sep);
+    if exist([pd.nLynxFolderSession sessionList{i} '_' unitList{i} '_met.mat'],'file')
+        load([pd.nLynxFolderSession sessionList{i} '_' unitList{i} '_met.mat']);
+    else
+        met = getClusterMetric(sessionList{i}, unitList{i}, 0, 1);
+    end
+     respInds = find(met.spikeProp>=0.8);
+    if length(respInds)>=1
+        respLat = nanmin(met.spikeLat(respInds));
+        if respLat <= 15000 && met.isiV <= 0.001 && met.distance<0.3
+            [peak,peakCh] = max(max(met.optoWaveform));
+            [~,peakSamp] = max(metSess.waveform(:,peakCh));
+            tempWF = metSess.waveform(:,peakCh);
+            tempWF = filtfilt(b,a,tempWF);
+            tempWF = tempWF(peakSamp-30:peakSamp+40);
+            peak = max(tempWF);
+            waveformsSession = [waveformsSession; tempWF'/peak];
+            allSessionWF = [allSessionWF, sessionList{i}];
+            allUnitWF = [allUnitWF, unitList{i}];
+        end
+    end 
+    firstLat = [firstLat met.spikeLat(1)];
+    pSpike = [pSpike met.spikeProp(1)];
+    pSpikeLast = [pSpikeLast met.spikeProp(end)];
+end
+%% good behNeurons
+baselineFreq = [];
+firstSpikeFreq = [];
+firstSpikeLat = [];
+width = [];
+spikeLatChange = [];
+spikeFreqChange = [];
+% waveforms = [];
+waveformsSession = [];
+maxInd = [];
+widthSess = [];
+
+for i = 1:length(sessionList)
+    pd = parseSessionString_df(sessionList{i}, root, sep);
+    if exist([pd.nLynxFolderSession sessionList{i} '_' unitList{i} '_met.mat'],'file')
+        load([pd.nLynxFolderSession sessionList{i} '_' unitList{i} '_met.mat']);
+    else
+        met = getClusterMetric(sessionList{i}, unitList{i}, 0, 1);
+    end
+     respInds = find(met.spikeProp>=0.8);
+    if length(respInds)>=1
+        respLat = nanmin(met.spikeLat(respInds));
+        if respLat <= 15000 && met.isiV <= 0.001 && met.distance<0.3
+            baselineFreq = [baselineFreq met.baseline];
+%             firstSpikeFreq = [firstSpikeFreq mean(met.spikeNum(:,1))];
+            firstSpikeFreq = [firstSpikeFreq 1000*mean(met.spikeNum(:,1))/20];
+            firstSpikeLat = [firstSpikeLat met.spikeLat(1)/1000];
+            width = [width met.width];
+            widthSess = [widthSess metSess.width];
+            spikeLatChange = [spikeLatChange (met.spikeLat(10)-met.spikeLat(1))/1000];
+            spikeFreqChange = [spikeFreqChange 1000*(mean(met.spikeNum(:,10))-mean(met.spikeNum(:,1)))/met.pulseWidth];
+%             spikeFreqChange = [spikeFreqChange mean(met.spikeNum(:,10))-mean(met.spikeNum(:,1))];
+%             [peak,peakCh] = max(max(metSess.waveform));
+%             [~,peakSamp] = max(met.optoWaveform(:,peakCh));
+%             tempWaveform = [zeros(1, 16-peakSamp), met.optoWaveform(max(1,peakSamp-15):min(peakSamp+25,size(met.optoWaveform,1)),peakCh)', zeros(1, peakSamp+25 - size(met.optoWaveform,1))];
+%             waveforms = [waveforms; tempWaveform/peak];
+            [peak,peakCh] = max(max(metSess.waveform));
+            [~, minCh] = min(max(metSess.waveform));
+            [~,peakSamp] = max(metSess.waveform(:,peakCh));
+            tempWF = metSess.waveform(:,peakCh);
+            tempWF = tempWF(peakSamp-20:peakSamp+50);
+            maxInd = [maxInd peakSamp];
+            waveformsSession = [waveformsSession; tempWF'/peak];
+        end
+    end 
+    
+end
+%%

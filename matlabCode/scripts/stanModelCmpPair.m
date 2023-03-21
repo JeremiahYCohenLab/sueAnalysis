@@ -190,20 +190,21 @@ mu_2 = normcdf(mu_common_pr + diff_pr);
 diff = mu_2 - mu_1;
 
 figure; 
-subplot(2,2,1);
-histogram(mu_common_pr);
+subplot(1,2,1);
+histogram(mu_common_pr, 'FaceColor', [0.6 0.6 0.6], 'EdgeColor', 'none', 'Normalization', 'probability');
 title('mu-common');
-subplot(2,2,2);
-histogram(diff_pr);
+subplot(1,2,2);
+histogram(diff_pr, 'FaceColor', [1 0 0], 'EdgeColor', 'none', 'Normalization', 'probability');
 title('mu-diff');
 
-subplot(2,2,3); hold on;
-histogram(mu_1, 0:0.05:1, 'Normalization', 'probability');
-histogram(mu_2, 0:0.05:1, 'Normalization', 'probability');
+figure;
+subplot(1,2,1); hold on;
+histogram(mu_1, 0:0.05:1, 'Normalization', 'probability', 'EdgeColor', 'none');
+histogram(mu_2, 0:0.05:1, 'Normalization', 'probability', 'EdgeColor', 'none');
 legend({'mu-Ctrl','mu-Inhi'})
 title('mu');
 
-subplot(2,2,4);
+subplot(1,2,2);
 histogram(diff)
 title('mu-Inhi-mu-Ctrl')
 

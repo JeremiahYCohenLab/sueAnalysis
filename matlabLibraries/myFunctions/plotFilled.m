@@ -1,4 +1,4 @@
-function hOut = plotFilled(x, data, color, stdFlag, figHandle)
+function hOut = plotFilled(x, data, color, lineWidth, stdFlag, figHandle)
 % plotFilled     Plots mean +/- SEM or std as a filled plot
 %   hOut = plotFilled(x, data, color, figHandle)
 %   INPUTS
@@ -11,7 +11,13 @@ function hOut = plotFilled(x, data, color, stdFlag, figHandle)
 
 if nargin < 4
     stdFlag = 0;
+    lineWidth = 1;
+else
+    if nargin < 5
+        stdFlag = 0;
+    end
 end
+
 
 y = nanmean(data);
 
@@ -23,8 +29,8 @@ else
     yL = y - nanstd(data)/sqrt(size(data,1));
 end
 
-if nargin > 4
+if nargin > 5
     subplot(figHandle)
 end
-hOut = plot(x, y, 'Color', color, 'linewidth', 1, 'Marker', 'none', 'LineStyle', '-'); hold on;
+hOut = plot(x, y, 'Color', color, 'linewidth', lineWidth, 'Marker', 'none', 'LineStyle', '-'); hold on;
 fill([x(~isnan(yU)) fliplr(x(~isnan(yU)))], [yU(~isnan(yU)) fliplr(yL(~isnan(yU)))], color, 'facealpha', 0.25, 'edgecolor', 'none')

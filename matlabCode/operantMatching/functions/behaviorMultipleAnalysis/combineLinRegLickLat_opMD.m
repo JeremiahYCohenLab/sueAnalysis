@@ -9,7 +9,8 @@ p.parse(varargin{:});
 [root, sep] = currComputer();
 
 [~, dayList, ~] = xlsread([root xlFile], animal);
-[~,col] = find(~cellfun(@isempty,strfind(dayList, category)) == 1);
+col = cellfun(@(x) strcmp(x, category), dayList(1,:));
+% [~,col] = find(~cellfun(@isempty,strcmp(dayList, category)) == 1);
 dayList = dayList(2:end,col);
 endInd = find(cellfun(@isempty,dayList),1);
 if ~isempty(endInd)

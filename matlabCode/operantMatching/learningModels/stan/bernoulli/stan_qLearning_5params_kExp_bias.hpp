@@ -105,7 +105,7 @@ static const std::vector<string> locations_array__ = {" (found before start of p
                                                       " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 32, column 2 to column 32)",
                                                       " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 35, column 4 to column 54)",
                                                       " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 36, column 4 to column 56)",
-                                                      " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 37, column 4 to column 63)",
+                                                      " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 37, column 4 to column 76)",
                                                       " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 38, column 4 to column 63)",
                                                       " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 39, column 4 to column 59)",
                                                       " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 34, column 17 to line 40, column 3)",
@@ -119,7 +119,7 @@ static const std::vector<string> locations_array__ = {" (found before start of p
                                                       " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 95, column 2 to column 22)",
                                                       " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 107, column 2 to column 31)",
                                                       " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 108, column 2 to column 32)",
-                                                      " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 109, column 2 to column 35)",
+                                                      " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 109, column 2 to column 47)",
                                                       " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 110, column 2 to column 37)",
                                                       " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 111, column 2 to column 36)",
                                                       " (in 'C:/Users/zhixi/Documents/gitRepositories/sueAnalysis/matlabCode/operantMatching/learningModels/stan/bernoulli/stan_qLearning_5params_kExp_bias.stan', line 115, column 6 to column 18)",
@@ -523,7 +523,9 @@ class stan_qLearning_5params_kExp_bias_model : public model_base_crtp<stan_qLear
           "assigning variable aF");
         current_statement__ = 16;
         assign(aChoice, cons_list(index_uni(n), nil_index_list()),
-          inv_logit((mu_p[(3 - 1)] + (sigma[(3 - 1)] * aChoice_pr[(n - 1)]))),
+          ((a[(n - 1)] * 0.5) *
+            inv_logit(
+              (mu_p[(3 - 1)] + (sigma[(3 - 1)] * aChoice_pr[(n - 1)])))),
           "assigning variable aChoice");
         current_statement__ = 17;
         assign(beta, cons_list(index_uni(n), nil_index_list()),
@@ -827,7 +829,9 @@ class stan_qLearning_5params_kExp_bias_model : public model_base_crtp<stan_qLear
           "assigning variable aF");
         current_statement__ = 16;
         assign(aChoice, cons_list(index_uni(n), nil_index_list()),
-          inv_logit((mu_p[(3 - 1)] + (sigma[(3 - 1)] * aChoice_pr[(n - 1)]))),
+          ((a[(n - 1)] * 0.5) *
+            inv_logit(
+              (mu_p[(3 - 1)] + (sigma[(3 - 1)] * aChoice_pr[(n - 1)])))),
           "assigning variable aChoice");
         current_statement__ = 17;
         assign(beta, cons_list(index_uni(n), nil_index_list()),
@@ -885,7 +889,7 @@ class stan_qLearning_5params_kExp_bias_model : public model_base_crtp<stan_qLear
       current_statement__ = 29;
       mu_aF = Phi_approx(mu_p[(2 - 1)]);
       current_statement__ = 30;
-      mu_aChoice = Phi_approx(mu_p[(3 - 1)]);
+      mu_aChoice = ((mu_a * 0.5) * inv_logit(mu_p[(3 - 1)]));
       current_statement__ = 31;
       mu_beta = (Phi_approx(mu_p[(4 - 1)]) * 10);
       current_statement__ = 32;

@@ -135,6 +135,12 @@ for i = 1:length(sortedFiles)
         [tt_ts, tt_sig] = Nlx2MatSpike(TTdir, [1 0 0 0 1], 0, 1, 1);
         TTprev = TTname;
     end
+    
+    % low pass waveform shape
+    fc = 6000;
+    [b, a] = butter(2,fc/(sampFreq/2),'low');
+    tt_sig = filtfilt(b, a, tt_sig);
+    
     for j = 1:4
         lightWaveForm{j} = AD2uV*squeeze(tt_sig(:, j, ismember(tt_ts, lightSpikeTimes)))';
         spontWaveForm{j} = AD2uV*squeeze(tt_sig(:, j, ismember(tt_ts, spontSpikeTimes)))';
@@ -285,6 +291,6 @@ for i = 1:length(sortedFiles)
     screen = get(0,'Screensize');
     screen(4) = screen(4) - 100;
     set(rasters, 'Position', screen)
-%     saveFigurePDF(rasters,[savePath sep session '_' cellName '_' p.Results.Session 'ID'])
+    saveFigurePDF(rasters,[savePath sep session '_' cellName '_' p.Results.Session 'ID'])
 end
   

@@ -113,7 +113,7 @@ for i = 1:length(sessionText)
                 end
             end
             
-            if strfind(sessionText{currTrialInd},'LASER')
+            if ~isempty(strfind(sessionText{currTrialInd},'LASER')) || ~isempty(strfind(sessionText{currTrialInd},'Laser'))
                 sessionData(currTrial).laser = 1;
             end
 %             if strfind(sessionText{currTrialInd},'AUTOMATIC WATER L DELIVERED')

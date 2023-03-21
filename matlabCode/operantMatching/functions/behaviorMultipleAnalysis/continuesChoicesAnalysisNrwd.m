@@ -3,10 +3,10 @@ function continuesChoicesAnalysisNrwd(xlFile, sheet, col, varargin)
 p = inputParser;
 % default parameters if none given
 p.addParameter('modelName', '5params');
-p.addParameter('len', 2:6);
-p.addParameter('followLen', 30);
+p.addParameter('len', 2:4);
+p.addParameter('followLen', 15);
 p.addParameter('trialBins',4);
-p.addParameter('numBins',5);
+p.addParameter('numBins',3);
 p.parse(varargin{:});
 modelName = '5params';
 dayList = getDayList(xlFile, sheet, col);

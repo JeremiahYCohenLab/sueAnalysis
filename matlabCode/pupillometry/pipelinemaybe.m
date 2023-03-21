@@ -1,4 +1,4 @@
-session = 'mBB10120181112';
+session = 'mZS078d20220610';
 [root,sep] = currComputer_df;
 
 % convert avi to mat, pupilStruct

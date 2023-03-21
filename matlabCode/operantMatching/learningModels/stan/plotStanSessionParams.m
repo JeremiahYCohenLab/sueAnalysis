@@ -5,7 +5,7 @@ p = inputParser;
 p.addParameter('beh', 'good')
 p.addParameter('bernFlag', 1)
 % p.addParameter('modelName','7params_absPePeAN_scale_int_bias_ord')
-p.addParameter('modelName', '5params');
+p.addParameter('modelName', '5paramsHmm');
 p.addParameter('plotFlag', 1)
 p.addParameter('saveFigFlag', 1)
 p.parse(varargin{:});

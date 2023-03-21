@@ -1,7 +1,7 @@
 function denoised = denoising(rawTrace)
     dn1_R1_sig = medfilt1(rawTrace,5); %median filter gets rid of random/ salt and pepper noise 
     fc = 7.5; %cutoff frequency in Hz (anything lower than this passes)
-    fs = 30; %sampling rate in Hz
+    fs = 40; %sampling rate in Hz
     [b,a] = butter(2,fc/(fs/2),'low');
 %     [b,a] = butter(2,0.99999999,'low'); % getting rid of signal that cannot be well-described by sampling frequency
     dn2_R1_sig = filtfilt(b,a,dn1_R1_sig); %filtfilt is zero-phase so no temporal distortion
@@ -10,5 +10,4 @@ function denoised = denoising(rawTrace)
     [b2,a2] = butter(2,fc2/(fs/2),'high'); %this accounts for slow time course changes on the order of ~16 minutes
     denoised = filtfilt(b2,a2,dn2_R1_sig) + 5; %filtfilt is zero-phase %add a constant so the trace doesn't go down to zero on y-axis
     SR = 30;
-
 end

@@ -121,7 +121,7 @@ for i = 1:length(behSessionData)
         end
     else
         lickTemp = [behSessionData(i).licksL, behSessionData(i).licksR];
-        if min(lickTemp) <= behSessionData(i).CSon + 2000
+        if min(lickTemp) <= behSessionData(i).CSon + 1000
             if min(behSessionData(i).licksL) < min(behSessionData(i).licksR)
                 lickSide(i) = -1;
             else
@@ -150,7 +150,7 @@ lickLatLogZ(indsR) = zscore(lickLat_Rlog);
 lickLatLogZ(indsL) = zscore(lickLat_Llog);
 
 %% Z scored lick rate (eliminates trials with impossible lick rates)
-
+% and remove too short lickLats.
 realID = lickRate<20 & lickRateRwd < 20 ; % take 20Hz as the max lickRate
 responseRateInds = find(lickRate < 20 & lickRateRwd < 20);
 lickRateZ = NaN(1,length(allChoices));
@@ -167,7 +167,43 @@ lickRateZ(indsR) = lickRate_R;
 lickRateZ(indsL) = lickRate_L;
 lickRateRwdZ(indsR) = lickRateRwd_R;
 lickRateRwdZ(indsL) = lickRateRwd_L;
-
+% lickRate recalculate
+lickNumPostRwd = [];
+lickDiff = [];
+tf = 2;
+minILI = 50;
+postRwdTime = 500;
+for k = 1:length(responseInds)
+    if ~isnan(behSessionData(responseInds(k)).rewardL)
+        currTrial_lickInd = [behSessionData(responseInds(k)).licksL] < (behSessionData( responseInds(k)).respondTime + tf*1000);
+        currTrial_lick = behSessionData( responseInds(k)).licksL(currTrial_lickInd) - behSessionData( responseInds(k)).respondTime;
+    elseif ~isnan(behSessionData( responseInds(k)).rewardR)
+        currTrial_lickInd = [behSessionData( responseInds(k)).licksR] < (behSessionData( responseInds(k)).respondTime + tf*1000);
+        currTrial_lick = behSessionData( responseInds(k)).licksR(currTrial_lickInd) - behSessionData( responseInds(k)).respondTime;  
+    else
+        currTrial_lick = 0;
+    end
+    % cleaned licks
+    ILI = diff(currTrial_lick);
+    if ~isnan(ILI)
+        while sum(~isnan(ILI))>0 && ILI(1) <= minILI
+            currTrial_lick = currTrial_lick(currTrial_lick~=currTrial_lick(2));
+            ILI = diff(currTrial_lick);
+        end
+        if ~isempty(ILI)
+            lickDiff(k) = ILI(1);
+        else
+            lickDiff(k) = NaN;
+        end
+    else
+        lickDiff(k) = NaN;
+    end
+    if lickDiff(k) >  rwdDelay
+        lickDiff(k) = NaN;
+    end
+    % get post-rwd licks
+    lickNumPostRwd(k) = sum(currTrial_lick>=(rwdDelay+50)&currTrial_lick<=(rwdDelay+50+postRwdTime))/(0.001*postRwdTime);
+end
 
 %%
 % CSplus trials
@@ -244,6 +280,9 @@ end
     end
     s.laser = laser;
     s.lickSide = lickSide;
+    s.behSessionData = behSessionData;
+    s.lickDiff = lickDiff;
+    s.lickNumRwd = lickNumPostRwd;
     
 if p.Results.simpleFlag
     return
@@ -496,6 +535,7 @@ s.timeMax = p.Results.timeMax;
 s.rwdMatxForLick = rwdMatxForLick;
 s.noRwdMatxForLick = noRwdMatxForLick;
 s.choiceMatx = choiceMatx;
+% s.choiceHx = choiceHx;
 
 
 

@@ -34,7 +34,7 @@ transformed parameters {
   for (n in 1:N) {
     a[n]   = Phi_approx(mu_p[1] + sigma[1] * a_pr[n]);
     aF[n]   = Phi_approx(mu_p[2] + sigma[2] * aF_pr[n]);
-    aChoice[n] = inv_logit(mu_p[3] + sigma[3] * aChoice_pr[n]); 
+    aChoice[n] = a[n] * 0.5 * inv_logit(mu_p[3] + sigma[3] * aChoice_pr[n]); 
     beta[n] = Phi_approx(mu_p[4] + sigma[4] * beta_pr[n]) * 10;
     k[n]    = Phi_approx(mu_p[5] + sigma[5] * k_pr[n]) * 5;
   }
@@ -106,7 +106,7 @@ generated quantities {
 
   mu_a   = Phi_approx(mu_p[1]);
   mu_aF   = Phi_approx(mu_p[2]);
-  mu_aChoice = Phi_approx(mu_p[3]);
+  mu_aChoice = mu_a * 0.5 * inv_logit(mu_p[3]);
   mu_beta = Phi_approx(mu_p[4]) * 10;
   mu_k    = Phi_approx(mu_p[5]) * 5;
 

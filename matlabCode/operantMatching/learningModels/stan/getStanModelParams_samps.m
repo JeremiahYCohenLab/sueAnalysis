@@ -28,15 +28,17 @@ tmp = whos;
 samples = eval(tmp(1).name);
 
 params = nan(numSamps, length(paramNames));
-inds = randperm(length(samples.lp__));
+inds = randperm(sum(1.-samples.divergent__));
 inds = inds(1:numSamps);
 for currP = 1:length(paramNames)
     if p.Results.sessionParamsFlag
-        tmp = eval(['samples.' paramNames{currP}]);
+        tmp = samples.(paramNames{currP})(samples.divergent__<1,:);
         tmp = tmp(:,sessionInd);
     else
         if ~strcmp(paramNames{currP}, 'bias')
-            tmp = eval(['samples.mu_' paramNames{currP}]);
+            tmp = samples.(['mu_' paramNames{currP}])(samples.divergent__<1,:);
+        else
+            tmp = zeros(numSamps,1);
         end
     end
     params(:,currP) = tmp(inds);
@@ -57,22 +59,23 @@ if p.Results.varFlag
         tmpStruct{currS} = getModelVariables_dF(modelName, params(currS, :), choice, outcome);
         
         %get rid of any bad parameters that cause outlier variable values
-        while any(abs(tmpStruct{currS}.pe) > 1)
-            tmpInd = randperm(length(samples.lp__));
-            while any(inds == tmpInd(1))
-                tmpInd = randperm(length(samples.lp__));
-            end
-            for currP = 1:length(paramNames)
-                if p.Results.sessionParamsFlag
-                    tmp = eval(['samples.' paramNames{currP}]);
-                    tmp = tmp(:,sessionInd);
-                else
-                    tmp = eval(['samples.mu_' paramNames{currP}]);
-                end
-                params(currS,currP) = tmp(tmpInd(1));
-            end 
-            tmpStruct{currS} = getModelVariables_dF(modelName, params(currS, :), choice, outcome);
-        end
+        %(this part is for 7 param model)
+%         while any(abs(tmpStruct{currS}.pe) > 1)
+%             tmpInd = randperm(length(samples.lp__));
+%             while any(inds == tmpInd(1))
+%                 tmpInd = randperm(length(samples.lp__));
+%             end
+%             for currP = 1:length(paramNames)
+%                 if p.Results.sessionParamsFlag
+%                     tmp = eval(['samples.' paramNames{currP}]);
+%                     tmp = tmp(:,sessionInd);
+%                 else
+%                     tmp = eval(['samples.mu_' paramNames{currP}]);
+%                 end
+%                 params(currS,currP) = tmp(tmpInd(1));
+%             end 
+%             tmpStruct{currS} = getModelVariables_dF(modelName, params(currS, :), choice, outcome);
+%         end
     end
     
     infInds = [];

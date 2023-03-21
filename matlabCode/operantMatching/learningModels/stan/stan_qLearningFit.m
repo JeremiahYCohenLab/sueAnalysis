@@ -8,7 +8,7 @@ p.addParameter('nonfixedParams', 0);
 p.addParameter('fixedParams', []);
 % p.addParameter('paramNames',{'aNmin', 'aP', 'aF', 'aPE', 'v', 'beta'}); % animal level
 % p.addParameter('modelName', '7params_absPePeAN_scale_int_bias_ord');
-p.addParameter('modelName', '5params_k_bias');
+p.addParameter('modelName', '5params');
 % p.addParameter('modelName', 'vkf_fixV_kappa');
 p.addParameter('iter', 10000);
 p.addParameter('warmup', []);
@@ -122,6 +122,14 @@ else
         ITItemp{i} = behavStruct.timeBtwn;
         Tsesh(i,1) = length(outcomeTmp{i});
     end
+    transGuess = [0.4 0.3 0.3;
+                  0.2 0.8 0;
+                  0.2 0 0.8];
+    emisGuess = [0.5 0.5;
+                 1 0;
+                 0 1];    
+             
+    
 
     T = max(Tsesh);
     N = length(dayList);
@@ -211,10 +219,14 @@ else
     for i = 1:length(paramInds) %use median in bin as best estimate
         tmp = allSamples(:,i);
         edgeTmp = edges{i};
-        if inds(i) < 50
-            paramEsts(i) = median(tmp(tmp >= edgeTmp(inds(i)) & tmp < edgeTmp(inds(i)+1)));
+        if length(unique(tmp))>1
+            if inds(i) < 50
+                paramEsts(i) = median(tmp(tmp >= edgeTmp(inds(i)) & tmp < edgeTmp(inds(i)+1)));
+            else
+                paramEsts(i) = edgeTmp(inds(i));
+            end
         else
-            paramEsts(i) = edgeTmp(inds(i));
+            paramEsts(i) = unique(tmp);
         end
     end
 end

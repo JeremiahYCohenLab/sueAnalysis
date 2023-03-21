@@ -123,6 +123,15 @@ optoUnit = unitsInfo{row,8};
     if ~isempty(ismember(chan,brokenChannels))
         samp(:,ismember(chan,brokenChannels)) = 0;
     end
+    
+    %% filter CSC signal
+    fc = [300 6000];
+    [b, a] = butter(2,fc/(sampFreq/2),'bandpass');
+    for i = 1:4
+        samp(:,i) = filtfilt(b, a, samp(:,i));
+    end
+    
+    %%
     % calculate time in CSC
     if length(unique(diff(ts))) == 1 % no pausing
         ts_interp = ts(1):tSamp:ts(1) + tSamp*(size(samp,1) - 1);
@@ -296,13 +305,115 @@ optoUnit = unitsInfo{row,8};
     unitNum = unitNum(end);
     TTdir = fullfile(sortedPathSession, tmp_TTname);
     [tt_ts, tt_sig] = Nlx2MatSpike(TTdir, [1 0 0 0 1], 0, 1, 1);
-
+    sortedPath = [pd.nLynxFolderSession];
+    header = Nlx2MatCSC([sortedPath 'CSC1.ncs'], [0 0 0 0 0], 1, 1, []);
+    AD2uVSess = split(header{contains(header, '-ADBitVolts')}, 'Volts');
+    AD2uVSess = str2double(AD2uVSess{2})*10^6;
     for j = 1:4
-        WaveForm{j} = AD2uV.*squeeze(tt_sig(:, j, ismember(tt_ts, spikeTimesSession)))';
+        WaveForm{j} = AD2uVSess.*squeeze(tt_sig(:, j, ismember(tt_ts, spikeTimesSession)))';
     end
     
     met.isiV = sum(diff(spikeTimesSession)<2000)/(length(spikeTimesSession)-1);
-    met.waveform = AD2uV.*mean(tt_sig(:,:,ismember(tt_ts, spikeTimesSession)),3);
+    met.waveform = AD2uVSess.*mean(tt_sig(:,:,ismember(tt_ts, spikeTimesSession)),3);
+%% get waveform from session csc file
+
+    % get trace
+    sortedPath = [pd.nLynxFolderSession];
+    [ts, samp0] = Nlx2MatCSC([sortedPath 'CSC' num2str(chan(1)) '.ncs'], [1 0 0 0 1], 0, 1, []);
+    [samp1] = Nlx2MatCSC([sortedPath 'CSC' num2str(chan(2)) '.ncs'], [0 0 0 0 1], 0, 1, []);
+    [samp2] = Nlx2MatCSC([sortedPath 'CSC' num2str(chan(3)) '.ncs'], [0 0 0 0 1], 0, 1, []);
+    [samp3] = Nlx2MatCSC([sortedPath 'CSC' num2str(chan(4)) '.ncs'], [0 0 0 0 1], 0, 1, []);
+    samp = cat(3, samp0, samp1, samp2, samp3);
+    samp = reshape(samp, [] ,4);
+    % get spike times
+    sortedFiles = dir(pd.nLynxFolderSession);
+    ind = find(contains({sortedFiles.name}, [unit '.txt']));
+    spikeTimes = load([pd.nLynxFolderSession sortedFiles(ind).name]); % in us
+    % realign
+    TTdir = fullfile(sortedPath,[TTname '.ntt']);
+    [tt_ts, tt_sig] = Nlx2MatSpike(TTdir, [1 0 0 0 1], 0, 1, 1);
+    allWaveForm = squeeze(tt_sig(:, :, ismember(tt_ts, spikeTimes)));
+    meanWaveForm = mean(allWaveForm, 3);
+    [~, peakChannel] = max(max(meanWaveForm,[], 1));
+    [~, peakTimes] = max(allWaveForm(:,peakChannel,:), [], 1);
+    tSamp = 1/p.Results.SamplingFreq * 1e6; % time per sample in microseconds
+    if length(spikeTimes) == length(squeeze(peakTimes))
+     spikeTimes = spikeTimes + tSamp*(squeeze(peakTimes) - 11); % change depend on how different were the peak from 11th sample
+    end
+    
+    spikeTimes = round(spikeTimes);
+    % rescale time
+    
+    if length(unique(diff(ts))) == 1 % no pausing
+        ts_interp = ts(1):tSamp:ts(1) + tSamp*(size(samp,1) - 1);
+    else % if pausing/skip due to data loss, use the proper for loop
+        ts_interp = NaN(1, size(samp,1)); 
+        for j = 1:length(ts)
+            ts_interp(512*(j - 1) + 1:512*(j)) = ts(j):tSamp:ts(j) + tSamp*511;
+        end
+    end
+    
+    % find signature channel
+    [~, peakChannel] = max(max(met.waveform,[], 1));
+    % 
+    leg = -100:100; % 101 samples    
+    peakIndsSess = find(ismember(floor(ts_interp), spikeTimes)|ismember(ceil(ts_interp), spikeTimes));
+    intactInds = (peakIndsSess+leg(1))>0 & (peakIndsSess+leg(end))<size(samp,1);
+    peakIndsSess = peakIndsSess(intactInds);
+    if abs(length(peakIndsSess)-length(spikeTimes))>=10
+        fprintf([session unit 'spike time detection error \n'])
+%         return
+    end
+%     spikeTimes = spikeTimes(intactInds);
+    waveforms = zeros(length(leg),4,length(peakIndsSess));
+    % waveform from CSC
+    for w = 1:length(leg)
+        waveforms(w,:,:) = samp(peakIndsSess + leg(w), :)';
+    end
+
+    % find samples not affected by spikes as baseline trace
+    
+    nospikeSamp = [];
+    nospikeSampLate = [];
+    for w = 1:20
+        tmp = samp(peakIndsSess(2:end)- 80 - w, :)';
+        nospikeSamp = [nospikeSamp, tmp];
+        tmp = samp(peakIndsSess(1:end-1)+ 80 + w, :)';
+        nospikeSampLate = [nospikeSampLate, tmp];
+    end
+    peakLagAllSess = zeros(4,1);
+    peakEndAllSess = zeros(4,1);
+    tmpHSess = zeros(length(leg),4);
+    tmpHLateSess = zeros(length(leg),4);
+
+    baseline = mean(nospikeSamp,2);
+    baselineLate = mean(nospikeSampLate,2);
+    for w = 1:4
+        for k = 1:length(leg)
+            h = ttest2(squeeze(waveforms(k,w,:)), squeeze(nospikeSamp(w,:)),'Alpha',0.001);
+            tmpHSess(k,w) = h;
+            h = ttest2(squeeze(waveforms(k,w,:)), squeeze(nospikeSampLate(w,:)),'Alpha',0.001);
+            tmpHLateSess(k,w) = h;
+        end
+        tmpHCov = conv(tmpHSess(:,w), ones(1,8));
+        tmpHCov = tmpHCov(8:end);
+        tmpHCovLate = conv(tmpHLateSess(:,w), ones(1,8));
+        tmpHCovLate = tmpHCovLate(8:end);
+        if ~isempty(find(tmpHCov(1:end-2) == 7 & tmpHCov(2:end-1)>5 & tmpHCov(3:end)>5))
+          peakLagAllSess(w) = min(find(tmpHCov(1:end-2) == 7 & tmpHCov(2:end-1)>5 & tmpHCov(3:end)>5)); % find first continued 5 sig points
+          peakEndAllSess(w) = max(find(tmpHCovLate == 5))+4; % find the end of the spike
+        else
+            peakLagAllSess(w) = 51;
+            peakEndAllSess(w) = 51;
+        end
+        
+    end
+    
+    width = peakEndAllSess(peakChannel) - peakLagAllSess(peakChannel);
+    metSess = struct;
+    metSess.waveform = mean(waveforms,3);
+    metSess.width = width;
+    
     %% plots
 if plotFlag
     rasters = figure;
@@ -324,7 +435,7 @@ if plotFlag
     errorbar(avgSpikeLat/1000, semSpikeLat/1000, 'b', 'LineWidth', 2);
 %     errorbar(avgSpikeLatSham/1000, semSpikeLatSham/1000, 'k', 'LineWidth', 2);
 %     legend('laser','control');
-    ylim([0 90])
+    ylim([0 30])
     
     subplot(4,3,5); hold on;
     xlabel('Pulse'); ylabel('P(spike)'); ylim([-0.1 1.1]); xlim([0 p.Results.Pulses+1])
@@ -336,7 +447,7 @@ if plotFlag
     plot(mean(spikeNum), 'b', 'LineWidth', 2);
     plot(mean(spikeNumSham), 'k', 'LineWidth', 2); 
     
-    subplot(4,3, 7:8); hold on
+    subplot(6,3, 10:11); hold on
     ylabel('Amplitude (\muV)');
     for j = 1:4
         plotFilled([1:32]+32*(j-1), WaveForm{j}, 'k');
@@ -344,42 +455,53 @@ if plotFlag
     line([0 128], [0 0], 'color', [0.7, 0.7, 0.7]);
     text(10, 150, sprintf('spikeNumber %d' , length(spikeTimesSession)));
     text(10, -100, sprintf('Lratio %d' , nums(row-1,1)));
-    ylim([min(-150, AD2uV*min(mainWaveform)) max(180, AD2uV*max(mainWaveform))])
+    ylim([min(-150, AD2uVSess*min(mainWaveform)) max(180, AD2uVSess*max(mainWaveform))])
+    title('ntt waveform')
     
-    subplot(4,3,10:11); hold on
+    subplot(6,3, 13:14); hold on
+    ylabel('Amplitude (\muV)');
+    wfSession = metSess.waveform;
+    for j = 1:4
+        plot([1:size(wfSession,1)]+size(wfSession,1)*(j-1), AD2uVSess*wfSession(:,j), 'k');
+    end
+    line([0 4*size(wfSession,1)], [0 0], 'color', [0.7, 0.7, 0.7]);
+    ylim([min(-150, AD2uVSess*min(mainWaveform)) max(180, AD2uVSess*max(mainWaveform))])
+    title('csc waveform')
+    
+    subplot(6,3,16:17); hold on
     ylabel('Amplitude (\muV)')
     if ~isempty(lightWaveForm)
         if size(lightWaveForm, 3) > 1
             for j = 1:4
-                plotFilled([1:length(leg)]+length(leg)*(j-1), AD2uV.*squeeze(lightWaveForm(:,j,:))', 'b');
+                plotFilled([1:size(lightWaveForm,1)]+size(lightWaveForm,1)*(j-1), AD2uV.*squeeze(lightWaveForm(:,j,:))', 'b');
             end
         else
             for j = 1:4
-                plot([1:length(leg)]+length(leg)*(j-1), AD2uV.*squeeze(lightWaveForm(:,j,:))', 'b');
+                plot([1:size(lightWaveForm,1)]+size(lightWaveForm,1)*(j-1), AD2uV.*squeeze(lightWaveForm(:,j,:))', 'b');
             end
         end
     end
     if ~isempty(spontWaveForm)
         if size(spontWaveForm, 3) > 1
             for j = 1:4
-                plotFilled([1:length(leg)]+length(leg)*(j-1), AD2uV.*squeeze(spontWaveForm(:,j,:))', 'k');
+                plotFilled([1:size(lightWaveForm,1)]+size(lightWaveForm,1)*(j-1), AD2uV.*squeeze(spontWaveForm(:,j,:))', 'k');
             end
         else
             for j = 1:4
-                plot([1:length(leg)]+length(leg)*(j-1), AD2uV.*squeeze(spontWaveForm(:,j,:))', 'k');
+                plot([1:size(lightWaveForm,1)]+size(lightWaveForm,1)*(j-1), AD2uV.*squeeze(spontWaveForm(:,j,:))', 'k');
             end
         end
     end
     for j = 1:4
-        plot([1:length(leg)]+length(leg)*(j-1), 50*tmpH(:,j), 'm');
-        line([peakEndAll(j)+length(leg)*(j-1) peakEndAll(j)+length(leg)*(j-1)], [-100 100], 'color', 'c')
-        line([peakLagAll(j)+length(leg)*(j-1) peakLagAll(j)+length(leg)*(j-1)], [-100 100], 'color', 'm')
+        plot([1:size(lightWaveForm,1)]+size(lightWaveForm,1)*(j-1), 50*tmpH(:,j), 'm');
+        line([peakEndAll(j)+size(lightWaveForm,1)*(j-1) peakEndAll(j)+size(lightWaveForm,1)*(j-1)], [-100 100], 'color', 'c')
+        line([peakLagAll(j)+size(lightWaveForm,1)*(j-1) peakLagAll(j)+size(lightWaveForm,1)*(j-1)], [-100 100], 'color', 'm')
         if j == peakChannel
-           fill([peakLag+51+length(leg)*(j-1) peakLag+51+length(leg)*(j-1) peakEnd+51+length(leg)*(j-1) peakEnd+51+length(leg)*(j-1)],...
+           fill([peakLag+51+size(lightWaveForm,1)*(j-1) peakLag+51+size(lightWaveForm,1)*(j-1) peakEnd+51+size(lightWaveForm,1)*(j-1) peakEnd+51+size(lightWaveForm,1)*(j-1)],...
                [50 -50 -50 50], [0.5 1 1], 'LineStyle','none', 'FaceAlpha', 0.5)
-            line([valleyInd+(51+peakLag-1)+length(leg)*(j-1) valleyInd+51+peakLag+length(leg)*(j-1)], [-100 100], 'color', 'b', 'LineWidth', 2) 
+            line([valleyInd+(51+peakLag-1)+size(lightWaveForm,1)*(j-1) valleyInd+51+peakLag+size(lightWaveForm,1)*(j-1)], [-100 100], 'color', 'b', 'LineWidth', 2) 
         end
-        line([1+length(leg)*(j-1) length(leg)+length(leg)*(j-1)], [AD2uV*baseline(j) AD2uV*baseline(j)], 'color', 'r', 'LineStyle','--')
+        line([1+size(lightWaveForm,1)*(j-1) size(lightWaveForm,1)+size(lightWaveForm,1)*(j-1)], [AD2uV*baseline(j) AD2uV*baseline(j)], 'color', 'r', 'LineStyle','--')
     end
 
     plot([5 5], [70 120],'color', 'k', 'lineWidth',2);
@@ -402,7 +524,7 @@ if plotFlag
     title('ISI')
 end
 if saveFlag
-        save([sortedPathSession sep session '_' unit '_met.mat'], 'met')
+        save([sortedPathSession sep session '_' unit '_met.mat'], 'met', 'metSess')
         if plotFlag
             if exist(savePath)
                 saveFigurePDF(rasters,[savePath session '_' unit '.pdf'])

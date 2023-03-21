@@ -32,6 +32,8 @@ firstSpikeLat = [];
 width = [];
 spikeLatChange = [];
 spikeFreqChange = [];
+allProbs = [];
+respProbs = [];
 waveforms = [];
 waveformsSession = [];
 rwdAUC = [];
@@ -87,9 +89,9 @@ for ani = 1:length(animalNames)
         fprintf([session unit '\n']);
     % paths
         pd = parseSessionString_df(session, root, sep);
-        neuralynxDataPath = [pd.sortedFolder 'session' sep session '_sessionData_nL.mat'];
+        neuralynxDataPath = [pd.sortedFolder session '_sessionData_nL.mat'];
         unitMetDir = [pd.nLynxFolderSession session '_' unit '_met.mat'];
-        sortedFolderLocation = [pd.sortedFolder 'session' sep];
+        sortedFolderLocation = [pd.sortedFolder];
     % decide is good behavior
     if ~ismember(session, goodDayList)
         continue
@@ -121,6 +123,10 @@ for ani = 1:length(animalNames)
         %% behavior preparation 
         % parse behavior
         os = behAnalysisNoPlot_opMD(session);
+        if length(os.CSplus) ~= length(sessionData)
+            fprintf([session ' error\n']);
+            return
+        end
         choice = os.allChoices';
         choice(choice<0) = 0;
         outcome = abs(os.allRewards)';
@@ -220,6 +226,7 @@ for ani = 1:length(animalNames)
     end
     %% 
     % load metric
+    allProbs = [allProbs; met.spikeProp];
     baselineFreq = [baselineFreq met.baseline];
     firstSpikeFreq = [firstSpikeFreq 1000*mean(met.spikeNum(:,1))/20];
     firstSpikeLat = [firstSpikeLat met.spikeLat(1)/1000];
@@ -234,7 +241,7 @@ for ani = 1:length(animalNames)
     [peak,~] = max(max(metSess.waveform));
     [~,peakSamp] = max(metSess.waveform(:,peakCh));
     tempWF = metSess.waveform(:,peakCh);
-    tempWF = tempWF(peakSamp-50:peakSamp+50);
+    tempWF = tempWF(peakSamp-30:peakSamp+40);
     waveformsSession = [waveformsSession; tempWF'/peak];
     %% create spike and lick cell
     spikeFields = fields(sessionData);
@@ -306,7 +313,8 @@ for ani = 1:length(animalNames)
     % go-cue
     goSpikeCounts = nansum(allTrial_spikeMatx_choice(:,p.Results.tb*1000-500:p.Results.tb*1000),2);
     % excitability
-    excit = [excit; [mean(baseline)/2, mean(goSpikeCounts)/0.5]];   
+    excit = [excit; [mean(baseline)/2, mean(goSpikeCounts)/0.5]]; 
+    % this is wrong, don't use this one for rigorous analysis
     % calculate and combine rwdvsNrwd
     rwdvsNrwd = [rwdvsNrwd; [mean(spikeCounts(os.rwd_Inds)), mean(spikeCounts(os.nrwd_Inds))]];
     % calculate reward roc curve
@@ -414,7 +422,7 @@ matrix = zscore(matrix,0,1);
 indAll = {};
 dis = {};
 for a = 1:10
-    [indAll{a}, ~, dis{a}] = kmeans([score(:, 1:5), width'], numCat);
+    [indAll{a}, ~, dis{a}] = kmeans([score(:, 1:5)], numCat);
 end
 [~,optiInds] = min(cellfun(@mean, dis));
 ind = indAll{optiInds};

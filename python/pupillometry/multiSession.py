@@ -4,13 +4,15 @@ Created on Sat Feb 22 00:25:39 2020
 
 @author: zhixi
 """
-file = r'F:\inhibitionAll.xlsx'
-sheet  = 'allInhibition'
-col = 'inhibitionNrwd'
+file = r'F:\activationAll.xlsx'
+sheet  = 'all'
+col = 'activation'
 cdnn = 'edgeHiddenLEDinPupil-ZS-2021-05-19'
 cdnn = 'pupilEdge-Katie-2021-12-08'
+cdnn  = 'acutePupil-ZS-2022-06-21'
 
 import pandas as pd
+import numpy as np
 import deeplabcut
 #%%
 file = r'J:\PSpupil.xlsx'
@@ -20,22 +22,37 @@ cdnn = 'edgeHiddenLEDinPupil-ZS-2021-05-19'
 cdnn = 'pupilEdge-Katie-2021-12-08'
 
 df = pd.read_excel(file, sheet_name = sheet, usecols = [col])
-
-for i in range(0, len(df)):
-    session = df.loc[i].at[col];
-    if session == session:
-        deeplabcut.extractPupil(session, cdnn, label = False);
-            
+ind = df[col] == df[col][50];
+for i in range(len(df)):
+    deeplabcut.extractPupil(df[col][i], cdnn, label = False)
+           
     
 #%%
-ani = ['ZS066', 'ZS068', 'ZS069', 'ZS070', 'ZS071'];
-dates = ['20211027', '20211028', '20211029', '20211030', '20211031'];
+ani = ['ZS082', 'ZS083', 'ZS084', 'ZS085', 'ZS086'];
+dates = ['20220612'];
 
 for i in range(len(ani)):
     for j in range(len(dates)):
-        session = f"m{ani[i]}d{dates[j]}";
+        session = f"m{ani[i]}d{dates[j]}";  
         deeplabcut.extractPupil(session, cdnn, label = False)
     
     
     
 #%%    
+deeplabcut.add_new_videos(config,[videoNew],copy_videos=False)
+#%%
+file = r'F:\inhibitionGt.xlsx'
+sheet  = 'allGt'
+col = 'cueOnGood'
+cdnn = 'tongueTrackingStraight-ZS-2022-12-01'
+
+df = pd.read_excel(file, sheet_name = sheet, usecols = [col])
+
+for i in range(len(df)):
+    if not pd.isna(df[col][i]):
+        deeplabcut.extractLick(df[col][i], cdnn, label = False)
+#%%    
+           
+
+
+

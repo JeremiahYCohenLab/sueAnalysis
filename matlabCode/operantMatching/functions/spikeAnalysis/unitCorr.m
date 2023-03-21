@@ -139,6 +139,7 @@ allSpikes = [];
 allSpikesPre = [];
 allSpikesAllTime = [];
 allSpikesPreSession = [];
+allSpikesPreCue = [];
 
 for i = 1:length(clust)
     % Initialize matrices for SDF
@@ -198,13 +199,14 @@ for i = 1:length(clust)
     allSpikesPre = [allSpikesPre, reshape((allTrial_spikeMatx_slide)', [], 1)];
     allSpikesAllTime = [allSpikesAllTime; currAllSpikesBin];
     allSpikesPreSession = [allSpikesPreSession; currAllSpikesPreSessBin];
+    allSpikesPreCue = [allSpikesPreCue; mean(allTrial_spikeMatx_slide, 2, 'omitnan')'];
 end
 %% calculate CorrCoeff
 [hIn, pIn] = corrcoef(allSpikes);
 [hPre, pPre] = corrcoef(allSpikesPre);
 [hAll, pAll] = corrcoef(allSpikesAllTime');
 [hPreSess, pPreSess] = corrcoef(allSpikesPreSession');
-
+[hPreCue, pPreCue] = corrcoef(allSpikesPreCue');
 s.hIn = hIn(1,2);
 s.pIn = pIn(1,2);
 s.hPre = hPre(1,2);
@@ -213,6 +215,8 @@ s.hAll = hAll(1,2);
 s.pAll = pAll(1,2);
 s.hPreSess = hPreSess(1,2);
 s.pPreSess = pPreSess(1,2);
+s.pPreCue = pPreCue(1,2);
+s.hPreCue = hPreCue(1,2);
 
 
    

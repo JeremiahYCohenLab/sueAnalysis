@@ -116,6 +116,10 @@ switch modelName
 %% most recent
     case '5params'
         [t.LH, t.probChoice, t.Q, t.pe] = qLearningModel_5params(params, choice, outcome);
+    case '5paramsLaserNegRPE'
+        [t.LH, t.probChoice, t.Q, t.pe, t.peChange] = qLearningModel_5paramsLaserNegRPE(params, choice, outcome, laser);
+    case '5paramsLaserNegRPERotation'
+        [t.LH, t.probChoice, t.Q, t.pe, t.peChange] = qLearningModel_5paramsLaserNegRPERotation_simNoPlot(params, choice, outcome, laser);
     case '5params_k_bias'
         [t.LH, t.probChoice, t.Q, t.pe] = qLearningModel_5params_k(params, choice, outcome);
     case 'fiveParam_ph_bias'
