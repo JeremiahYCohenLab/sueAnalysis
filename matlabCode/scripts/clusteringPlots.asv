@@ -1,0 +1,40 @@
+
+color1 = [0, 0.8, 0.8];
+color2 = [1, 0.3, 1];
+colors = [color1; color2];
+%%
+load F:\tmpData\catWithOutcome.mat
+ind = cats;
+figure2; hold on;
+scatter(score(:,1), score(:,2), 25, [0.7 0.7 0.7], 'filled');
+for i = 1:2
+    scatter(score(ind==i,1), score(ind==i,2), 25, colors(i,:), 'filled');
+end
+legend({'NA', 'neg', 'pos'}, 'FontSize', 12)
+xlabel('PC1');
+ylabel('PC2');
+xlim([-17 20])
+ylim([-20 12])
+set(gca, 'YTick', [-10, 0, 10]);
+set(gca, 'XTick', [-10, 0, 10, 20]);
+set(gca, 'TickDir', 'out');
+title('outcome', 'FontSize', 15)
+%%
+load F:\tmpData\catWithOutcome.mat
+ind = cats;
+figure2; hold on;
+scatter(score(:,1), score(:,2), 25, [0.7 0.7 0.7], 'filled');
+for i = 1:2
+    scatter(score(ind==i,1), score(ind==i,2), 25, colors(i,:), 'filled');
+end
+legend({'NA', 'neg', 'pos'}, 'FontSize', 12)
+xlabel('PC1');
+ylabel('PC2');
+xlim([-17 20])
+ylim([-20 12])
+set(gca, 'YTick', [-10, 0, 10]);
+set(gca, 'XTick', [-10, 0, 10, 20]);
+set(gca, 'TickDir', 'out');
+title('outcome', 'FontSize', 15)
+%% 
+laod 

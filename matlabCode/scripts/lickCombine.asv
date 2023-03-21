@@ -1,0 +1,94 @@
+% load dayList and model
+file = 'inhibitionGt';
+sheet = 'allGt';
+col = 'cueOnGood';
+modelName = '5params';
+numSamps = 2000;
+dayList = getDayList(file, sheet, col);
+[root, sep] = currComputer();
+confThresh = 0.98;
+lenThresh = 100;
+%% load all variables
+% behavior
+QdiffCombined = [];
+QchosenCombined = [];
+QdiffChosenCombined = [];
+pChoiceCombined = [];
+svsCombined = [];
+laserCombined = [];
+laserPreCombined = [];
+choiceCombined = [];
+rwdCombined = [];
+lickLatCombined = [];  
+% tongue
+meanXCombined = [];
+meanYCombined = [];
+meanXCCombined = [];
+XmaxCombined = [];
+YmaxCombined = [];
+XmaxCCombined = [];
+vXCombined = [];
+vYCombined = [];
+vXCCombined = [];
+
+lenCombined = [];
+confCombined = [];
+for i = 1:length(dayList)
+    session = dayList{i};
+    pd = parseSessionString_df(session, root, sep);
+    params = getStanModelParams_sampsOnly(pd.animalName, col, modelName, numSamps, 'sessionName', session, 'sessionParamsFlag', 1);
+    t = inferModelVar(session, params, modelName, 'perturb', 0);
+    s = behAnalysisNoPlot_opMD(session, 'simpleFlag', 1);
+    lickS = lickFeature(session);    
+    
+    % behavior
+    svs = NaN(length(s.responseInds),1);
+    svs(s.changeChoice_Inds) = 1;
+    svs(s.stayChoice_Inds) = 0;
+    choices = s.allChoices;
+    choices(choices<0) = 0;
+    
+    svsCombined = [svsCombined; NaN(10, 1); svs];
+    choiceCombined = [choiceCombined; NaN(10, 1); choices'];
+    rwdCombined = [rwdCombined; NaN(10, 1); abs(s.allRewards)'];
+    laserCombined = [laserCombined; NaN(10, 1); s.laser'];
+    lickLatCombined = [lickLatCombined; NaN(10,1); s.lickLatZ'];
+    laserPreCombined = [laserPreCombined; NaN(10,1); [NaN s.laser(1:end-1)]'];
+    
+    % model
+    QdiffChosen = t.Q(:,2) - t.Q(:,1);
+    QdiffChosen(s.allChoices==-1) = -QdiffChosen(s.allChoices==-1);
+    Qchosen = t.Q(:,2);
+    Qchosen(s.allChoices==-1) = t.Q(s.allChoices==-1,1);
+    
+    pChoiceCombined = [pChoiceCombined; NaN(10, 1); t.probChoice];
+    QdiffChosenCombined = [QdiffChosenCombined; NaN(10, 1); QdiffChosen];
+    QdiffCombined =[QdiffCombined; NaN(10, 1); t.Q(:,2) - t.Q(:,1)];
+    QchosenCombined = [QchosenCombined; NaN(10, 1); Qchosen];
+    
+    % tongue
+    meanXCombined = [meanXCombined; NaN(10,1); lickS.meanX'];
+    meanYCombined = [meanYCombined; NaN(10,1); lickS.meanY'];
+    meanXCCombined = [meanXCCombined; NaN(10,1); lickS.meanXC'];
+    XmaxCombined = [XmaxCombined; NaN(10, 1); lickS.XMax'];
+    YmaxCombined = [YmaxCombined; NaN(10, 1); lickS.YMax'];
+    XmaxCCombined = [XmaxCCombined; NaN(10, 1); lickS.XmaxC'];
+    vXCombined = [vXCombined; NaN(10,1); lickS.vXFixInter'];
+    vYCombined = [vYCombined; NaN(10,1); lickS.vYFixInter'];
+    vXCCombined = [vXCCombined; NaN(10,1); lickS.vXFixInterC'];
+    lenCombined = [lenCombined; NaN(10,1); lickS.len'];
+    confCombined = [confCombined; NaN(10,1); lickS.conf']; 
+
+    
+end
+%% quality
+qualInd = lenCombined <= lenThresh & confCombined >= confThresh;
+focusInd = mintersect(find(qualInd), find(rwdCombined<1));
+%%
+matrix = [QdiffCombined, choiceCombined, laserPreCombined];
+lm = fitlm(matrix(focusInd,:), XmaxCombined(focusInd));
+%%
+lmL = fitlm(matrix, lickLatCombined);
+%%
+lm = fitglm([laserPreCombined, [NaN; rwdCombined(1:end-1)]], svsCombined, 'interactions', 'Distribution', 'binomial');
+%
