@@ -99,25 +99,21 @@ fileName = [folder 'optoResp.mat'];
 load(fileName);
 % plot single units 
 %% plot lfp
-% [3, 8, 2, 1, 7]
-LEDFocus = 1;
+LEDFocus = 3;
 lfpFocus = optoResp.resp([optoResp.led]==LEDFocus).lfp;
-levelFocus = 200;
-seq = [13, 12, 11, 14, 10, 15, 9, 16, 8, 1, 7, 2, 6];
-figure2;
-hold on;
-for i = 1:length(seq)
-    lfpCurr = lfpFocus{seq(i)};
+levelFocus = 100;
+for i = 1:numChannels
+    lfpCurr = lfpFocus{i};
     lfpCurr = lfpCurr([optoResp.resp([optoResp.led]==LEDFocus).level] == levelFocus,:);
     timePlot = linspace(-optoResp.preLen, optoResp.postLen, size(lfpCurr, 2));
     
-    plotFilled(timePlot, lfpCurr + 1000*(i-1), 'b');
-    % title(['Channel' num2str(i) '  ' 'led' num2str(LEDFocus) ' ' 'level' num2str(levelFocus)]);
+    figure2; hold on;
+    plotFilled(timePlot, lfpCurr, 'b');
+    plot([0 0], [-10 10], 'LineStyle','-','Color','r', 'LineWidth',2);
+    title(['Channel' num2str(i) '  ' 'led' num2str(LEDFocus) ' ' 'level' num2str(levelFocus)]);
 end
-plot([0 0], [0 1000*length(seq)], 'LineStyle','-','Color','r', 'LineWidth',2);
-title(['led' num2str(LEDFocus) ' ' 'level' num2str(levelFocus)]);
-ylabel('ventral <----- -----> dorsal')
-yticks([]);
+
+seq = [13, 12, 11, 14, 10, 15, 9, 16, 8, 1]
 %%
 
 

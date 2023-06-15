@@ -1,5 +1,5 @@
 % align opto with LED
-folder = 'F:\allenData\683497_leftLC_060723\2023-06-07_12-28-27';
+folder = 'F:\allenEphys\676522 _bilateralLC_061423\676522_2023-06-14_11-15-09';
 % load ttl timestamps
 session = Session(folder); 
 streamKey = session.recordNodes{1,1}.recordings{1,1}.continuous.keys();
