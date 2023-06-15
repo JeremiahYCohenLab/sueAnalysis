@@ -1,0 +1,40 @@
+% align opto with LED
+folder = 'F:\allenData\683497_leftLC_060723\2023-06-07_12-28-27';
+% load ttl timestamps
+session = Session(folder); 
+streamKey = session.recordNodes{1,1}.recordings{1,1}.continuous.keys();
+streamKey = streamKey{1};
+ttl = session.recordNodes{1,1}.recordings{1,1}.ttlEvents(streamKey);
+onTime = ttl.timestamp([ttl.state]==1); 
+offTime = ttl.timestamp([ttl.state]==0);
+% find broken points. 
+startInd = find(diff(onTime)>3) + 1;
+% startInd = [startInd(3:4)];
+startInd = [1; startInd; length(onTime)+1];
+%% load stimulation IDs
+optoFiles = dir([folder '\opto']);
+optoFiles = {optoFiles([optoFiles.isdir]==0).name};
+
+ttlTime = cell(length(optoFiles), 1);
+led = cell(length(optoFiles), 1);
+level = cell(length(optoFiles), 1);
+duration = zeros(length(optoFiles), 1);
+
+% collect data for each opto train
+for i = 1:length(optoFiles)
+    currFile = [folder '\opto\' optoFiles{i}];
+    currTbl = readtable(currFile);
+    len = startInd(i+1) - startInd(i);
+    led{i} = currTbl.site(1:len);
+    level{i} = currTbl.level(1:len);
+    ttlTime{i} = onTime(startInd(i):(startInd(i+1)-1));
+    duration(i) = mean(currTbl.duration(1:len));
+end
+
+onTime = onTime(startInd(1):end);
+offTime = offTime(startInd(1):end);
+%% saving
+fileName = [folder '\opto\opto.mat'];
+save(fileName, 'led', 'level', 'ttlTime', 'duration', 'onTime', 'offTime');
+%%
+

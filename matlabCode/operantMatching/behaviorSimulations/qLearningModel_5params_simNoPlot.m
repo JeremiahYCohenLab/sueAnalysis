@@ -47,6 +47,7 @@ for currT = 1:maxTrial
         allChoices(currT) = -1;
         allRewards(currT) = p.AllRewards(currT, 1) * -1;
         rpe = p.AllRewards(currT, 1) - Q(currT, 1);
+        pe(currT) = rpe;
         if rpe >= 0
             Q(currT + 1, 1) = Q(currT, 1) + alphaPPE*rpe;
         else
@@ -59,6 +60,7 @@ for currT = 1:maxTrial
         allChoices(currT) = 1;
         allRewards(currT) = p.AllRewards(currT, 2);
         rpe = p.AllRewards(currT, 2) - Q(currT, 2);
+        pe(currT) = rpe;
         if rpe >= 0
             Q(currT + 1, 2) = Q(currT, 2) + alphaPPE*rpe;
         else
@@ -92,5 +94,6 @@ end
 
 t.Q = Q;
 t.probChoice = probChosen;
+t.pe = pe;
 
 end

@@ -19,6 +19,8 @@ beta = params(3);
 kappa = params(4);
 bias = params(5);
 
+rpe = NaN(1, maxTrial);
+probChosen = NaN(1, maxTrial);
 %initialize task class
 switch a.Results.taskType
     case 'coupled'
@@ -42,19 +44,21 @@ for currT = 1:maxTrial
     % Select action
     pRight = logistic(beta*diff(Q(currT, :)) + bias + kappa*prevChoice);
     if binornd(1, pRight) == 0 % left choice selected probabilistically
+        probChosen(currT) = 1 - pRight;
         p.inputChoice([1 0]);
         allChoices(currT) = -1;
         allRewards(currT) = p.AllRewards(currT, 1) * -1;
-        rpe = p.AllRewards(currT, 1) - Q(currT, 1);
-        Q(currT + 1, 1) = Q(currT, 1) + alpha*rpe;
+        rpe(currT) = p.AllRewards(currT, 1) - Q(currT, 1);
+        Q(currT + 1, 1) = Q(currT, 1) + alpha*rpe(currT);
         Q(currT + 1, 2) = Q(currT, 2)*alphaForget;
         prevChoice = -1;
     else
+        probChosen(currT) = 1 - pRight;
         p.inputChoice([0 1]);
         allChoices(currT) = 1;
         allRewards(currT) = p.AllRewards(currT, 2);
-        rpe = p.AllRewards(currT, 2) - Q(currT, 2);
-        Q(currT + 1, 2) = Q(currT, 2) + alpha*rpe;
+        rpe(currT) = p.AllRewards(currT, 2) - Q(currT, 2);
+        Q(currT + 1, 2) = Q(currT, 2) + alpha*rpe(currT);
         Q(currT + 1, 1) = Q(currT, 1)*alphaForget;
         prevChoice = 1;
     end
@@ -83,5 +87,7 @@ switch a.Results.taskType
 end
 
 t.Q = Q;
+t.pe = rpe;
+t.probChoice = probChosen;
 
 end

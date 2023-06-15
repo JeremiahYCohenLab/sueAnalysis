@@ -33,10 +33,11 @@ cols = allCols;
 allEmis = {};
 allQ = {};
 allPe = {};
+allPC = {};
 allStates = {};
 allSession = {};
 allRewards = {};
-allSvSNext = {};
+allSvSNext = {}; 
 transGuess = [0.4 0.3 0.3;
               0.3 0.7 0;
               0.3 0 0.7];
@@ -49,6 +50,7 @@ for ani = 1:length(sheet)
     Emis = cell(length(dayList),1);
     Q = cell(length(dayList),1);
     Pe = cell(length(dayList),1);
+    pC = cell(length(dayList),1);
     Rewards = cell(length(dayList),1);
     sN = cell(length(dayList),1);
     for i = 1:length(dayList)
@@ -67,6 +69,8 @@ for ani = 1:length(sheet)
 
         Q{i} = t.Q;
         Pe{i} = t.pe;
+        pC{i} = t.probChoice;
+        
         Rewards{i} = s.allRewards;
         sN{i} = svsNext;
         
@@ -86,6 +90,7 @@ for ani = 1:length(sheet)
     allEmis = [allEmis; Emis];
     allQ = [allQ; Q];
     allPe = [allPe; Pe];
+    allPC = [allPC; pC];
     allStates = [allStates; States];
     allSession = [allSession; dayList];
     allRewards = [allRewards; Rewards];
@@ -171,6 +176,78 @@ plot(meanQe, meanCe, 'Color', 'm', 'LineWidth', 2);
 patch([meanQe, flip(meanQe)], [meanCe-semE flip(meanCe+semE)], 'm', 'EdgeColor', 'none', 'FaceAlpha', 0.4);
 plot(meanQt, meanCt, 'Color', 'b', 'LineWidth', 2);
 patch([meanQt, flip(meanQt)], [meanCt-semT flip(meanCt+semT)], 'b', 'EdgeColor', 'none', 'FaceAlpha', 0.4);
+%% comparing with Daw exploration
+% plot p(R|Qdiff)
+numBins = 6;
+Qexploit = zeros(length(allEmis), numBins);
+Qexplore = zeros(length(allEmis), numBins);
+PRexploit = zeros(length(allEmis), numBins);
+PRexplore = zeros(length(allEmis), numBins);
+allQt = [];
+allQe = [];
+allChoicesT = [];
+allChoicesE = [];
+for i = 1:length(allSession)
+    % identify explore trials as those less predicted
+    states = allPC{i}<0.5; 
+    
+    if isempty(find(states==1,1))
+        Qexploit(i, :) = NaN;
+        Qexplore(i, :) = NaN;
+        PRexploit(i, :) = NaN;
+        PRexplore(i, :) = NaN;        
+        continue
+    end
+    Q = allQ{i};
+    choices = allEmis{i} - 1;
+    Qdiff = Q(:,2) - Q(:,1);
+    Qt = Qdiff(states==0);
+    Qe = Qdiff(states==1);
+    choiceT = choices(states==0);
+    choiceE = choices(states==1);
+    edgesT = linspace(min(Qt)-0.01, max(Qt)+0.01, numBins+1);
+    edgesE = linspace(min(Qe)-0.01, max(Qe)+0.01, numBins+1);
+
+    for j = 1:numBins
+        
+        Qexploit(i, j) = mean(Qt(Qt>=edgesT(j) & Qt<edgesT(j+1)), 'omitnan');
+        Qexplore(i, j) = mean(Qe(Qe>=edgesE(j) & Qe<edgesE(j+1)), 'omitnan');
+        PRexploit(i, j) = mean(choiceT(Qt>=edgesT(j) & Qt<edgesT(j+1)), 'omitnan');
+        PRexplore(i, j) = mean(choiceE(Qe>=edgesE(j) & Qe<edgesE(j+1)), 'omitnan');
+    end
+    
+    allQt = [allQt; Qt];
+    allQe = [allQe; Qe];
+    allChoicesT = [allChoicesT choiceT];
+    allChoicesE = [allChoicesE choiceE];
+end
+%% plot mean of all sessions
+semE = sem(PRexplore);
+semT = sem(PRexploit);
+meanCe = mean(PRexplore, 'omitnan');
+meanCt = mean(PRexploit, 'omitnan');
+meanQe = mean(Qexplore, 'omitnan');
+meanQt = mean(Qexploit, 'omitnan');
+
+figure2;
+hold on;
+plot(meanQe, meanCe, 'Color', 'm', 'LineWidth', 2);
+patch([meanQe, flip(meanQe)], [meanCe-semE flip(meanCe+semE)], 'm', 'EdgeColor', 'none', 'FaceAlpha', 0.4);
+plot(meanQt, meanCt, 'Color', 'b', 'LineWidth', 2);
+patch([meanQt, flip(meanQt)], [meanCt-semT flip(meanCt+semT)], 'b', 'EdgeColor', 'none', 'FaceAlpha', 0.4);
+%% plot mean of all sessions
+semE = sem(PRexplore);
+semT = sem(PRexploit);
+meanCe = mean(PRexplore, 'omitnan');
+meanCt = mean(PRexploit, 'omitnan');
+meanQe = mean(Qexplore, 'omitnan');
+meanQt = mean(Qexploit, 'omitnan');
+
+figure2;
+hold on;
+errorbar(meanQe, meanCe, semE, 'Color', 'r', 'LineWidth', 2);
+errorbar(meanQt, meanCt, semT, 'Color', 'k', 'LineWidth', 2);
+
 %% plot p(R) after pulling all trials
 edgesT = linspace(min(allQt)-0.01, max(allQt)+0.01, numBins+1);
 edgesE = linspace(min(allQe)-0.01, max(allQe)+0.01, numBins+1);

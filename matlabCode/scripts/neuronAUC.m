@@ -346,7 +346,7 @@ xlabel('Tstats'); ylabel('AUC')
 %% use the new window to do new LM fitting
 [root, sep] = currComputer();
 col = 'good';
-modelName = '5params';
+modelName = '5params_k_bias';
 
 numBins = 8;  
 numBinsPSTH = 6;
@@ -460,7 +460,7 @@ title(['max Tstats Outcome' num2str(p)]);
 
 set(gca, 'Box', 'off')
 set(gca,'tickdir', 'out')
-set(gca, 'XTick', [-15:5:15])
+set(gca, 'XTick', [-15:5:15]) 
 set(gca, 'YTick', [0:5:15])
 set(gca, 'XColor', 'k')
 
@@ -547,12 +547,12 @@ ylabel('Qchosen', 'FontSize', 18)
 %% scatter in coeff space
 figure2; hold on;
 % scatter(allTstats(:, outcomeInd), allTstats(:,qInd), 30, [0.7 0.7 0.7], 'filled');
-% scatter(allCoeffs(cats==1, outcomeInd), allCoeffs(cats==1,qInd), 50, [0 0 0], 'x', 'LineWidth', 2);
-% scatter(allCoeffs(cats==2, outcomeInd), allCoeffs(cats==2,qInd), 50, [0.6 0.6 0.6],  'x', 'LineWidth', 2);
-% scatter(allCoeffs(ind==-1, outcomeInd), allCoeffs(ind==-1,qInd), 50, color1, '.', 'LineWidth', 2);
-% scatter(allCoeffs(ind==1, outcomeInd), allCoeffs(ind==1,qInd), 50, color2,  '.', 'LineWidth', 2);
-% xlim([-1.5 1.5])
-% ylim([-1.5 1.5])
+scatter(allCoeffs(cats==1, outcomeInd), allCoeffs(cats==1,qInd), 50, [0 0 0], 'x', 'LineWidth', 2);
+scatter(allCoeffs(cats==2, outcomeInd), allCoeffs(cats==2,qInd), 50, [0.6 0.6 0.6],  'x', 'LineWidth', 2);
+scatter(allCoeffs(ind==-1, outcomeInd), allCoeffs(ind==-1,qInd), 50, color1, '.', 'LineWidth', 2);
+scatter(allCoeffs(ind==1, outcomeInd), allCoeffs(ind==1,qInd), 50, color2,  '.', 'LineWidth', 2);
+xlim([-1.5 1.5])
+ylim([-1.5 1.5])
 %% polar histogram all
 edges = linspace(-pi, pi, 20);
 % max tStats
@@ -562,14 +562,14 @@ sigO = sigMax(:, outcomeInd);
 sigQ = sigMax(:, qInd);
 
 allVec = [tStatsMax(:, outcomeInd), tStatsMax(:,qInd)];
-allVec = [coeffsMax(:, outcomeInd), coeffsMax(:,qInd)];
+% allVec = [coeffsMax(:, outcomeInd), coeffsMax(:,qInd)];
 [theta1, rho] = cart2pol(allVec(ind==1,1), allVec(ind==1,2));
 [theta2, rho] = cart2pol(allVec(ind==2,1), allVec(ind==2,2));
 figure2; 
 polarhistogram(theta1,edges, 'FaceColor', [0.1 0.1 0.1], 'FaceAlpha',.7, 'EdgeColor', 'none', 'Normalization', 'Probability');
 hold on; 
 polarhistogram(theta2,edges, 'FaceColor', [0.7 0.7 0.7], 'FaceAlpha',.6, 'EdgeColor', 'none', 'Normalization', 'Probability');
-title('maxWin, sig')
+title('maxWin, all')
 
 
 % frst tStats
@@ -729,7 +729,7 @@ colors = [1 0 0;
       
 [root, sep] = currComputer();
 col = 'good';
-modelName = '5params';
+modelName = '5params_k_bias';
 
 numBinsPSTH = 4;
 tbPSTH = 1;

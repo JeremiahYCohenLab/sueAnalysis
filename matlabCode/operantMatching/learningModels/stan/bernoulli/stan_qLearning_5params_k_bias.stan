@@ -26,14 +26,14 @@ transformed parameters {
 // Transform session-level raw parameters
   vector<lower=0, upper=1>[N] a;
   vector<lower=0, upper=1>[N] aF;
-  vector<lower=0, upper=20>[N] beta;
-  vector<lower=-5, upper=5>[N] k;
+  vector<lower=0, upper=10>[N] beta;
+  vector<lower=0, upper=3>[N] k;
 
   for (n in 1:N) {
     a[n]   = Phi_approx(mu_p[1] + sigma[1] * a_pr[n]);
     aF[n]   = Phi_approx(mu_p[2] + sigma[2] * aF_pr[n]);
-    beta[n] = Phi_approx(mu_p[3] + sigma[3] * beta_pr[n]) * 20;
-    k[n]    = Phi_approx(mu_p[4] + sigma[4] * k_pr[n]) * 10 - 5;
+    beta[n] = Phi_approx(mu_p[3] + sigma[3] * beta_pr[n]) * 10;
+    k[n]    = Phi_approx(mu_p[4] + sigma[4] * k_pr[n]) * 3;
   }
 }
 model {
@@ -82,8 +82,8 @@ generated quantities {
   // For group level parameters
   real<lower=0, upper=1> mu_a;
   real<lower=0, upper=1> mu_aF;
-  real<lower=0, upper=20> mu_beta;
-  real<lower=-5, upper=5> mu_k;
+  real<lower=0, upper=10> mu_beta;
+  real<lower=0, upper=3> mu_k;
 
   // For log likelihood calculation
   real log_lik[N];
@@ -101,8 +101,8 @@ generated quantities {
 
   mu_a   = Phi_approx(mu_p[1]);
   mu_aF   = Phi_approx(mu_p[2]);
-  mu_beta = Phi_approx(mu_p[3]) * 20;
-  mu_k    = Phi_approx(mu_p[4]) * 10 - 5;
+  mu_beta = Phi_approx(mu_p[3]) * 10;
+  mu_k    = Phi_approx(mu_p[4]) * 3;
 
   { // local section, this saves time and space
     for (n in 1:N) {

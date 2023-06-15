@@ -15,8 +15,8 @@ for i = 1:length(dayList)
 end
 dayList = dayListNew;
 
-%%
-modelName = '5params';
+%% infer rpe and pRight by model
+modelName = '5params_k_bias';
 sampNum = 2000;
 allPe = {};
 allChoices = {};
@@ -46,25 +46,152 @@ for i = 1:length(dayList)
     predRCombined = [predRCombined; pRight];
  
 end
-%% get all RPEs
+%% behavior simiulation
+modelName = '5params_k_bias';
+sampNum = 100;
+allPe = {};
+allChoices = {};
+allPredR = {};
+maxTrial = 400;
+
+peCombined = [];
+choiceCombined = [];
+outcomeCombined = [];
+predRCombined = [];
+predCCombined = [];
+
+
+parfor i = 1:length(dayList)
+    session = dayList{i};
+    pd = parseSessionString_df(session, root, sep);
+    colInd = strcmp(allAnis, pd.aniName);
+    category = allCols{colInd};
+    params = getStanModelParams_sampsOnly(pd.animalName, category, modelName, sampNum, 'sessionName', session, 'biasFlag', 1, 'sessionParamsFlag', 1);
+    
+    peCombinedTemp = [];
+    choiceCombinedTemp = [];
+    predRCombinedTemp = [];
+    predCCombinedTemp = [];
+    outcomeCombinedTemp = [];
+        
+    for j = 1:sampNum
+%         [t, allRewards, allChoices] = qLearningModel_5params_simNoPlot(params(j,:), maxTrial, sampNum*i + j);
+        [t, allRewards, allChoices] = qLearningModel_5params_k_bias_simNoPlot(params(j,:), maxTrial, sampNum*i + j)
+        pRight = t.probChoice;
+        pRight(allChoices<0) = 1 - pRight(allChoices<0);
+
+        peCombinedTemp(j, :) = t.pe;
+        choiceCombinedTemp(j, :) = 0.5*(allChoices + 1);
+        predRCombinedTemp(j, :) = pRight;
+        predCCombinedTemp(j, :) = t.probChoice;
+        outcomeCombinedTemp(j,:) = abs(allRewards);
+    end
+    peCombined = [peCombined; peCombinedTemp];
+    choiceCombined = [choiceCombined; choiceCombinedTemp];
+    predRCombined = [predRCombined; predRCombinedTemp];
+    predCCombined = [predCCombined; predCCombinedTemp];
+    outcomeCombined = [outcomeCombined; outcomeCombinedTemp];
+end
+%% reorganize data;
+peCombined = [peCombined, NaN(size(peCombined,1), 10)];
+choiceCombined = [choiceCombined, NaN(size(peCombined,1), 10)];
+predRCombined = [predRCombined, NaN(size(peCombined,1), 10)];
+predCCombined = [predCCombined, NaN(size(peCombined,1), 10)];
+outcomeCombined = [outcomeCombined, NaN(size(peCombined,1), 10)];
+
+peCombined = reshape(peCombined', [], 1);
+outcomeCombined = reshape(outcomeCombined', [], 1);
+choiceCombined = reshape(choiceCombined', [], 1);
+predRCombined = reshape(predRCombined', [], 1);
+predCCombined = reshape(predCCombined', [], 1);
+
+%% get all RPEs from behavior
 load F:\tmpData\allSessionModel.mat
-%% plot predicted P(right)-rpe
+%% plot predicted P(right)-rpe (can be borrowed by simulation)
 rightRpe = peCombined;
 rightRpe(choiceCombined==0) = -rightRpe(choiceCombined==0);
 
-pRightChange = predRCombined(2:end) - predRCombined(1:end-1);
+pRightChange = predRCombined(2:end) - predRCombined(1:end-1);  
 pRightChange = [pRightChange; NaN];
 
 figure2;
 scatter(rightRpe,pRightChange, 3, 'k', 'filled');
 title('combined')
-figure2Wide;
+figure2Wide; 
 subplot(1, 2, 1)
 scatter(peCombined(choiceCombined==0), pRightChange(choiceCombined==0), 3, 'k', 'filled');
 title('L')
 subplot(1, 2, 2)
 scatter(peCombined(choiceCombined==1), pRightChange(choiceCombined==1), 3, 'k', 'filled');
 title('R')
+%% plot predicted P(right)-rpe (can be borrowed by simulation)
+rightRpe = peCombined;
+rightRpe(choiceCombined==0) = -rightRpe(choiceCombined==0);
+
+pRightChange = predRCombined(2:end) - predRCombined(1:end-1);
+pRightChange = [pRightChange; NaN];
+
+numBins = 7;
+edges = linspace(-1-0.001, 1+0.001, numBins+1);
+pRightPredMean = NaN(1, numBins);  
+pRightPredSem = NaN(1, numBins);
+pRightMean = NaN(1, numBins);
+pRightSem = NaN(1, numBins);
+peMean = NaN(1, numBins);
+
+rightRpe(abs(rightRpe)<0.05) = NaN;
+for j = 1:numBins
+    rpeInd = find(rightRpe>=edges(j) & rightRpe<edges(j+1));
+    peMean(j) = mean(rightRpe(rpeInd), 'omitnan');
+    pRightPredMean(j) =  mean(pRightChange(rpeInd), 'omitnan');
+    pRightPredSem(j) = sem(pRightChange(rpeInd));
+    pRightMean(j) = mean(choiceCombined(intersect(rpeInd+1, 1:length(choiceCombined)))) - mean(choiceCombined(rpeInd));
+    pRightPost(j) = mean(choiceCombined(intersect(rpeInd+1, 1:length(choiceCombined))));
+    pRightPre(j) = mean(predRCombined(rpeInd));
+    pRightSem(j) = sqrt(sem_bern(choiceCombined(intersect(rpeInd+1, 1:length(choiceCombined))))^2 + sem(predRCombined(rpeInd))^2);
+end
+
+% plot
+figure2;
+errorbar(peMean, pRightPredMean, pRightPredSem, 'LineWidth', 2, 'Color', [0.4 0.4 0.4]);
+xlabel('rpe, flipped on left');
+ylabel('model predicted deltaP(right)')
+set(gca,'Box', 'off');
+set(gca, 'TickDir', 'out')
+%% plot predicted pStay-rpe (can be borrowed by simulation)
+rpe = peCombined;
+% rightRpe(choiceCombined==0) = -rightRpe(choiceCombined==0);
+
+pCurrentChoice = predRCombined;
+pCurrentChoice(choiceCombined<=0) = 1 - pCurrentChoice(choiceCombined<=0);
+pRepeat = predRCombined;
+preChoice = [NaN; choiceCombined(1:end-1)];
+pRepeat(preChoice==0) = 1 - pRepeat(preChoice==0);
+pStayChange = [pRepeat(2:end) - pCurrentChoice(1:end-1); NaN];
+pStayChange = pStayChange - mean(pStayChange, 'omitnan');
+
+numBins = 7;
+edges = linspace(-1-0.001, 1+0.001, numBins+1);
+pStayPredMean = NaN(1, numBins);
+pStayPredSem = NaN(1, numBins);
+peMean = NaN(1, numBins);
+
+rpe(abs(rpe)<0.05) = NaN;
+for j = 1:numBins
+    rpeInd = find(rpe>=edges(j) & rpe<edges(j+1));
+    peMean(j) = mean(rpe(rpeInd), 'omitnan');
+    pStayPredMean(j) =  mean(pStayChange(rpeInd), 'omitnan');
+    pStayPredSem(j) = sem(pStayChange(rpeInd));
+end
+
+% plot
+figure2;
+errorbar(peMean, pStayPredMean, pStayPredSem, 'LineWidth', 2, 'Color', [0.4 0.4 0.4]);
+xlabel('rpe');
+ylabel('model predicted deltaP(currC)')
+set(gca,'Box', 'off');
+set(gca, 'TickDir', 'out')
+
 %% load data
 % load F:\tmpData\allSessionRPE.mat
 %% plot P(right) - rpe
@@ -134,12 +261,59 @@ xlabel('rpe');
 ylabel('deltaP(currChoice)')
 set(gca,'Box', 'off');
 set(gca, 'TickDir', 'out')
+%% simulation plot pStay - rpe
+numBins = 7;
+
+allChoices = reshape(choiceCombined, maxTrial+10, [])';
+allPe = reshape(peCombined, maxTrial+10, [])';
+allPredR = reshape(predRCombined, maxTrial+10, [])';
+allOutcomes = reshape(outcomeCombined, maxTrial+10, [])';
+
+allMeans = NaN(size(allPe,1), numBins);
+meanPe = NaN(size(allPe,1), numBins);
+
+
+
+parfor i = 1:size(allChoices,1)
+    choices = allChoices(i,1:maxTrial);
+    outcomes = allOutcomes(i,1:maxTrial);
+    rpe = allPe(i,1:maxTrial);
+%     edges = quantile(rpe, linspace(0, 1, numBins+1));
+%     edges(1) = edges(1) - 0.001;
+%     edges(end) = edges(end) + 0.001;
+    edges = linspace(min(rpe)-0.001, max(rpe)+0.001, numBins+1);
+    stay = ones(length(choices)-1,1);
+    stay(choices(1:end-1)~=choices(2:end)) = 0;
+    stay = [NaN; stay];
+    pStay = allPredR(i, 1:maxTrial);
+    pStay(find(choices(1:end-1)==0)+1) = 1 - pStay(find(choices(1:end-1)==0)+1);
+    pStay(1) = NaN;
+    pChoicePred = allPredR(i, 1:maxTrial);
+    pChoicePred(choices==0) = 1 - pChoicePred(choices==0);
+    meanChange = mean(stay(2:end), 'omitnan') - mean(pChoicePred(1:end-1), 'omitnan');
+    for j = 1:numBins
+        currInd = find(rpe>=edges(j) & rpe<edges(j+1));
+        pRcurr = mean(pChoicePred(currInd), 'omitnan');
+        pRnext = mean(stay(intersect(currInd+1, 1:length(choices))), 'omitnan');
+%         pRnext = mean(pStay(intersect(currInd+1, 1:length(choices))), 'omitnan');
+        allMeans(i,j) = pRnext-pRcurr-meanChange;
+        meanPe(i,j) = mean(rpe(currInd), 'omitnan');
+    end
+%     allMeans(i,:) = allMeans(i,:) - meanChange;
+end
+% plot
+figure2;
+errorbar(mean(meanPe, 'omitnan'), mean(allMeans, 'omitnan'), sem(allMeans), 'LineWidth', 2, 'Color', [0.4 0.4 0.4]);
+xlabel('rpe');
+ylabel('deltaP(currChoice)')
+set(gca,'Box', 'off');
+set(gca, 'TickDir', 'out')
 %% spearman correlation 
 combineAllMeans = reshape(allMeans, [], 1);
 combineMeanPe = reshape(meanPe, [], 1);
 valInds = ~isnan(combineAllMeans)& ~isnan(combineMeanPe);
 [rho,pval] = corr(combineAllMeans(valInds), combineMeanPe(valInds), 'type', 'Spearman');
-%% plot predicted P(right)-rpe
+% % plot predicted P(right)-rpe
 % rightRpe = peCombined;
 % rightRpe(choiceCombined==0) = -rightRpe(choiceCombined==0);
 % 

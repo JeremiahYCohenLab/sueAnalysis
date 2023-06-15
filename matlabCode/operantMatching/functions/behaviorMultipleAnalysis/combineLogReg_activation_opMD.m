@@ -26,6 +26,7 @@ combinedNoRewardsMatx = [];
 combinedTimesMatx = [];
 combinedActivation = [];
 combinedAllChoice_R = [];
+combinedCurrActivation = [];
 seshLength = [];
 tMax = p.Results.numBins;
  
@@ -116,6 +117,7 @@ for i = 1: length(dayList)
     combinedTimesMatx = [combinedTimesMatx timeTmp];
     combinedAllChoice_R = [combinedAllChoice_R allChoice_R];
     combinedActivation = [combinedActivation activationMatxTmp];
+    combinedCurrActivation = [combinedCurrActivation, allActivation];
     
     seshLength = [seshLength length(rwdMatxTmp)];
 end

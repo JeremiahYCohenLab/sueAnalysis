@@ -1,8 +1,12 @@
 ani = 'allGt';
 sheet = 'inhibitionGt';
-col = 'cueOnShamLate';
+col = 'cueOnGood';
+col = 'nrwd50';
 dayList = getDayList(sheet, ani, col);
 [root, sep] = currComputer();
+% remove 84 if possible
+ind = cellfun(@(x) contains(x, 'mZS084'), dayList);
+dayList = dayList(~ind);
 %% get rid of days with big bias
 modelName = '5params';
 bias = cell(length(dayList),1);
@@ -30,6 +34,7 @@ dayList = dayList(~cellfun(@isempty, dayList));
 %%
 switchCurrControl = [];
 switchCurrLaser = [];
+%
 lcCurrControl = [];
 lcCurrLaser = [];
 wsCurrControl = [];
@@ -61,6 +66,7 @@ for i = 1:length(dayList)
     os = behAnalysisNoPlot_opMD(dayList{i},  'simpleFlag', 1);
     svs = zeros(size(os.allChoices));
     svs(os.changeChoice_Inds) = 1;
+    svs(1) = NaN;
     laserCue = [os.behSessionData.laser];   
     laserNrwdInd = intersect(os.nrwd_Inds, find(os.laser==1));
     ctrlNrwdInd = intersect(os.nrwd_Inds, find(os.laser==0));

@@ -177,7 +177,7 @@ allCols = dayList(2:end, 2);
 allFile = dayList(2:end, 3);
 allSheet = dayList(2:end, 4);
 % check model fitting
-modelName = '5params_k_bias_biForget';
+modelName = '5params_k_bias';
 for i = 1:length(allAnis)
     animalName = allAnis{i};
     category = allCols{i};
@@ -185,9 +185,24 @@ for i = 1:length(allAnis)
     path = [root animalName sep animalName 'sorted' sep 'stan' sep 'bernoulli' sep modelName sep category sep];
     modelPath = [path sampFile '.mat'];
 
-    if ~exist(modelPath, 'file')
+%     if ~exist(modelPath, 'file')
         fprintf([animalName ' ' category, ' not fitted yet with ' modelName '\n'])
         stan_qLearningFit(allFile{i}, allAnis{i}, allCols{i}, 'modelName', modelName, 'iter', 10000);
-    end
+%     end
+end
+%% model fitting
+allAnis = {'ZS059', 'ZS060', 'ZS061', 'ZS062'};
+col = 'good';
+modelName = '5params_k_bias';
+[root, sep] = currComputer();
+for i = 1:length(aniNames)
+    animalName = allAnis{i};
+    category = col;
+    sampFile = [animalName category '_', modelName];
+    path = [root animalName sep animalName 'sorted' sep 'stan' sep 'bernoulli' sep modelName sep category sep];
+    modelPath = [path sampFile '.mat'];
+
+    fprintf([animalName ' ' category, ' not fitted yet with ' modelName '\n'])
+    stan_qLearningFit(allAnis{i}, allAnis{i}, col, 'modelName', modelName, 'iter', 10000);   
 end
 %%
