@@ -1,5 +1,5 @@
 % align opto with LED
-folder = 'F:\michiganProbe\679457_062623\679457_2023-06-26_14-30-32_R_2.5';
+folder = 'F:\michiganProbe\679457_062623\679457_2023-06-26_12-37-53_R_3.4';
 % load ttl timestamps
 session = Session(folder); 
 streamKey = session.recordNodes{1,1}.recordings{1,1}.continuous.keys();
@@ -8,7 +8,7 @@ ttl = session.recordNodes{1,1}.recordings{1,1}.ttlEvents(streamKey);
 onTime = ttl.timestamp([ttl.state]==1); 
 offTime = ttl.timestamp([ttl.state]==0);
 % find broken points. 
-startInd = find(diff(onTime)>5) + 1;
+startInd = find(diff(onTime)>3) + 1;
 % startInd = [startInd(3:4)];
 startInd = [1; startInd; length(onTime)+1];
 %% load stimulation IDs

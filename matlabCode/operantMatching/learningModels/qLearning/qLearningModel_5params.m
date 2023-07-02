@@ -45,6 +45,5 @@ LH = likelihood(choice,probChoice);
 
 % probChosenChoice
 
-probChosen = probChoice;
-probChosen(choice == 0) = 1 - probChoice(choice==0);
+.0   
 end

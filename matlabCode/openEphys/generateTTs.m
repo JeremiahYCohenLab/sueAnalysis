@@ -2,11 +2,11 @@ function generateTTs(dir, varargin)
     p = inputParser;
     p.addParameter('HighPassCutoffInHz', 300)
     p.addParameter('LowPassCutoffInHz', 6000);
-    p.addParameter('ThresholdFactor', 3.5);
+    p.addParameter('ThresholdFactor', 2.5);
     p.addParameter('RefractorySamples', 20);
     p.addParameter('medianSubtraction', 1);
-    p.addParameter('flipSign',true);
-    p.addParameter('AnalyzeSpecificTTs', []);
+    p.addParameter('flipSign',false);
+    p.addParameter('AnalyzeSpecificTTs', [4]);
     p.parse(varargin{:});
 
     session = Session(dir);
@@ -29,7 +29,7 @@ function generateTTs(dir, varargin)
     
     % median subtraction
     if p.Results.medianSubtraction
-        referenceC = mean(samples, 1);
+        referenceC = mean(samples(1:13,:), 1);
     else
         referenceC = zeros(size(timeStamps))';
     end
@@ -66,7 +66,7 @@ function generateTTs(dir, varargin)
                 allLocs = allLocs(1:end-1);
             end
             % remove the first one if too early
-            if allLocs(1) - sampBack < 0
+            if allLocs(1) - sampBack <= 0
                 allLocs = allLocs(2:end);
             end            
 

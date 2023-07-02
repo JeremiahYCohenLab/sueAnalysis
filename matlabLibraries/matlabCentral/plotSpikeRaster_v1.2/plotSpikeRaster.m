@@ -355,7 +355,7 @@ else % Equivalent to elseif iscell(spikes).
     % instead of > 0).
     if sum(nRowsInTrial > 1) > 0 
         trialsToReformat = find(nRowsInTrial > 1);
-        disp('Warning - some cells (trials) have more than 1 row. Those trials will be transposed.');
+%         disp('Warning - some cells (trials) have more than 1 row. Those trials will be transposed.');
         for t = 1:length(trialsToReformat)
             spikes{trialsToReformat(t)} = spikes{trialsToReformat(t)}';
         end

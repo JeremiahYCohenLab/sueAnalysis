@@ -244,10 +244,10 @@ if sum(cellfun(@(x) strcmp(x, 'vol'), fieldnames(behSessionData)))~=0
     s.vol = vol;
 end
 %% adding double dipping
-dd = zeros(size(allChoices))';
+dd = zeros(size(allChoices));
 for i = 1:length(allChoices)
-    allLicks = [behSessionData(responseInds(i)).licksL, behSessionData(responseInds(i)).licksR] - behSessionData(responseInds(i)).CSon;
-    allLicksSide = [-ones(size(behSessionData(responseInds(i)).licksL)), ones(size(behSessionData(responseInds(i)).licksR))];
+    allLicks = [behSessionData(responseInds(i)).lickL, behSessionData(responseInds(i)).lickR] - behSessionData(responseInds(i)).CSon;
+    allLicksSide = [-ones(size(behSessionData(responseInds(i)).lickL)), ones(size(behSessionData(responseInds(i)).lickR))];
 %     [allLicks, sortInd] = sort(allLicks);
 %     allLicksID = allLicksID(sortInd); 
     if abs(allRewards(i))==1

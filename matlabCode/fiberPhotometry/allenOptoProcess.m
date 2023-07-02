@@ -1,0 +1,60 @@
+session = 'mKJ009d20230619';
+regions = {'mPFC', 'LC', 'LCN'};
+tb = 2;
+tf = 5;
+samplingFreq = 20;
+s = behAnalysisNoPlot_opMD(session, 'simpleFlag', 1);
+[root, sep] = currComputer;
+p = parseSessionString_df(session, root, sep);
+fpDir = [p.baseFolder sep 'fp' sep];
+allFiles = dir(fpDir);
+allFiles = {allFiles([allFiles.isdir]==0).name}';
+% load ttl file
+ttlInd = contains(allFiles, 'TTL') & contains(allFiles, 'csv');
+ttlFile = allFiles{ttlInd};
+ttlSigInd = contains(allFiles, 'TTL') & ~contains(allFiles, 'csv');
+ttlSignalFile = allFiles{ttlSigInd};
+ttlTime = readmatrix([fpDir ttlFile]); % time in ms, 1 Hz, updates each second
+fileID = fopen([fpDir ttlSignalFile]);
+ttlSignal = fread(fileID, 'float64'); % sampling rate 1kHz
+fclose(fileID);
+% load signal
+GInd = contains(allFiles, 'FIP_DataG');
+IsoInd = contains(allFiles, 'FIP_DataIso');
+numChannels = 3;
+
+GSig = readmatrix([fpDir allFiles{GInd}]);
+timeStampsG = GSig(:,1);
+GSig = GSig(:, 2:2+numChannels-1);
+
+IsoSig = readmatrix([fpDir allFiles{IsoInd}]);
+timeStampsIso = IsoSig(:,1);
+IsoSig = IsoSig(:, 2:2+numChannels-1);
+%% detect trial starts
+upThresh = 4;
+downThresh = 0.5;
+upInds = find(ttlSignal(1:end-1)<upThresh & ttlSignal(2:end)>=upThresh)+1;
+downInds = find(ttlSignal(1:end-1)>downThresh & ttlSignal(2:end)<=downThresh)+1;
+time = linspace(ttlTime(1), ttlTime(end)+1000, length(ttlSignal)+1);
+time = time(1:length(ttlSignal));
+trialStarts = time(upInds);
+%% preprocessing
+% truncate
+% use timeStampsG as default time
+timeFIP = timeStampsG;
+GSig = GSig(timeFIP >= (trialStarts(1) - (tb*1000+500)) & timeFIP < (trialStarts(end) + tf*1000+500),:);
+IsoSig = IsoSig(timeFIP >= (trialStarts(1) - (tb*1000+500)) & timeFIP < (trialStarts(end) + tf*1000+500),:);
+timeFIP = timeFIP(timeFIP >= (trialStarts(1) - (tb*1000+500)) & timeFIP < (trialStarts(end) + tf*1000+500),:);
+dFF = cell(3,1);
+winLeft = samplingFreq * 20; % 20s before sample
+p = 10; % percentage
+winRight = 0;
+for i = 1:numChannels
+    GSig(:,i) = denoising(GSig(:,i), samplingFreq);
+    IsoSig(:,i) = denoising(IsoSig(:,i), samplingFreq);
+    fit = fitlm(zscore(IsoSig(:,i)), zscore(GSig(:,i)));
+    dFF{i} = zscore(GSig(:,i)) - (zscore(IsoSig(:,i))*fit.Coefficients.Estimate(2) +  fit.Coefficients.Estimate(1));
+    baseline = running_percentile_filter(dFF{i}, winLeft, winRight, p); 
+    dFF{i} = dFF{i} - baseline;
+end
+%%

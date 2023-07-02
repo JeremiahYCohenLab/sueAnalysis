@@ -1,0 +1,20 @@
+function flipVideo(file, dim)
+Vobj = VideoReader(file);
+matrix_V = read(Vobj);
+[H, W, B, F] = size(matrix_V);
+
+matrix_V_rev = [];
+v = VideoWriter([file(1:end-4) '_flip.avi']);
+for i = 1:F
+    matrix_image = matrix_V(:,:,:,i);
+    if dim == 1
+        matrix_image_rev = flipud(matrix_image);
+    else if dim == 2
+            matrix_image_rev = fliplr(matrix_image);
+        end
+    end
+    M(i) = im2frame(matrix_image_rev);
+end
+
+
+

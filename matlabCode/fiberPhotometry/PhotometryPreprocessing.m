@@ -1,4 +1,4 @@
-function photometryPreprocessing(session, regions, varargin)
+function photometryPreprocessing(session, regions, frameRate, varargin)
 %% load data fromm file
 % all time in s. 
 p = inputParser;
@@ -15,7 +15,7 @@ trialStartPath = [pd.baseFolder 'photometry'  sep session 'trialStart.csv'];
 photometry_data = readmatrix(dataPath);
 trialStart = readtable(trialStartPath);
 trialStart = trialStart.Seconds;
-frameRate = 40;
+% Hopkins frameRate = 40; Allen frameRate = 20;
 % channel names
 binSize = p.Results.binSize; % stepSize in ms
 stepSize = p.Results.stepSize; % stepSize in ms
@@ -62,10 +62,10 @@ title([regions{2}, 'raw'])
 xlabel('time in s')
 
 %% Denoising the signal 
-dn2_R1_sig = denoising(raw_R1_sig);
-dn2_R1_ref = denoising(raw_R1_ref);
-dn2_R2_sig = denoising(raw_R2_sig);
-dn2_R2_ref = denoising(raw_R2_ref);
+dn2_R1_sig = denoising(raw_R1_sig, frameRate);
+dn2_R1_ref = denoising(raw_R1_ref, frameRate);
+dn2_R2_sig = denoising(raw_R2_sig, frameRate);
+dn2_R2_ref = denoising(raw_R2_ref, frameRate);
 %% plotting denoised
 % plot raw data
 % figure;
