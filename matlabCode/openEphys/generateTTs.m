@@ -1,18 +1,22 @@
-function generateTTs(dir, varargin)
-    p = inputParser;
-    p.addParameter('HighPassCutoffInHz', 300)
+function generateTTs(path, varargin)
+p = inputParser;
+    p.addParameter('HighPassCutoffInHz', 600)
     p.addParameter('LowPassCutoffInHz', 6000);
     p.addParameter('ThresholdFactor', 2.5);
     p.addParameter('RefractorySamples', 20);
     p.addParameter('medianSubtraction', 1);
-    p.addParameter('flipSign',false);
-    p.addParameter('AnalyzeSpecificTTs', [4]);
+    p.addParameter('flipSign', true);
+    p.addParameter('AnalyzeSpecificTTs', [1:16]);
+    p.addParameter('groupSize', 1); 
     p.parse(varargin{:});
-
-    session = Session(dir);
+    
+    % mapInd = [13, 12, 11, 14, 10, 15, 9, 16, 8, 1, 7 , 2, 6, 3, 5, 4];
+    mapInd = [1:16];
+    session = Session(path);
     streamKey = session.recordNodes{1,1}.recordings{1,1}.continuous.keys();
     streamKey = streamKey{1};
     samples = session.recordNodes{1,1}.recordings{1,1}.continuous(streamKey).samples;
+    samples = samples(mapInd, :);
     timeStamps =  session.recordNodes{1,1}.recordings{1,1}.continuous(streamKey).timestamps;
     samplingFreq = session.recordNodes{1,1}.recordings{1,1}.continuous(streamKey).metadata.sampleRate;
     numChannels = session.recordNodes{1,1}.recordings{1,1}.continuous(streamKey).metadata.numChannels;
@@ -20,7 +24,7 @@ function generateTTs(dir, varargin)
     Wn = [p.Results.HighPassCutoffInHz p.Results.LowPassCutoffInHz] /(samplingFreq/2);
     [b, a] = butter(2, Wn, 'bandpass');    
     
-    saveDir = [dir '\' 'spikes'];
+    saveDir = [path '\' 'spikes'];
     
     if ~exist(saveDir, 'dir')
         mkdir(saveDir);
@@ -29,7 +33,7 @@ function generateTTs(dir, varargin)
     
     % median subtraction
     if p.Results.medianSubtraction
-        referenceC = mean(samples(1:13,:), 1);
+        referenceC = mean(samples([1:7, 9:13],:), 1);
     else
         referenceC = zeros(size(timeStamps))';
     end
@@ -49,7 +53,10 @@ function generateTTs(dir, varargin)
         % flip 
         if p.Results.flipSign == true
            currSamp = -currSamp;
-        end        
+        end     
+        % amplify for spikesorting
+        currSamp = 10*currSamp;
+        fprintf(['Channel' num2str(currC) ' mean ' '%0.2f \n'], mean(currSamp))
         % spike detection
         % threshold and median method from Rey, Pedreira, Quiroga (2015)
         thresh = p.Results.ThresholdFactor*round(median(abs(currSamp), 2)/0.6745);
@@ -83,7 +90,7 @@ function generateTTs(dir, varargin)
             featToSave(1:4,:) = squeeze(max(sampToSave,[],1));
             featToSave(5:8,:) = squeeze(min(sampToSave,[],1));
 
-            tsToSave = 1000*timeStamps(allLocs)';
+            tsToSave = round(1000*timeStamps(allLocs))';
 
             header = cell(0);
 

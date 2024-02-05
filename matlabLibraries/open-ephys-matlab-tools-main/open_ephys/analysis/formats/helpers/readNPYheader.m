@@ -45,7 +45,7 @@ function [arrayShape, dataType, fortranOrder, littleEndian, totalHeaderLength, n
         % assumptions about its format...
         
         r = regexp(arrayFormat, '''descr''\s*:\s*''(.*?)''', 'tokens');
-        dtNPY = r{1}{1};    
+        dtNPY = r{1}{1};
         
         littleEndian = ~strcmp(dtNPY(1), '>');
         

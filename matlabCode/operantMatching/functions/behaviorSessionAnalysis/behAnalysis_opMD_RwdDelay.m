@@ -1,6 +1,6 @@
 function behAnalysis_opMD_RwdDelay(sessionName, varargin)
 p = inputParser;
-p.addParameter('maxTrials', 600)
+p.addParameter('maxTrials', 1000)
 p.addParameter('lickFlag',0)
 p.addParameter('saveFigFlag',1)
 p.addParameter('coupledFlag',0)
@@ -26,7 +26,6 @@ else
 end
 
 behSessionData = behSessionData(1:min(p.Results.maxTrials, length(behSessionData)));
-blockSwitch = blockSwitch(blockSwitch <= p.Results.maxTrials);
 s = behAnalysisNoPlot_opMD(sessionName, 'simpleFlag', 1);
 %% Break session down into CS+ trials where animal responded
 
@@ -35,10 +34,10 @@ omitInds = isnan([behSessionData.rewardTime]);
 
 origBlockSwitch = blockSwitch;
 tempBlockSwitch = blockSwitch;
-% for i = 2:length(blockSwitch)
-%     subVal = sum(omitInds(tempBlockSwitch(i-1):tempBlockSwitch(i)));
-%     blockSwitch(i:end) = blockSwitch(i:end) - subVal;
-% end
+% % for i = 2:length(blockSwitch)
+% %     subVal = sum(omitInds(tempBlockSwitch(i-1):tempBlockSwitch(i)));
+% %     blockSwitch(i:end) = blockSwitch(i:end) - subVal;
+% % end
 
 pL = [behSessionData(responseInds).rewardProbL];
 pR = [behSessionData(responseInds).rewardProbR];
@@ -113,11 +112,10 @@ figure
 screenSize = get(0,'Screensize');
 screenSize(4) = screenSize(4) - 100;
 set(gcf, 'Position', screenSize)
-suptitle(sessionName)
-
+sgtitle([sessionName 'dd=' num2str(mean(abs(s.dd)))])
 %% Plot smoothed rwd&choices
 subplot(6,8,[17:20 25:28]); hold on
-normKern = normpdf(-15:15,0,4);
+normKern = normpdf(-20:20,0,4);
 normKern = normKern / sum(normKern);
 xVals = (1:(length(normKern) + length(allChoices) - 1)) - round(length(normKern)/2);
 plot(xVals, conv(allChoices,normKern)/max(abs(conv(allChoices,normKern))),'k','linewidth',2);
@@ -416,8 +414,9 @@ end
 
 halfKern = normKern(round(length(normKern)/2):end);
 choiceSlope = atand(diff(conv(cumsum_allRchoice,halfKern))./diff(conv(cumsum_allLchoice,halfKern)));
+choiceSlope(choiceSlope<-85) = -choiceSlope(choiceSlope<-85);
 rwdSlope = atand(diff(conv(cumsum_allRreward,halfKern))./diff(conv(cumsum_allLreward,halfKern)));
-
+rwdSlope(rwdSlope<-85) = -rwdSlope(rwdSlope<-85);
 subplot(6,8,[37 38 45 46]); hold on
 plot(cumsum_allLchoice, cumsum_allRchoice,'linewidth',2,'Color',[30,144,255]/255);
 
@@ -482,7 +481,7 @@ end
 if p.Results.lickFlag == 1
     figure   %make new lick behavior analysis figure
     set(gcf, 'Position', screenSize)
-    suptitle(sessionName)
+    suptitle([sessionName 'dd=' num2str(mean(s.dd))])
 
 
     %% lick latency and recent rwd hist analysis

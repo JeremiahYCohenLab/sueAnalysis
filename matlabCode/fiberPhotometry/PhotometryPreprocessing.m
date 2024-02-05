@@ -1,4 +1,4 @@
-function photometryPreprocessing(session, regions, frameRate, varargin)
+function PhotometryPreprocessing(session, regions, frameRate, varargin)
 %% load data fromm file
 % all time in s. 
 p = inputParser;

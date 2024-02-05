@@ -1,0 +1,111 @@
+function generateOptoAligned(folder)
+[root, sep] = currComputer();
+band = [600 6000];
+denoiseBand = [55 65];
+lowpass = 300;
+threshFactor = 3.5;
+preLen = 50; % in ms
+postLen = 500; % in ms
+%% prepare neuron signal
+% signal unit by themselves
+spikesDir = [folder sep 'spikes' sep];
+unitName = dir(spikesDir);
+unitName = {unitName(contains({unitName.name}, '.txt')).name};
+allUnits = cell(1, length(unitName));
+for i = 1:length(unitName)
+    allUnits{i} = csvread([folder '\spikes\' unitName{i}], 0, 0);
+end
+
+% LFP by channel
+session = Session(folder);
+streamKey = session.recordNodes{1,1}.recordings{1,1}.continuous.keys();
+streamKey = streamKey{1};
+samples = session.recordNodes{1,1}.recordings{1,1}.continuous(streamKey).samples;
+timeStamps =  session.recordNodes{1,1}.recordings{1,1}.continuous(streamKey).timestamps;
+samplingFreq = session.recordNodes{1,1}.recordings{1,1}.continuous(streamKey).metadata.sampleRate;
+numChannels = session.recordNodes{1,1}.recordings{1,1}.continuous(streamKey).metadata.numChannels;
+
+mapInd = [13, 12, 11, 14, 10, 15, 9, 16, 8, 1, 7 , 2, 6, 3, 5, 4];
+mapInd = 1:16;
+samples = samples(mapInd, :);
+
+% multi-unit by each channel
+allMultiUnits = cell(13, 1);
+referenceC = mean(samples([1:7, 9:13],:), 1);
+for i = 1:numChannels-3
+    WnSpike = band/(samplingFreq/2);
+    [bSpike, aSpike] = butter(2, WnSpike, 'bandpass');  
+    
+    currSignal = double(samples(i,:)) - referenceC;
+    currSignal = filtfilt(bSpike, aSpike, currSignal);
+    currSignal = -currSignal; % flip signal
+    threshCurr = threshFactor*round(median(abs(currSignal), 2)/0.6745);
+    allLocs = peakseek(currSignal, 20, threshCurr);
+    allMultiUnits{i} = timeStamps(allLocs);
+end
+% median subtranction
+referenceC = mean(samples([1:7, 8:13],:), 1);
+samples = double(samples) - referenceC;
+Wn = lowpass/(samplingFreq/2);
+[b, a] = butter(2, Wn, 'low');
+lfps = -filtfilt(b, a, samples')';
+Wn = denoiseBand/(samplingFreq/2);
+[b, a] = butter(2, Wn, 'stop');
+lfps = filtfilt(b, a, lfps')';
+
+% plot by opto file
+preSamp = round(preLen/1000 * samplingFreq);
+postSamp = round(postLen/1000 * samplingFreq);
+
+load([folder '\opto\opto.mat']);
+
+% specify led file
+for i = 1:length(led)
+    currLed = unique(led{i});
+    for j = 1:length(currLed)
+        currLedTime = ttlTime{i}(led{i} == currLed(j));
+        currLedLevel = level{i}(led{i} == currLed(j));
+        % create cell for raster
+        rasterCell = cell(length(currLedTime), length(allUnits));
+        for s = 1:length(currLedTime)
+            for u = 1:length(allUnits)
+                temp = allUnits{u};
+                rasterCell{s, u} = temp(temp > (1000*currLedTime(s)-preLen) & temp <= (1000*currLedTime(s)+postLen)) - 1000*currLedTime(s);
+            end
+        end
+        % create cell for lfp
+        lfpCell = cell(1, numChannels-3);
+        for c = 1:numChannels-3
+            lfptemp = [];
+            for s = 1:length(currLedTime)
+                [~, indS] = min(abs(timeStamps - currLedTime(s)));
+                lfptemp = [lfptemp; lfps(c, indS-preSamp:indS+postSamp)];
+            end
+            lfpCell{c} = lfptemp;
+        end
+        % create cell for multi-unit
+        multiCell = cell(length(currLedTime), numChannels-3);
+        for c = 1:numChannels-3
+            temp = allMultiUnits{c};
+            for s = 1:length(currLedTime)               
+                multiCell{s, c} = temp(temp > (currLedTime(s)-preLen/1000) & temp <= (currLedTime(s)+postLen/1000)) - currLedTime(s);
+            end
+        end        
+        
+        
+        ledResp(j).raster = rasterCell;
+        ledResp(j).lfp = lfpCell;
+        ledResp(j).multi = multiCell;
+        ledResp(j).level = currLedLevel;
+    end 
+    optoResp(i).led = currLed;
+    % optoResp(i).level = 
+    optoResp(i).resp = ledResp;
+    optoResp(i).unit = unitName;
+    optoResp(i).preLen = preLen;
+    optoResp(i).postLen = postLen;
+    optoResp(i).preSamp = preSamp;
+    optoResp(i).postSamp = postSamp;
+end
+
+save([folder '\opto\optoResp.mat'], 'optoResp');

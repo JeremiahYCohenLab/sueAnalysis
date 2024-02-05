@@ -73,7 +73,7 @@ figure;
 screenSize = get(0,'Screensize');
 screenSize(4) = screenSize(4) - 100;
 set(gcf, 'Position', screenSize)
-suptitle(session)
+sgtitle(session)
 %% baseline vs dilation
 baseline = mean(sessionPupilCue(:,1:round(2*FR)),2,'omitnan');
 dilation = max(sessionPupilCue(:,round(2*FR)+1:end),[],2,'omitnan')-baseline;

@@ -90,7 +90,7 @@ end
 % calculate timeBetween trials
 timeBtwn = [behSessionData(responseInds(2:end)).CSon] - [behSessionData(responseInds(1:end-1)).rewardTime];
 timeBtwn(timeBtwn < 0 ) = 0;
-timeBtwn = [NaN zscore(timeBtwn(~isnan(timeBtwn)))];
+timeBtwn = [NaN timeBtwn(~isnan(timeBtwn))];
 
 %% determine and plot lick latency distributions for each spout
 lickLat = [];       lickRate = [];      lickRateRwd = [];
@@ -244,14 +244,17 @@ if sum(cellfun(@(x) strcmp(x, 'vol'), fieldnames(behSessionData)))~=0
     s.vol = vol;
 end
 %% adding double dipping
-dd = zeros(size(allChoices));
+dd = zeros(size(allChoices))';
 for i = 1:length(allChoices)
-    allLicks = [behSessionData(responseInds(i)).lickL, behSessionData(responseInds(i)).lickR] - behSessionData(responseInds(i)).CSon;
-    allLicksSide = [-ones(size(behSessionData(responseInds(i)).lickL)), ones(size(behSessionData(responseInds(i)).lickR))];
-%     [allLicks, sortInd] = sort(allLicks);
+    allLicks = [behSessionData(responseInds(i)).licksL, behSessionData(responseInds(i)).licksR] - behSessionData(responseInds(i)).CSon;
+    % remove licks within 20 ms
+    lickDiff = [200, diff(allLicks)];
+    allLicksSide = [-ones(size(behSessionData(responseInds(i)).licksL)), ones(size(behSessionData(responseInds(i)).licksR))];
+    
+% [allLicks, sortInd] = sort(allLicks);
 %     allLicksID = allLicksID(sortInd); 
     if abs(allRewards(i))==1
-        choiceLickSides = allLicksSide(allLicks < lickLat(i)+rwdDelay);
+        choiceLickSides = allLicksSide(allLicks < lickLat(i)+rwdDelay+100);
 %         choiceLicks = allLicks(allLicks < lickLat(i)+rwdDelay);
         if sum(choiceLickSides ~= allChoices(i))>0
             dd(i) = -allChoices(i);

@@ -1,0 +1,49 @@
+% this script scans all units in the provided directories 
+root = 'F:\michiganProbe\';
+days = {'676522_061423', '679457_062623', '679458_070723_leftLC', '683497_060723_leftLC'};
+% create recording list
+recList = {};
+for i = 1:length(days)
+    currDir = dir([root days{i}]);
+    currDir = {currDir.name};
+    currDir = currDir(cellfun(@length, currDir)>10);
+    currDir = currDir(~cellfun(@(x) contains(x, 'opto'), currDir));
+    recList = [recList; strcat([root days{i} '\'], currDir)'];
+end
+
+%% criteria
+inhiLen = 500; % in ms
+pValue = 0.05; % in response to any inhibition location 
+%% loop through list to get neurons with lower activity with inhibition
+optoLength = cell(length(recList), 1);
+recListResp = {};
+unitListResp = {};
+ledListRespPval = {};
+ledBestResp = {};
+
+
+for i = 1:length(recList)
+    currFolder = recList{i};
+    % load opto infor
+    optoName = [currFolder '\opto\opto.mat'];
+    optoFileName = [currFolder '\opto\optoResp.mat'];
+    if exist(optoName, 'file')
+        load([currFolder '\opto\opto.mat'], 'duration', 'led', 'level', 'offTime', 'onTime', 'ttlTime');
+        disp([currFolder(4:end) ' has opto file'])
+    else 
+        disp([currFolder(4:end) ' no opto file'])
+        alignOpto(currFolder);
+        disp([currFolder(4:end) ' generating opto file'])
+
+    end
+    
+    if max(duration)> inhiLen             
+        load(optoFileName);
+    end
+    % if usable, load neuron data
+    % pulseLen = duration;
+    % load(optoFileName);
+    optoLength{i} = duration;
+    
+end
+%%

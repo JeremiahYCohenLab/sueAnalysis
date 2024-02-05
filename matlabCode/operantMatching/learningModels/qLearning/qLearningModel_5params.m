@@ -45,5 +45,6 @@ LH = likelihood(choice,probChoice);
 
 % probChosenChoice
 
-.0   
+probChosen = probChoice;
+probChosen(choice == 0) = 1 - probChoice(choice==0);  
 end

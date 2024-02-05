@@ -7,12 +7,12 @@ v.FrameRate = Vobj.FrameRate;
 
 open(v);
 %%
-for i= 1:n
+for i = 1:n
     matrix_image = read(Vobj, i);
     if dim == 1
         matrix_image_rev = flipud(matrix_image);
     else
-        if dim == 2
+       if dim == 2
             matrix_image_rev = fliplr(matrix_image);
         end
     end

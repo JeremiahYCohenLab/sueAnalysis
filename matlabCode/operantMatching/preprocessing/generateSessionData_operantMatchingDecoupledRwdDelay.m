@@ -1,5 +1,7 @@
-function [behSessionData, blockSwitch, blockSwitchL, blockSwitchR] = generateSessionData_operantMatchingDecoupledRwdDelay(sessionName)
-
+function [behSessionData, blockSwitch, blockSwitchL, blockSwitchR] = generateSessionData_operantMatchingDecoupledRwdDelay(sessionName, varargin)
+p = inputParser;
+p.addParameter('saveFlag', 1)
+p.parse(varargin{:})
 
 % Determine if computer is PC or Mac and set roots and separators appropriately
 [root, sep] = currComputer();
@@ -183,10 +185,12 @@ blockSwitch = blockSwitch(blockSwitch<length(behSessionData));
 blockSwitchL = blockSwitchL(blockSwitchL<length(behSessionData));
 blockSwitchR = blockSwitchR(blockSwitchR<length(behSessionData));
 
-if isempty(dir(savepath))
-    mkdir(savepath)
+if p.Results.saveFlag
+    if isempty(dir(savepath))
+        mkdir(savepath)
+    end
+    save([savepath sessionName '_sessionData_behav.mat'], 'behSessionData', 'blockSwitch', 'blockSwitchL', 'blockSwitchR');
 end
-save([savepath sessionName '_sessionData_behav.mat'], 'behSessionData', 'blockSwitch', 'blockSwitchL', 'blockSwitchR');
 end
 
 function dataOutput = importData_operantMatching(sessionName, startRow, endRow)

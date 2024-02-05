@@ -2,9 +2,9 @@
 clear all
 xlFile = 'photometry'; 
 sheet = 'all'; 
-category = 'goodFP';
+category = 'goodFPNew';
 region = 'mPFC';
-regressors = 'outcome + Qchosen + (Qchosen-1|group)';
+% regressors = 'outcome + Qchosen + (Qchosen-1|group)';
 modelName = '5params';
 binSize = 1500; % in ms
 stepSize = 500;
@@ -117,27 +117,27 @@ for sess = 1:length(dayList)
     allSignalFocus{sess} = signalFocus;
     
 end
-% %% regression through time
-%     outcome = outcomeCombined;
-%     Qchosen = QchosenCombined;
-%     
-%     tbl = table(group, outcome, Qchosen);
-% 
-%     sigs = [];
-%     tStats = [];
-%     coeffs = [];
-%     uppers = [];
-%     lowers = [];
-%     for k = 1:length(midPointsGLM)
-%         currSignal = allTrial_Matx_slideCombined(:,k);
-%         currTbl = addvars(tbl, currSignal);
-%         lm = fitlme(currTbl, ['currSignal~' p.Results.regressors]);
-%         sigs(k,:) = (lm.Coefficients.pValue(2:end)<0.05)';
-%         tStats(k,:) = lm.Coefficients.tStat(2:end)';
-%         coeffs(k,:) = lm.Coefficients.Estimate(2:end)';
-%         lowers(k,:) = lm.Coefficients.Lower(2:end)';
-%         uppers(k,:) = lm.Coefficients.Upper(2:end)';        
-%     end
+%% regression through time
+    outcome = outcomeCombined;
+    Qchosen = QchosenCombined;
+
+    tbl = table(group, outcome, Qchosen);
+
+    sigs = [];
+    tStats = [];
+    coeffs = [];
+    uppers = [];
+    lowers = [];
+    for k = 1:length(midPointsGLM)
+        currSignal = allTrial_Matx_slideCombined(:,k);
+        currTbl = addvars(tbl, currSignal);
+        lm = fitlme(currTbl, ['currSignal~' p.Results.regressors]);
+        sigs(k,:) = (lm.Coefficients.pValue(2:end)<0.05)';
+        tStats(k,:) = lm.Coefficients.tStat(2:end)';
+        coeffs(k,:) = lm.Coefficients.Estimate(2:end)';
+        lowers(k,:) = lm.Coefficients.Lower(2:end)';
+        uppers(k,:) = lm.Coefficients.Upper(2:end)';        
+    end
 %% mix model on focus window
 outcome = outcomeCombined;
 Qchosen = QchosenCombined;
@@ -187,7 +187,7 @@ edges = linspace(-pi, pi, 20);
 outcomeInd = 1;
 qInd = 2;
 
-allVec = allT;
+allVec = allCoeff;
 [theta, rho] = cart2pol(allVec(:,1), allVec(:,2));
 figure2; 
 polarhistogram(theta,edges, 'FaceColor', [0.1 0.1 0.1], 'FaceAlpha',.7, 'EdgeColor', 'none', 'Normalization', 'Probability');
@@ -246,7 +246,7 @@ xlabel('time from respond')
 title('tStats')
 
 sgtitle([sheet]);
-
+%%
 figure2;
 plotFilled(mean(meanPEs), meanSignal, 'r');
 xlabel('RPE')

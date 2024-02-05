@@ -11,7 +11,11 @@ p.parse(varargin{:});
 
 [root, sep] = currComputer();
 paramNames = getParamNames_dF(modelName, p.Results.biasFlag);
-sampFile = [animalName category '_', modelName];
+if  ~isempty(regexp(animalName, '^[A-Z]', 'once')) || ~isempty(regexp(animalName, '^[a-z]', 'once'))
+    sampFile = [animalName category '_', modelName];
+else
+    sampFile = ['m' animalName category '_', modelName];
+end
 path = [root animalName sep animalName 'sorted' sep 'stan' sep 'bernoulli' sep modelName sep category sep];
 modelPath = [path sampFile '.mat'];
 %get model params
@@ -28,7 +32,8 @@ if p.Results.sessionParamsFlag
 end
 
 tmp = whos;
-samples = eval(tmp(1).name);
+eval(['samples =' sampFile ';'])
+
 
 inds = find(samples.divergent__<1);
 inds = inds(randperm(sum(samples.divergent__<1), numSamps));

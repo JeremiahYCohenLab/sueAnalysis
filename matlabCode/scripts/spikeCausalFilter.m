@@ -126,7 +126,8 @@ figure2;
 subplot(1,2,1);
 
 for i = 1:numBinsPSTH
-    plotFilled(time, squeeze(allPSTH(i,:,sigMax(:,1) & tStatsMax(:,1)<0 & ind==1))', colors(i,:));
+    % plotFilled(time, squeeze(allPSTH(i,:,sigMax(:,1) & tStatsMax(:,1)<0 & ind==1))', colors(i,:));
+    plotFilled(time, squeeze(allPSTH(i,:, ind==1))', colors(i,:));
 end
 % plot([s.rwdDelay s.rwdDelay], [-0.2 0.4], 'Color', [0.6 0.6 0.6], 'LineWidth', 2, 'LineStyle', '--');
 set(gca, 'Box', 'off')
@@ -142,7 +143,8 @@ title('Type II', 'FontSize', 18)
 
 subplot(1,2,2);
 for i = 1:numBinsPSTH
-    plotFilled(time, squeeze(allPSTH(i,:,sigMax(:,1) & tStatsMax(:,1)>0 & ind==2))', colors(i,:));
+    % plotFilled(time, squeeze(allPSTH(i,:,sigMax(:,1) & tStatsMax(:,1)>0 & ind==2))', colors(i,:));
+    plotFilled(time, squeeze(allPSTH(i,:,ind==2))', colors(i,:));
 end
 % plot([s.rwdDelay s.rwdDelay], [-0.2 0.4], 'Color', [0.6 0.6 0.6], 'LineWidth', 2, 'LineStyle', '--');
 set(gca, 'Box', 'off')

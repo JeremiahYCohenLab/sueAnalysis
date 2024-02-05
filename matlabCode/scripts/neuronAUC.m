@@ -346,7 +346,7 @@ xlabel('Tstats'); ylabel('AUC')
 %% use the new window to do new LM fitting
 [root, sep] = currComputer();
 col = 'good';
-modelName = '5params_k_bias';
+modelName = '5params';
 
 numBins = 8;  
 numBinsPSTH = 6;
@@ -460,7 +460,7 @@ title(['max Tstats Outcome' num2str(p)]);
 
 set(gca, 'Box', 'off')
 set(gca,'tickdir', 'out')
-set(gca, 'XTick', [-15:5:15]) 
+set(gca, 'XTick', [-15:5:15])  
 set(gca, 'YTick', [0:5:15])
 set(gca, 'XColor', 'k')
 
@@ -509,7 +509,7 @@ histogram(tStatsMax(ind==2 & diffInd,1), edges, 'FaceColor', color2, 'Normalizat
 auc = auROCZS(tStatsMax(ind==1 & diffInd,1),tStatsMax(ind==2 & diffInd,1));
 title(['consistent on max window ' num2str(auc)])
 %%
-%% scatter in tstats space
+%% scatter in tstats/coeff space
 % maxWin
 figure2; hold on;
 outcomeInd = 1;
@@ -528,22 +528,22 @@ set(gca, 'XColor', 'k')
 xlabel('outcome', 'FontSize', 18)
 ylabel('Qchosen', 'FontSize', 18)
 % firstWin
-figure2; hold on;
-outcomeInd = 1;
-qInd = 3;
-scatter(allTstats(ind==1, outcomeInd), allTstats(ind==1,qInd), 50, [0 0 0], 'o', 'LineWidth', 2.5);
-scatter(allTstats(ind==2, outcomeInd), allTstats(ind==2,qInd), 50, [0.6 0.6 0.6],  'o', 'LineWidth', 2.5);
-plot([-15 15], [0 0], 'LineStyle', '--', 'LineWidth', 2, 'Color', [0.6 0.6 0.6]);
-plot([0 0], [-10 5], 'LineStyle', '--', 'LineWidth', 2, 'Color', [0.6 0.6 0.6]);
-xlim([-18 20])
-ylim([-8 6])
-set(gca, 'Box', 'off')
-set(gca,'tickdir', 'out')
-set(gca, 'XTick', [-15:5:20])
-set(gca, 'YTick', [-10:5:5])
-set(gca, 'XColor', 'k')
-xlabel('outcome', 'FontSize', 18)
-ylabel('Qchosen', 'FontSize', 18)
+% figure2; hold on;
+% outcomeInd = 1;
+% qInd = 3;
+% scatter(allTstats(ind==1, outcomeInd), allTstats(ind==1,qInd), 50, [0 0 0], 'o', 'LineWidth', 2.5);
+% scatter(allTstats(ind==2, outcomeInd), allTstats(ind==2,qInd), 50, [0.6 0.6 0.6],  'o', 'LineWidth', 2.5);
+% plot([-15 15], [0 0], 'LineStyle', '--', 'LineWidth', 2, 'Color', [0.6 0.6 0.6]);
+% plot([0 0], [-10 5], 'LineStyle', '--', 'LineWidth', 2, 'Color', [0.6 0.6 0.6]);
+% xlim([-18 20])
+% ylim([-8 6])
+% set(gca, 'Box', 'off')
+% set(gca,'tickdir', 'out')
+% set(gca, 'XTick', [-15:5:20])
+% set(gca, 'YTick', [-10:5:5])
+% set(gca, 'XColor', 'k')
+% xlabel('outcome', 'FontSize', 18)
+% ylabel('Qchosen', 'FontSize', 18)
 %% scatter in coeff space
 figure2; hold on;
 % scatter(allTstats(:, outcomeInd), allTstats(:,qInd), 30, [0.7 0.7 0.7], 'filled');
@@ -561,7 +561,7 @@ qInd = 2;
 sigO = sigMax(:, outcomeInd);
 sigQ = sigMax(:, qInd);
 
-allVec = [tStatsMax(:, outcomeInd), tStatsMax(:,qInd)];
+allVec = [coeffsMax(:, outcomeInd), coeffsMax(:,qInd)];
 % allVec = [coeffsMax(:, outcomeInd), coeffsMax(:,qInd)];
 [theta1, rho] = cart2pol(allVec(ind==1,1), allVec(ind==1,2));
 [theta2, rho] = cart2pol(allVec(ind==2,1), allVec(ind==2,2));
@@ -572,19 +572,19 @@ polarhistogram(theta2,edges, 'FaceColor', [0.7 0.7 0.7], 'FaceAlpha',.6, 'EdgeCo
 title('maxWin, all')
 
 
-% frst tStats
-outcomeInd = 1;
-qInd = 3;
-allVec = [allTstats(:, outcomeInd), allTstats(:,qInd)];
-[theta1, rho] = cart2pol(allVec(ind==1,1), allVec(ind==1,2));
-[theta2, rho] = cart2pol(allVec(ind==2,1), allVec(ind==2,2));
-figure2; 
-polarhistogram(theta1,edges, 'FaceColor', [0.1 0.1 0.1], 'FaceAlpha',.7, 'EdgeColor', 'none', 'Normalization', 'Probability');
-hold on; 
-polarhistogram(theta2,edges, 'FaceColor', [0.7 0.7 0.7], 'FaceAlpha',.6, 'EdgeColor', 'none', 'Normalization', 'Probability');
-title('firstWin, all')
+% % frst tStats
+% outcomeInd = 1;
+% qInd = 3;
+% allVec = [allTstats(:, outcomeInd), allTstats(:,qInd)];
+% [theta1, rho] = cart2pol(allVec(ind==1,1), allVec(ind==1,2));
+% [theta2, rho] = cart2pol(allVec(ind==2,1), allVec(ind==2,2));
+% figure2; 
+% polarhistogram(theta1,edges, 'FaceColor', [0.1 0.1 0.1], 'FaceAlpha',.7, 'EdgeColor', 'none', 'Normalization', 'Probability');
+% hold on; 
+% polarhistogram(theta2,edges, 'FaceColor', [0.7 0.7 0.7], 'FaceAlpha',.6, 'EdgeColor', 'none', 'Normalization', 'Probability');
+% title('firstWin, all')
 %% polar histogram sig ones
-edges = linspace(-pi, pi, 20);
+edges = linspace(-pi, pi, 30);
 % max tStats
 outcomeInd = 1;
 qInd = 2;

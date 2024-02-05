@@ -1,6 +1,5 @@
-function [ratioMax, x, p] = timeProjectionOpti2(ledLL, csT, startFrame, startTrial)
+function [ratioMax, x, p] = timeProjectionOpti2(ledLL, csT, startPoints, startFrame, startTrial)
 fun = @(x) -1*timeProjection(ledLL, csT, startFrame, startTrial, x);
-startPoints = [20.5:0.1:21.5];
 runs = length(startPoints);
 A = [1, -1]';
 b = [21.5, -20.5]';

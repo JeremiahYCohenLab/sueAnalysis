@@ -53,11 +53,11 @@ end
 responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window
 omitInds = isnan([behSessionData.rewardTime]); 
 
-blockProbs = [[behSessionData.rewardProbL]; [behSessionData.rewardProbR]]';
-blockProbs = blockProbs(responseInds,:);
-blockSwitchL = [1; find(blockProbs(2:end,1)~= blockProbs(1:end-1,1)) + 1];
-blockSwitchR = [1; find(blockProbs(2:end,2)~= blockProbs(1:end-1,2)) + 1];
-blockSwitch = unique([blockSwitchL; blockSwitchR]);
+% blockProbs = [[behSessionData.rewardProbL]; [behSessionData.rewardProbR]]';
+% blockProbs = blockProbs(responseInds,:);
+% blockSwitchL = [1; find(blockProbs(2:end,1)~= blockProbs(1:end-1,1)) + 1];
+% blockSwitchR = [1; find(blockProbs(2:end,2)~= blockProbs(1:end-1,2)) + 1];
+% blockSwitch = unique([blockSwitchL; blockSwitchR]);
 
 rwdDelay = mode([behSessionData(responseInds).rewardTime] - [behSessionData(responseInds).respondTime]);
 allReward_R = [behSessionData(responseInds).rewardR]; 
@@ -82,15 +82,15 @@ rewardsList =  allRewards(find(allRewards~=0));
 allNoRewards = allChoices;
 allNoRewards(allRewards~=0) = 0;
 
-
-if blockSwitch(end) == length(allChoices)
-    blockSwitch = blockSwitch(1:end-1);
-end
+% 
+% if blockSwitch(end) == length(allChoices)
+%     blockSwitch = blockSwitch(1:end-1);
+% end
 
 % calculate timeBetween trials
 timeBtwn = [behSessionData(responseInds(2:end)).CSon] - [behSessionData(responseInds(1:end-1)).rewardTime];
 timeBtwn(timeBtwn < 0 ) = 0;
-timeBtwn = [NaN zscore(timeBtwn(~isnan(timeBtwn)))];
+timeBtwn = [NaN timeBtwn(~isnan(timeBtwn))];
 
 %% determine and plot lick latency distributions for each spout
 lickLat = [];       lickRate = [];      lickRateRwd = [];
@@ -247,18 +247,23 @@ end
 dd = zeros(size(allChoices))';
 for i = 1:length(allChoices)
     allLicks = [behSessionData(responseInds(i)).licksL, behSessionData(responseInds(i)).licksR] - behSessionData(responseInds(i)).CSon;
+    [allLicks, sortInd] = sort(allLicks);
+    % remove licks within 20 ms
+    lickDiff = [200, diff(allLicks)];
     allLicksSide = [-ones(size(behSessionData(responseInds(i)).licksL)), ones(size(behSessionData(responseInds(i)).licksR))];
-%     [allLicks, sortInd] = sort(allLicks);
+    allLicksSide = allLicksSide(sortInd);
+    allLicksSide(lickDiff<20) = 0;
+% 
 %     allLicksID = allLicksID(sortInd); 
     if abs(allRewards(i))==1
-        choiceLickSides = allLicksSide(allLicks < lickLat(i)+rwdDelay);
+        choiceLickSides = allLicksSide(allLicks < lickLat(i)+rwdDelay+100);
 %         choiceLicks = allLicks(allLicks < lickLat(i)+rwdDelay);
-        if sum(choiceLickSides ~= allChoices(i))>0
+        if sum(choiceLickSides ~= allChoices(i) & choiceLickSides ~= 0)>0
             dd(i) = -allChoices(i);
         end
     else
         choiceLickSides = allLicksSide(allLicks < lickLat(i)+rwdDelay+100);
-        if sum(choiceLickSides ~= allChoices(i))>0
+        if sum(choiceLickSides ~= allChoices(i) & choiceLickSides ~= 0)>0
             dd(i) = -allChoices(i);
         end
     end
@@ -268,8 +273,8 @@ end
     s.allChoices = allChoices;
     s.allRewards = allRewards;
     s.allNoRewards = allNoRewards;
-    s.blockSwitch = blockSwitch;
-    s.blockProbs = blockProbs;
+    % s.blockSwitch = blockSwitch;
+    % s.blockProbs = blockProbs;
     s.lickLat = lickLat;
     s.lickLatInds = find(realID>0);
     s.responseInds = responseInds;
@@ -295,8 +300,8 @@ end
         hmmStates = [behSessionData.hmm];
         s.hmmStates = hmmStates;
     else
-        [~, hmmStates] = fitHmmOpt(sessionName, 0);
-        s.hmmStates = hmmStates;
+        % [~, hmmStates] = fitHmmOpt(sessionName, 0);
+        % s.hmmStates = hmmStates;
     end
     s.laser = laser;
     s.lickSide = lickSide;
@@ -511,10 +516,10 @@ cumsum_allRchoice = cumsum(allChoices == 1);
 cumsum_allLchoice = cumsum(allChoices == -1);
 cumsum_allRreward = cumsum(allRewards == 1);
 cumsum_allLreward = cumsum(allRewards == -1);
-cumsum_blockSwitch = cumsum_allLchoice(blockSwitch);
-if cumsum_blockSwitch(1) == 0
-    cumsum_blockSwitch(1) = 1;
-end
+% cumsum_blockSwitch = cumsum_allLchoice(blockSwitch);
+% if cumsum_blockSwitch(1) == 0
+%     cumsum_blockSwitch(1) = 1;
+% end
 
 normKern = normpdf(-15:15,0,4);
 normKern = normKern / sum(normKern);
@@ -522,15 +527,15 @@ halfKern = normKern(round(length(normKern)/2):end);
 choiceSlope = atand(diff(conv(cumsum_allRchoice,halfKern))./diff(conv(cumsum_allLchoice,halfKern)));
 rwdSlope = atand(diff(conv(cumsum_allRreward,halfKern))./diff(conv(cumsum_allLreward,halfKern)));
 
-avgRwdSlope = [];
-tempMax = 0;
-for i = 1:length(cumsum_blockSwitch)
-    if i ~= length(cumsum_blockSwitch)
-        avgRwdSlope(i) = tand(nanmean(rwdSlope(blockSwitch(i):blockSwitch(i+1))));
-    else
-        avgRwdSlope(i) = tand(mean(rwdSlope(blockSwitch(i):end)));
-    end
-end
+% avgRwdSlope = [];
+% tempMax = 0;
+% for i = 1:length(cumsum_blockSwitch)
+%     if i ~= length(cumsum_blockSwitch)
+%         avgRwdSlope(i) = tand(nanmean(rwdSlope(blockSwitch(i):blockSwitch(i+1))));
+%     else
+%         avgRwdSlope(i) = tand(mean(rwdSlope(blockSwitch(i):end)));
+%     end
+% end
 %% divide licks into two groups
 ind = kmeans(log(lickLat'),2,'Start', [4.5; 5.5], 'OnlinePhase', 'on');
 ind(ind == 3) = 2;

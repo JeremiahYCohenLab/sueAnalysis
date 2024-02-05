@@ -26,16 +26,29 @@ paramMatx = [];
 sInds = [];
 for aI = 1:numAnimals
     if p.Results.bernFlag
-        filePath = [root animals{aI} sep  animals{aI} 'sorted' sep 'stan' sep 'bernoulli' sep...
-            p.Results.modelName sep p.Results.beh sep animals{aI} p.Results.beh '_' p.Results.modelName '.mat'];
+        
+        % filePath = [root animals{aI} sep  animals{aI} 'sorted' sep 'stan' sep 'bernoulli' sep...
+        %     p.Results.modelName sep p.Results.beh sep animals{aI} p.Results.beh '_' p.Results.modelName '.mat'];
         savePath = [root animals{aI} sep animals{aI} 'sorted' sep 'stan' sep 'bernoulli' sep p.Results.modelName sep p.Results.beh sep];
+    
+    
+        if  ~isempty(regexp(animals{aI}, '^[A-Z]', 'once')) || ~isempty(regexp(animals{aI}, '^[a-z]', 'once'))
+            sampFile = [animals{aI} p.Results.beh '_',  p.Results.modelName];
+        else
+            sampFile = ['m' animals{aI} p.Results.beh '_',  p.Results.modelName];
+        end
+
+        path = [root animals{aI} sep  animals{aI} 'sorted' sep 'stan' sep 'bernoulli' sep...
+            p.Results.modelName sep p.Results.beh sep];
+        filePath = [path sampFile '.mat'];
+   
     else        
         filePath = [root animals{aI} sep  animals{aI} 'sorted' sep 'stan' sep...
             p.Results.modelName sep p.Results.beh sep animals{aI} p.Results.beh '_' p.Results.modelName '.mat'];
     end
 
     mdl = load(filePath);
-    structName = [animals{aI} p.Results.beh '_' p.Results.modelName];
+    structName = sampFile;
     samps = mdl.(structName);
     numSesh = length(mdl.dayList);
     dates = zeros(size(mdl.dayList));
@@ -156,7 +169,7 @@ for aI = 1:numAnimals
         ytickangle(45)
 
         titleTxt = [animals{aI} ' ' p.Results.beh ' ' strrep([p.Results.modelName], '_', ' ')];
-        suptitle(titleTxt);
+        sgtitle(titleTxt);
         set(gcf,'Renderer', 'Painters', 'position', [-1928 278 1924 1066])
 
         if p.Results.saveFigFlag
@@ -208,7 +221,7 @@ for aI = 1:numAnimals
             end
         end
         titleTxt = [titleTxt ' (divergence rate = ' num2str(sum(samps.divergent__)/length(samps.divergent__)) ')'];
-        suptitle(titleTxt);
+        sgtitle(titleTxt);
         screenSize = get(0,'Screensize');
         screenSize(4) = screenSize(4) - 100;
         set(dFig, 'renderer', 'painters', 'position', screenSize)
@@ -217,7 +230,7 @@ for aI = 1:numAnimals
         end
         cFig = figure;
         scatterAll(avgParams, paramNames, 7, 'm')
-        suptitle(titleTxt);
+        sgtitle(titleTxt);
         if p.Results.saveFigFlag
             saveFigurePDF(cFig,[savePath animals{aI} p.Results.beh '_' p.Results.modelName '_' 'estimatedParams.pdf'])
         end      

@@ -4,14 +4,14 @@ function [errorProp,csFT, qualInd, ratioMax] = timeAlign(session, plotFlag, save
 unblockedError = false; 
 iterMaxReach = false;
 errorRate = 0.05;
-errorThresh = 3; %no. of frames allowed for mis-alignment
+errorThresh = 4; %no. of frames allowed for mis-alignment
 iter = 0;
 errorProp = NaN;
 csFT = NaN;
 ratioMax = NaN;
-ledLLThresh = 0.5;
-positionThresh = 0.9999999999;
-ledDisThresh = 300;
+ledLLThresh = 0.9999999;
+positionThresh = 0.999999999999;
+ledDisThresh = 200;
 %% training set
 [root,sep] = currComputer;
    
@@ -42,12 +42,12 @@ else
     savepath = [root animalName sep sessionFolder sep 'sorted' sep 'session' sep];
 end
 
-iterMax = 0.1*length(behSessionData);
+iterMax = 0.025*length(behSessionData);
 %% load diameter and position
 videopath = [root animalName sep sessionFolder sep 'pupil'];
 list = dir(videopath);
-expression = ['^' session 'DLC' '\w*' '200000.csv' '$'];
-expressionSkeleton = ['^' session 'DLC' '\w*' 'shuffle1_200000_skeleton.csv' '$'];
+expression = ['^' session 'DLC' '\w*' '300000.csv' '$'];
+expressionSkeleton = ['^' session 'DLC' '\w*' 'shuffle1_300000_skeleton.csv' '$'];
 if isempty(find(~cellfun(@isempty, cellfun(@(x) regexp(x, expression), {list.name}, 'UniformOutput', false)), 1))
    fprintf([session ' no pupil video \n'])
    return
@@ -60,7 +60,7 @@ end
 positionRaw = csvread([videopath sep position],3,0);
 
 %% Align time by finding maximum projection
-ratio =[20.5:0.01:21.5];
+ratio =[25.0:0.01:26];
 %ledLL = sign(positionRaw(:,16).*positionRaw(:,10) - ledLLThresh);
 ledLL = sign(positionRaw(:,16) - ledLLThresh);
 %% led position
@@ -78,7 +78,7 @@ accLL = accLL(length(filter) : end);
 startFrameTemp = find(accLL > 0.6 * length(filter) & ledLL > 0 );
 startFrame = startFrameTemp(1);
 startTrial = 1;
-[ratioMax, ~, ~] = timeProjectionOpti2(ledLL, csT(1:50), startFrame, startTrial);
+[ratioMax, ~, ~] = timeProjectionOpti2(ledLL, csT(1:10), ratio, startFrame, startTrial);
 %% check first error
 cskernel = ones(1, round(0.5 * ratioMax));
 [~, csF, csFT] = timeProjection(ledLL, csT, startFrame, startTrial, ratioMax);
@@ -129,7 +129,7 @@ while length(error) > errorRate*length(csT) && iter < iterMax
     startFrame = sort([startFrame startFramePlus]);
     startTrial = sort([startTrial errorSeq + 1]);
     % optimizing with new startpoints
-    [ratioMax, ~, ~] = timeProjectionOpti2(ledLL, csT, startFrame, startTrial);   
+    [ratioMax, ~, ~] = timeProjectionOpti2(ledLL, csT, ratio, startFrame, startTrial);   
 
     % calculate error number
     cskernel = ones(1, round(0.5* ratioMax));
@@ -161,18 +161,18 @@ figure; hold on;
 screenSize = get(0,'Screensize');
 screenSize(4) = screenSize(4) - 100;
 set(gcf, 'Position', screenSize)
-suptitle(session)
+sgtitle(session)
 subplot(1,3,1)
 plot(ratio, p);
 line([ratioMax ratioMax], minmax(p), 'Color', 'red');
-text(21, 999, sprintf('errorRate %.2g', errorProp));
+text(25, 999, sprintf('errorRate %.2g', errorProp));
 if unblockedError
-    text(20.5, 999, 'unblockedErrors');
+    text(mean(ratio), max(p)+0.5, 'unblockedErrors');
 end
 if iterMaxReach
-    text(20.5, 900, 'maxIter reached');
+    text(mean(ratio), max(p)+0.5, 'maxIter reached');
 end
-xlim([20.5 21.5])
+xlim([min(ratio) max(ratio)])
 
 subplot(2,3,[2,3]); hold on;
 plot(csF, 'b');
@@ -181,6 +181,7 @@ for j=1:length(csFT)
     text(csFT(j), 1, num2str(j), 'FontSize', 10);
 end
 scatter(csFT(error) + 0.5*(length(cskernel)), 0.5*ones(size(error)), 30, 'filled')
+scatter(startFrame, 0.75*ones(size(startFrame)), 30, 'red')
 xlim([1 2000]);
 ylim([0 1.2]);
 
@@ -191,6 +192,7 @@ for j=1:length(csFT)
     text(csFT(j), 1, num2str(j), 'FontSize', 10);
 end
 scatter(csFT(error) + 0.5*(length(cskernel)), 0.5*ones(size(error)), 30, 'filled')
+scatter(startFrame, 0.75*ones(size(startFrame)), 30, 'red')
 xlim([csFT(end)-2000 csFT(end)]);
 ylim([0 1.2]);
 end

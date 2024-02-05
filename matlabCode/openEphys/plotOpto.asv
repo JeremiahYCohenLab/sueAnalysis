@@ -1,261 +1,211 @@
 % plot neurons against opto
-fileName = '679457_2023-06-26_12-37-53_R_3.4';
-folder = ['F:\michiganProbe\679457_062623\' fileName];
-[root, sep] = currComputer();
-%% prepare neuron signal
-% signal unit by themselves
-spikesDir = [folder sep 'spikes' sep];
-unitName = dir(spikesDir);
-unitName = {unitName(contains({unitName.name}, '.txt')).name};
-allUnits = cell(1, length(unitName));
-for i = 1:length(unitName)
-    allUnits{i} = csvread([folder '\spikes\' unitName{i}], 0, 0);
-end
+function plotOpto(folder)
 
-% LFP by channel
-session = Session(folder);
-streamKey = session.recordNodes{1,1}.recordings{1,1}.continuous.keys();
-streamKey = streamKey{1};
-samples = session.recordNodes{1,1}.recordings{1,1}.continuous(streamKey).samples;
-timeStamps =  session.recordNodes{1,1}.recordings{1,1}.continuous(streamKey).timestamps;
-samplingFreq = session.recordNodes{1,1}.recordings{1,1}.continuous(streamKey).metadata.sampleRate;
-numChannels = session.recordNodes{1,1}.recordings{1,1}.continuous(streamKey).metadata.numChannels;
-lowpass = 300;
-Wn = [lowpass]/(samplingFreq/2);
-[b, a] = butter(2, Wn, 'low');
-% multi-unit by each channel
-allMultiUnits = cell(13, 1);
-referenceC = mean(samples(1:13,:), 1);
-threshFactor = 3.5;
-for i = 1:numChannels-3
-    WnSpike = [600 6000] /(samplingFreq/2);
-    [bSpike, aSpike] = butter(2, WnSpike, 'bandpass');  
+    band = [600 6000];
+    denoiseBand = [55 65];
+    lowpass = 300;
+    threshFactor = 3.5;
+    preLen = 500; % in ms
+    postLen = 2000; % in ms
     
-    currSignal = double(samples(i,:)) - referenceC;
-    currSignal = filtfilt(bSpike, aSpike, currSignal);
-    currSignal = -currSignal; % flip signal
-    threshCurr = threshFactor*round(median(abs(currSignal), 2)/0.6745);
-    allLocs = peakseek(currSignal, 20, threshCurr);
-    allMultiUnits{i} = timeStamps(allLocs);
-end
-% median subtranction
-referenceC = mean(samples(1:13,:), 1);
-samples = double(samples) - referenceC;
-lfps = -filtfilt(b, a, samples')';
-Wn = [55 65]/(samplingFreq/2);
-[b, a] = butter(2, Wn, 'stop');
-lfps = filtfilt(b, a, lfps')';
-
-% plot by opto file
-preLen = 500; % in ms
-postLen = 2000; % in ms
-preSamp = round(preLen/1000 * samplingFreq);
-postSamp = round(postLen/1000 * samplingFreq);
-
-load([folder '\opto\opto.mat']);
-clear optoResp
-% specify led file
-for i = 1:length(led)
-    currLed = unique(led{i});
-    for j = 1:length(currLed)
-        currLedTime = ttlTime{i}(led{i} == currLed(j));
-        currLedLevel = level{i}(led{i} == currLed(j));
-        % create cell for raster
-        rasterCell = cell(length(currLedTime), length(allUnits));
-        for s = 1:length(currLedTime)
-            for u = 1:length(allUnits)
-                temp = allUnits{u};
-                rasterCell{s, u} = temp(temp > (1000*currLedTime(s)-preLen) & temp <= (1000*currLedTime(s)+postLen)) - 1000*currLedTime(s);
-            end
-        end
-        % create cell for lfp
-        lfpCell = cell(1, numChannels-3);
-        for c = 1:numChannels-3
-            lfptemp = [];
-            for s = 1:length(currLedTime)
-                [~, indS] = min(abs(timeStamps - currLedTime(s)));
-                lfptemp = [lfptemp; lfps(c, indS-preSamp:indS+postSamp)];
-            end
-            lfpCell{c} = lfptemp;
-        end
-        % create cell for multi-unit
-        multiCell = cell(length(currLedTime), numChannels-3);
-        for c = 1:numChannels-3
-            temp = allMultiUnits{c};
-            for s = 1:length(currLedTime)               
-                multiCell{s, c} = temp(temp > (currLedTime(s)-preLen/1000) & temp <= (currLedTime(s)+postLen/1000)) - currLedTime(s);
-            end
-        end        
-        
-        
-        ledResp(j).raster = rasterCell;
-        ledResp(j).lfp = lfpCell;
-        ledResp(j).multi = multiCell;
-        ledResp(j).level = currLedLevel;
-    end 
-    optoResp(i).led = currLed;
-    % optoResp(i).level = 
-    optoResp(i).resp = ledResp;
-    optoResp(i).unit = unitName;
-    optoResp(i).preLen = preLen;
-    optoResp(i).postLen = postLen;
-    optoResp(i).preSamp = preSamp;
-    optoResp(i).postSamp = postSamp;
-end
-
-save([folder '\opto\optoResp.mat'], 'optoResp');
-%% plot aligned files and save
-optoFileName = [folder '\opto\optoResp.mat'];
-load(optoFileName);
-% plot single units 
-%% plot lfp
-% [3, 8, 2, 1, 7]
-for n = 1:length(optoResp)
-    optoFile = n;
-    for m = 1:length([optoResp(optoFile).led])
-        LEDFocus = optoResp(optoFile).led;
-        LEDFocus = LEDFocus(m);
-        lfpFocus = optoResp(optoFile).resp([optoResp(optoFile).led]==LEDFocus).lfp;
-        levelFocus = 200;
-        seq = 1:13;
-        figure2;
-        hold on;
-        for i = 1:length(seq)
-            lfpCurr = lfpFocus{seq(i)};
-            lfpCurr = lfpCurr([optoResp(optoFile).resp([optoResp(optoFile).led]==LEDFocus).level] == levelFocus,:);
-            timePlot = linspace(-optoResp(optoFile).preLen, optoResp(optoFile).postLen, size(lfpCurr, 2));
-
-            plotFilled(timePlot, lfpCurr + 1000*(i-1), 'b');
-            % title(['Channel' num2str(i) '  ' 'led' num2str(LEDFocus) ' ' 'level' num2str(levelFocus)]);
-        end
-        patch([0 duration(optoFile) duration(optoFile)  0], [0 0 1000*length(seq) 1000*length(seq)], 'r', 'FaceAlpha', 0.5, 'EdgeColor', 'none');
-        title(['led' num2str(LEDFocus) ' ' 'level' num2str(levelFocus)]);
-        ylabel('ventral <----- -----> dorsal')
-        yticks([]);
-        if ~exist([folder '\opto\lfp\' num2str(optoFile) '\'], 'dir')
-            mkdir([folder '\opto\lfp\' num2str(optoFile) '\'])
-        end
-        saveFigurePDF(gcf, [folder '\opto\lfp\' num2str(optoFile) '\' 'optoSeq' num2str(optoFile) 'LED' num2str(LEDFocus)]);
+    %% load aligned files and save
+    [root, sep] = currComputer();
+    
+    
+    lfpFolders = [folder sep 'opto' sep 'lfp' sep];
+    multiFolders = [folder sep 'opto' sep 'multiU' sep];
+    singleFolders = [folder sep 'opto' sep 'singleU' sep];
+    
+    if exist(lfpFolders, 'dir')
+        rmdir(lfpFolders, 's')
     end
-end
-%% multiunit;
-binSize = 200;
-stepSize = 25;
-for n = 1:length(optoResp)
-    optoFile = n;
-    for m = 1:length([optoResp(optoFile).led])
-        LEDFocus = optoResp(optoFile).led;
-        LEDFocus = LEDFocus(m);
-        multiUnitsFocus = optoResp(optoFile).resp([optoResp(optoFile).led]==LEDFocus).multi;
-        levelFocus = 200;
-        seq = 1:13;
-        hold on;
-        for i = 1:length(seq)
-            currMulti = multiUnitsFocus(:, i);
-            figure;
-            subplot(3,1,[1:2]); hold on;
-            plotSpikeRaster(currMulti', 'PlotType','vertline'); hold on;    
-            patch([0 duration(optoFile)/1000 duration(optoFile)/1000 0], [0 0 length(currMulti) length(currMulti)], 'r', 'FaceAlpha', 0.4, 'edgeColor', 'none');
+    if exist(multiFolders, 'dir')
+        rmdir(multiFolders, 's')
+    end
+    if exist(singleFolders, 'dir')
+        rmdir(singleFolders, 's')
+    end
 
-            trialTimes = (-optoResp(optoFile).preLen + 0.5*binSize):stepSize:(optoResp(optoFile).postLen - 0.5*binSize);
-            trialTimes = trialTimes/1000;
-            spikeMat = zeros(length(currMulti), length(trialTimes));
-            for a = 1:length(currMulti)
-                currSpikes = currMulti{a};
-                for b = 1:length(trialTimes)
-                    spikeMat(a, b) = sum(currSpikes>=trialTimes(b)-0.5*binSize/1000 & currSpikes<trialTimes(b)+0.5*binSize/1000);
-                    spikeMat(a, b) = spikeMat(a, b)/(binSize/1000);
-                end
-            end
-            subplot(3, 1, 3)
+    optoFileName = [folder '\opto\optoResp.mat'];
+    load([folder '\opto\opto.mat']);
+    pulseLen = duration;
+    load(optoFileName);
+    preLen = 500; % in ms
+    postLen = 2000; % in ms
+    % plot single units 
+    %% plot lfp
+    % [3, 8, 2, 1, 7]
+    for n = 1:length(optoResp)
+        optoFile = n;
+        for m = 1:length([optoResp(optoFile).led])
+            LEDFocus = optoResp(optoFile).led;
+            LEDFocus = LEDFocus(m);
+            lfpFocus = optoResp(optoFile).resp([optoResp(optoFile).led]==LEDFocus).lfp;
+            levelFocus = 200;
+            seq = 1:13;
+            figure2;
             hold on;
-            plotFilled(trialTimes, spikeMat, 'b');
-            patch([0 duration(optoFile)/1000 duration(optoFile)/1000 0], [0 0 max(mean(spikeMat,1)) max(mean(spikeMat,1))], 'r', 'FaceAlpha', 0.4, 'edgeColor', 'none');
-            sgtitle(['MultiUnits on Channel' num2str(i) '  ' 'led' num2str(LEDFocus) ' ' 'level' num2str(levelFocus)], 'Interpreter', 'none');
-            if ~exist([folder '\opto\multiU\' num2str(optoFile) '\'], 'dir')
-                mkdir([folder '\opto\multiU\' num2str(optoFile) '\'])
+            for i = 1:length(seq)
+                lfpCurr = lfpFocus{seq(i)};
+                lfpCurr = lfpCurr([optoResp(optoFile).resp([optoResp(optoFile).led]==LEDFocus).level] == levelFocus,:);
+                timePlot = linspace(-optoResp(optoFile).preLen, optoResp(optoFile).postLen, size(lfpCurr, 2));
+    
+                plotFilled(timePlot, lfpCurr + 1000*(i-1), 'b');
+                % title(['Channel' num2str(i) '  ' 'led' num2str(LEDFocus) ' ' 'level' num2str(levelFocus)]);
             end
-            saveFigurePDF(gcf, [folder '\opto\multiU\' num2str(optoFile) '\'  'optoSeq' num2str(optoFile) 'LED' num2str(LEDFocus) 'Channel' num2str(i)]);
+            patch([0 duration(optoFile) duration(optoFile)  0], [0 0 1000*length(seq) 1000*length(seq)], 'r', 'FaceAlpha', 0.5, 'EdgeColor', 'none');
+            title(['led' num2str(LEDFocus) ' ' 'level' num2str(levelFocus)]);
+            ylabel('ventral <----- -----> dorsal')
+            yticks([]);
+            if ~exist([folder '\opto\lfp\' num2str(optoFile) '\'], 'dir')
+                mkdir([folder '\opto\lfp\' num2str(optoFile) '\'])
+            end
+            saveFigurePDF(gcf, [folder '\opto\lfp\' num2str(optoFile) '\' 'optoSeq' num2str(optoFile) 'LED' num2str(LEDFocus)]);
         end
     end
-end
-
-%% singleunit;
-binSize = 100;
-stepSize = 25;
-for n = 1:length(optoResp)
-    optoFile = n;
-    for m = 1:length([optoResp(optoFile).led])
-        LEDFocus = optoResp(optoFile).led;
-        LEDFocus = LEDFocus(m);
-        singleUnitsFocus = optoResp(optoFile).resp([optoResp(optoFile).led]==LEDFocus).raster;
-        levelFocus = 200;
-        hold on;
-        for i = 1:size(singleUnitsFocus,2)
-            currSingle = singleUnitsFocus(:, i);
-            if sum(cellfun(@isempty, currSingle))<length(currSingle)
+    %% multiunit;
+    binSize = 200;
+    stepSize = 25;
+    for n = 1:length(optoResp)
+        optoFile = n;
+        for m = 1:length([optoResp(optoFile).led])
+            LEDFocus = optoResp(optoFile).led;
+            LEDFocus = LEDFocus(m);
+            multiUnitsFocus = optoResp(optoFile).resp([optoResp(optoFile).led]==LEDFocus).multi;
+            levelFocus = 200;
+            seq = 1:13;
+            hold on;
+            for i = 1:length(seq)
+                currMulti = multiUnitsFocus(:, i);
                 figure;
                 subplot(3,1,[1:2]); hold on;
-                plotSpikeRaster(currSingle', 'PlotType','vertline'); hold on;    
-                patch([0 duration(optoFile) duration(optoFile) 0], [0 0 length(currSingle) length(currSingle)], 'r', 'FaceAlpha', 0.4, 'edgeColor', 'none');
-
+                plotSpikeRaster(currMulti', 'PlotType','vertline'); hold on;    
+                patch([0 duration(optoFile)/1000 duration(optoFile)/1000 0], [0 0 length(currMulti) length(currMulti)], 'r', 'FaceAlpha', 0.4, 'edgeColor', 'none');
+            
+                % xlim([-preLen postLen]);
                 trialTimes = (-optoResp(optoFile).preLen + 0.5*binSize):stepSize:(optoResp(optoFile).postLen - 0.5*binSize);
-                spikeMat = zeros(length(currSingle), length(trialTimes));
-                for a = 1:length(currSingle)
-                    currSpikes = currSingle{a};
-
+                trialTimes = trialTimes/1000;
+                spikeMat = zeros(length(currMulti), length(trialTimes));
+                for a = 1:length(currMulti)
+                    currSpikes = currMulti{a};
                     for b = 1:length(trialTimes)
-                        spikeMat(a, b) = sum(currSpikes>=trialTimes(b)-0.5*binSize & currSpikes<trialTimes(b)+0.5*binSize);
-                        spikeMat(a, b) = spikeMat(a, b)/binSize;
+                        spikeMat(a, b) = sum(currSpikes>=trialTimes(b)-0.5*binSize/1000 & currSpikes<trialTimes(b)+0.5*binSize/1000);
+                        spikeMat(a, b) = spikeMat(a, b)/(binSize/1000);
                     end
                 end
                 subplot(3, 1, 3)
                 hold on;
                 plotFilled(trialTimes, spikeMat, 'b');
-                patch([0 duration(optoFile) duration(optoFile) 0], [0 0 max(mean(spikeMat,1)) max(mean(spikeMat,1))], 'r', 'FaceAlpha', 0.4, 'edgeColor', 'none');
-                currUnit = optoResp(optoFile).unit;
-                currUnit = currUnit{i};
-                sgtitle(['Single Units on Channel' num2str(i) '  ' 'led' num2str(LEDFocus) ' ' 'level' num2str(levelFocus) 'Unit'  currUnit], 'Interpreter', 'none');
-                if ~exist([folder '\opto\singleU\' num2str(optoFile) '\'], 'dir')
-                    mkdir([folder '\opto\singleU\' num2str(optoFile) '\'])
+                patch([0 duration(optoFile)/1000 duration(optoFile)/1000 0], [0 0 max(mean(spikeMat,1)) max(mean(spikeMat,1))], 'r', 'FaceAlpha', 0.4, 'edgeColor', 'none');
+                % xlim([-preLen postLen]);
+                sgtitle(['MultiUnits on Channel' num2str(i) '  ' 'led' num2str(LEDFocus) ' ' 'level' num2str(levelFocus)], 'Interpreter', 'none');
+                if ~exist([folder '\opto\multiU\' num2str(optoFile) '\'], 'dir')
+                    mkdir([folder '\opto\multiU\' num2str(optoFile) '\'])
                 end
-                saveFigurePDF(gcf, [folder '\opto\singleU\'  num2str(optoFile) '\' 'optoSeq' num2str(optoFile) 'LED' num2str(LEDFocus) 'Unit' currUnit '.pdf']);
+                saveFigurePDF(gcf, [folder '\opto\multiU\' num2str(optoFile) '\'  'optoSeq' num2str(optoFile) 'LED' num2str(LEDFocus) 'Channel' num2str(i)]);
             end
         end
     end
-end
-%% combine all files into 1
-% lfp
-lfpFolders = dir([folder sep 'opto' sep 'lfp' sep]);
-lfpFolders = {lfpFolders(3:end).name};
-for i = 1:length(lfpFolders)
-    currDir = [folder sep 'opto' sep 'lfp' sep lfpFolders{i} sep];
-    allFiles = dir(currDir);
-    allFiles = {allFiles([allFiles.bytes]>0).name}';
-    allFiles = strcat(currDir, allFiles);
-    append_pdfs([currDir sep 'lfpCombine.pdf'],allFiles{:});
-end
-
-% multi
-multiFolders = dir([folder sep 'opto' sep 'multiU' sep]);
-multiFolders = {multiFolders(3:end).name};
-for i = 1:length(multiFolders)
-    currDir = [folder sep 'opto' sep 'multiU' sep multiFolders{i} sep];
-    allFiles = dir(currDir);
-    allFiles = {allFiles([allFiles.bytes]>0).name}';
-    allFiles = strcat(currDir, allFiles);
-    append_pdfs([currDir sep 'multiCombine.pdf'],allFiles{:});
-end
-
-% single
-singleFolders = dir([folder sep 'opto' sep 'singleU' sep]);
-singleFolders = {singleFolders(3:end).name};
-for i = 1:length(singleFolders)
-    currDir = [folder sep 'opto' sep 'singleU' sep singleFolders{i} sep];
-    allFiles = dir(currDir);
-    allFiles = {allFiles([allFiles.bytes]>0).name}';
-    allFiles = strcat(currDir, allFiles);
-    append_pdfs([currDir sep 'singleCombine.pdf'],allFiles{:});
-end
-%%
+    
+    %% singleunit;
+    binSize = 100;
+    stepSize = 25;
+    sortedDir = [folder sep 'spikes' sep];
+    for n = 1:length(optoResp)
+        optoFile = n;
+        for m = 1:length([optoResp(optoFile).led])
+            LEDFocus = optoResp(optoFile).led;
+            LEDFocus = LEDFocus(m);
+            singleUnitsFocus = optoResp(optoFile).resp([optoResp(optoFile).led]==LEDFocus).raster;
+            
+            levelFocus = 200;
+            hold on;
+            TTprev = '';
+            for i = 1:size(singleUnitsFocus,2)
+                currSignal = singleUnitsFocus(:, i);
+                if sum(cellfun(@isempty, currSignal))<length(currSignal)
+                    currUnit = optoResp(optoFile).unit;
+                    currUnit = currUnit{i};
+                    [TTname, unitNum] = strtok(currUnit, 'SS');
+                    TTname = TTname(1:end-1);
+                    unitNum = strtok(unitNum, '.txt');
+                    spikeTimes = [load(strcat(sortedDir, currUnit))]';
+                    if strcmp(TTname, TTprev) == false % if the tetrode has changed, load a new one
+                        tmp_TTname = [TTname '.ntt'];
+                        TTdir = fullfile(sortedDir, tmp_TTname);
+                        [tt_ts, tt_sig] = Nlx2MatSpike(TTdir, [1 0 0 0 1], 0, 1, 1);
+                        TTprev = TTname;
+                    end
+    
+                    waveform = squeeze(tt_sig(:, 1, ismember(tt_ts, spikeTimes)))';
+    
+                    figure;
+                    subplot(3,3,[1:2, 4:5]); hold on;
+                    plotSpikeRaster(currSignal', 'PlotType','vertline'); hold on;    
+                    patch([0 duration(optoFile) duration(optoFile) 0], [0 0 length(currSignal) length(currSignal)], 'r', 'FaceAlpha', 0.4, 'edgeColor', 'none');
+                    xlim([-preLen postLen]);
+                    trialTimes = (-optoResp(optoFile).preLen + 0.5*binSize):stepSize:(optoResp(optoFile).postLen - 0.5*binSize);
+                    spikeMat = zeros(length(currSignal), length(trialTimes));
+                    for a = 1:length(currSignal)
+                        currSpikes = currSignal{a};
+    
+                        for b = 1:length(trialTimes)
+                            spikeMat(a, b) = sum(currSpikes>=trialTimes(b)-0.5*binSize & currSpikes<trialTimes(b)+0.5*binSize);
+                            spikeMat(a, b) = spikeMat(a, b)/binSize;
+                        end
+                    end
+                    subplot(3, 3, 7:8)
+                    hold on;
+                    plotFilled(trialTimes, spikeMat, 'b');
+                    patch([0 duration(optoFile) duration(optoFile) 0], [0 0 max(mean(spikeMat,1)) max(mean(spikeMat,1))], 'r', 'FaceAlpha', 0.4, 'edgeColor', 'none');
+                    xlim([-preLen postLen]);
+                    sgtitle(['Single Units on led' num2str(LEDFocus) ' ' 'level' num2str(levelFocus) 'Unit'  currUnit], 'Interpreter', 'none');
+                    if ~exist([folder '\opto\singleU\' num2str(optoFile) '\'], 'dir')
+                        mkdir([folder '\opto\singleU\' num2str(optoFile) '\'])
+                    end
+    
+                    subplot(3,3,3); hold on;
+                    plotFilledStd(1:32, waveform, 'k');
+                    line([0 32], [0 0], 'color', [0.7, 0.7, 0.7]);
+                    ylabel('Amplitude (\muV)');
+    
+                    % saveFigurePDF(gcf, [folder '\opto\singleU\'  num2str(optoFile) '\' 'optoSeq' num2str(optoFile) 'LED' num2str(LEDFocus) 'Unit' currUnit '.pdf']);
+                end
+            end
+        end
+    end
+    %% combine all files into 1
+    % lfp
+    lfpFolders = dir(lfpFolders);
+    lfpFolders = {lfpFolders(3:end).name};
+    for i = 1:length(lfpFolders)
+        currDir = [folder sep 'opto' sep 'lfp' sep lfpFolders{i} sep];
+        allFiles = dir(currDir);
+        allFiles = {allFiles([allFiles.bytes]>0).name}';
+        allFiles = strcat(currDir, allFiles);
+        append_pdfs([currDir sep 'lfpCombine.pdf'],allFiles{:});
+    end
+    
+    % multi
+    multiFolders = dir(multiFolders);
+    multiFolders = {multiFolders(3:end).name};
+    for i = 1:length(multiFolders)
+        currDir = [folder sep 'opto' sep 'multiU' sep multiFolders{i} sep];
+        allFiles = dir(currDir);
+        allFiles = {allFiles([allFiles.bytes]>0).name}';
+        allFiles = strcat(currDir, allFiles);
+        append_pdfs([currDir sep 'multiCombine.pdf'],allFiles{:});
+    end
+    
+    % single
+    singleFolders = dir(singleFolders);
+    singleFolders = {singleFolders(3:end).name};
+    for i = 1:length(singleFolders)
+        currDir = [folder sep 'opto' sep 'singleU' sep singleFolders{i} sep];
+        allFiles = dir(currDir);
+        allFiles = {allFiles([allFiles.bytes]>0).name}';
+        allFiles = strcat(currDir, allFiles);
+        append_pdfs([currDir sep 'singleCombine.pdf'],allFiles{:});
+    end
+    %%
 

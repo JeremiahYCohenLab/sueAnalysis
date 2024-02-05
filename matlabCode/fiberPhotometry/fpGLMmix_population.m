@@ -7,7 +7,7 @@ p.addParameter('plotFlag', 1);
 p.addParameter('maxTrial', 1000);
 % p.addParameter('modelName','7params_absPePeAN_scale_int_bias_ord')
 p.addParameter('modelName','5params')
-p.addParameter('regressors', '1+pe+biasSide+pe*biasSide')
+p.addParameter('regressors', '1+outcome+Qchosen')
 p.addParameter('binSize', 1500)% in ms
 p.addParameter('stepSize', 500)
 p.addParameter('saveFigFlag', 1);
@@ -76,7 +76,7 @@ for sess = 1:length(dayList)
 
         %% behavior preparation 
         % parse behavior
-        os = behAnalysisNoPlot_opMD(session);
+        os = behAnalysisNoPlot_opMD(session, 'simpleFlag', 1);
         choice = os.allChoices';
         choice(choice<0) = 0;
         outcome = abs(os.allRewards)';
@@ -181,6 +181,10 @@ for sess = 1:length(dayList)
     else
         if strcmp(region, 'mPFC')
             signalMat = mPFCmatChoice;
+        else 
+            if strcmp(region, 'LCN')
+                signalMat = LCNmatChoice;
+            end
         end
     end
     for w = 1:length(midPointsGLM)

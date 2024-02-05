@@ -88,7 +88,7 @@ end
 
 %%
 figure;
-suptitle([sheet '  ' col])
+sgtitle([sheet '  ' col])
 subplot(4,6,1); hold on;
 plot(len, meanLats, 'c', 'lineWidth', 2);
 patch([len flip(len)], [meanLats + semLats, flip(meanLats - semLats)], 'c', 'FaceAlpha', 0.4, 'EdgeColor', 'none');

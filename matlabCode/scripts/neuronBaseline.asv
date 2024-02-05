@@ -1,0 +1,690 @@
+%% load data and parameters
+load('F:\tmpData\allSessionUnit.mat');
+load('F:\tmpData\waveformFiltered.mat');
+tb = 1; 
+tf = 2;
+stepSize = 200;
+binSize = 1000;
+[root, sep] = currComputer();
+transIdx = zeros(length(waveformsSession), 1);
+for i = 1:length(transIdx)
+    x = cellfun(@(x)strcmp(allSessionWF{i}, x), allSessions);
+    y = cellfun(@(x)strcmp(allUnitWF{i}, x), allUnits);
+    if ~isempty(find(x+y>=2,1))
+        transIdx(i) = 1;
+    end
+end
+waveformsSession = waveformsSession(logical(transIdx),:);
+%%
+%% clustering by waveform
+color1 = [0.2 0.2 0.2];
+color2 = [0.8 0.8 0.8];
+% filtering
+% fs = 32000;
+% fc = [300 8000];
+% [b,a] = butter(2,fc/(fs/2),'bandpass');
+% 
+% waveformsSession = filtfilt(b,a,waveformsSession')';
+%% clustering
+numCat = 2;
+[coeff,score,latent, ~, explained, mu] = pca(zscore(waveformsSession, [], 1));
+indAll = {};
+dis = {};
+for a = 1:10
+    [indAll{a}, ~, dis{a}] = kmeans([score(:, 1:5)], numCat);
+end
+[~,optiInds] = min(cellfun(@mean, dis));
+ind = indAll{optiInds};
+figure2;
+hold on;
+plotFilled(1:size(waveformsSession,2), waveformsSession(ind==1,:), color1);
+plotFilled(1:size(waveformsSession,2), waveformsSession(ind==2,:), color2);
+
+plot([5 21], [-0.3 -0.3], 'LineWidth', 3,'Color', 'k');
+text(10, -0.4, '0.5 ms', 'FontSize', 14)
+
+set(gca, 'Box', 'off')
+set(gca,'tickdir', 'out')
+xlabel('expected value tstats', 'FontSize', 18)
+set(gca, 'XTick', [-10:5:5], 'FontSize', 14)
+set(gca, 'YTick', [0 0.1 0.2], 'FontSize', 14)
+set(gca, 'XColor', 'none')
+set(gca, 'YColor', 'none')
+%% 
+figure2;
+maxScale = max(abs(waveformsSession), [], 'all');
+myMap = [[linspace(0, 1, 100)', linspace(0, 1, 100)', linspace(1, 1, 100)'];
+         [linspace(1, 1, 100)', linspace(1, 0, 100)', linspace(1, 0, 100)']];
+     
+subplot(1,2,1);
+imagesc(1:size(waveformsSession,2), 1:sum(ind==1), waveformsSession(ind==1,:)); 
+ylim([0 max([sum(ind==1) sum(ind==2)])])
+colormap(myMap)
+caxis([-maxScale maxScale])
+title('Type I', 'FontSize', 18)
+set(gca, 'Box', 'off')
+set(gca,'tickdir', 'out')
+xlabel('expected value tstats', 'FontSize', 18)
+set(gca, 'XTick', [-10:5:5], 'FontSize', 14)
+set(gca, 'YTick', [0 0.1 0.2], 'FontSize', 14)
+set(gca, 'XColor', 'none')
+set(gca, 'YColor', 'none')
+colorbar; 
+colorbar('Ticks', [-1.5 0 1.5])
+
+subplot(1,2,2);
+imagesc(1:size(waveformsSession,2), 1:sum(ind==2), waveformsSession(ind==2,:)); 
+ylim([0 max([sum(ind==1) sum(ind==2)])])
+colormap(myMap)
+caxis([-maxScale maxScale])
+title('Type II', 'FontSize', 18)
+colorbar;
+set(gca, 'Box', 'off')
+set(gca,'tickdir', 'out')
+xlabel('expected value tstats', 'FontSize', 18)
+set(gca, 'XTick', [-10:5:5], 'FontSize', 14)
+set(gca, 'YTick', [0 0.1 0.2], 'FontSize', 14)
+set(gca, 'XColor', 'none')
+set(gca, 'YColor', 'none')
+colorbar('Ticks', [-1.5 0 1.5])
+%% waveform 
+figure2;
+[~, sortInd] = sort(score(:, 1));
+waveformsSessionSorted = waveformsSession(sortInd,:);
+indSorted = ind(sortInd);
+subplot(1,2,1); hold on;
+
+plot(1:size(waveformsSession,2), waveformsSessionSorted(indSorted==1,:)+0.5*[1:sum(ind==1)]', 'k');
+plot([10 26], [-5 -5], 'k', 'LineWidth', 2);
+text(18, -7, '0.5 ms', 'HorizontalAlignment', 'center');
+set(gca, 'XColor', 'none');
+set(gca, 'YColor', 'none');
+ylim([-10 0.5*sum(ind==1)+3]);
+xlim([10 size(waveformsSession,2)-10])
+title('Type I')
+
+subplot(1,2,2);hold on;
+plot(1:size(waveformsSession,2), waveformsSessionSorted(indSorted==2,:)+0.5*[1:sum(ind==2)]', 'k');
+plot([10 26], [-5 -5], 'k', 'LineWidth', 2);
+text(18, -7, '0.5 ms', 'HorizontalAlignment', 'center');
+ylim([-10 0.5*sum(ind==1)+3]);
+xlim([10 size(waveformsSession,2)-10])
+title('Type II')
+set(gca, 'XColor', 'none');
+set(gca, 'YColor', 'none');
+%% prepare model
+modelName = '5params';
+allQ = cell(length(allSessions), 1);
+allpChoice = cell(length(allSessions), 1);
+allpe = cell(length(allSessions), 1);
+for i = 1:length(allSessions)
+    session = allSessions{i};
+    unit = allUnits{i};
+    os = behAnalysisNoPlot_opMD(session, 'simpleFlag', 1);
+
+    pd = parseSessionString_df(session, root, sep);
+    
+    params = getStanModelParams_sampsOnly(pd.animalName, 'good', modelName, 2000, 'sessionName', session, 'sessionParamsFlag', 1);
+    t = inferModelVar(session, params, modelName, 'perturb', 0);
+    allQ{i} = t.Q;
+    allpChoice{i} = t.probChoice; 
+    allpe{i} = t.pe;
+end
+%% calculate glm
+regressors = '1 + Qchosen + rightSide';
+focusWin = [0 0.3];
+focusWinPSTH = [2 2]; 
+stepSize = 100;
+binSize = 200;
+maxTrial = 1000;
+[root, sep] = currComputer();
+paramNames = getParamNames_dF(modelName, 1);
+
+sigs = [];
+tStats = []; 
+coeffs = [];
+numBins = 3;
+allTarget = NaN(length(allSessions), numBins);
+allFocusSpikes = NaN(length(allSessions), numBins);
+allPSTH = [];
+targetVar = 'Qchosen';
+for i = 1:length(allSessions)
+    session = allSessions{i};
+    unit = allUnits{i};
+    os = behAnalysisNoPlot_opMD(session, 'simpleFlag', 1);
+    [matCell, matCue] = getUnitMatCue(session, unit, focusWin(1), focusWin(2), stepSize, binSize);
+    currSpikes = sum(matCue, 2)/((focusWin(2)+focusWin(1))/1000);
+    currSpikes = currSpikes(os.responseInds);
+
+    [~, ~, matSlide, slideTime] = getUnitMatCue(session, unit, focusWinPSTH(1), focusWinPSTH(2), stepSize, binSize);
+    matSlide = matSlide(os.responseInds, :);
+    matSlide = zscore(matSlide, [], 'all');
+    
+    
+    choice = os.allChoices';
+    choice(choice<0) = 0;
+    outcome = abs(os.allRewards)';
+    choice = choice(1:min(length(choice), maxTrial));
+    outcome = outcome(1:length(choice));
+    outcomeL = outcome;
+    outcomeL(outcomeL==0) = -1;
+    outcomeR = outcome;
+    outcomeR(outcomeR==0) = -1;
+    outcomeL(choice==1) = 0;
+    outcomeR(choice==0) = 0;
+    responseInds = os.responseInds(1:min(length(choice), maxTrial)); 
+    preRwd = [NaN abs(os.allRewards(1:end-1))]';
+    % behavior
+    % switch
+    svs = zeros(length(os.responseInds),1);
+    svs(os.changeChoice_Inds) = 1;
+    svsNext = [svs(2:end); NaN];
+    svsWhenNrwd = svsNext;
+    svsWhenNrwd(os.rwd_Inds) = NaN;
+    
+    % model
+    Q = allQ{i};
+    pe = allpe{i};
+    probChoice = allpChoice{i};
+    % diff value
+    Qdiff = abs(Q(:,2)-Q(:,1));
+    % total value
+    Qsum = sum(Q,2);
+    % prepe
+    prePe = [NaN; pe(1:end-1)];
+
+    % dawExp
+    dawExp = double(probChoice <= 0.5);
+    % confidence
+    choiceConf = 2.*probChoice - 1;
+    %time in session
+    timeInSession = [os.behSessionData(responseInds).CSon]' - os.behSessionData(responseInds(1)).CSon;
+    % chosen valie
+    Qchosen  = zeros(length(choice),1);
+    Qunchosen  = zeros(length(choice),1);
+    QchosenUpdate = NaN(length(choice),1);
+    for j = 1:length(choice)
+        if j < length(choice)
+            if choice(j)>0
+                Qchosen(j) = Q(j,2);
+                Qunchosen(j) = Q(j,1);
+                QchosenUpdate(j) = Q(j+2);
+            else
+                Qchosen(j) = Q(j,1);
+                Qunchosen(j) = Q(j,2);
+                QchosenUpdate(j) = Q(j+1);
+            end
+        else                
+            if choice(j)>0
+                Qchosen(j) = Q(j,2);
+                Qunchosen(j) = Q(j,1);
+            else
+                Qchosen(j) = Q(j,1);
+                Qunchosen(j) = Q(j,2);
+            end
+            
+        end
+    end
+    % bias side
+    biasSide = zeros(size(responseInds))';
+    biasInd = contains(paramNames, 'bias');
+    if mean(t.params(:,biasInd))>0
+        biasSide(os.lickR_Inds)=1;
+    else
+        biasSide(os.lickL_Inds)=1;
+    end
+    hmm = double(os.hmmStates==1)';
+    lickLat = os.lickLatLogZ';
+    rightSide = zeros(size(pe));
+    rightSide(os.allChoices>0)=1;
+    rightSide(os.allChoices<=0)=-1;
+    preITI = os.timeBtwn';
+    % consecutive no rewards
+    conNrwds = zeros(size(pe));
+    for j = 1:length(choice)
+        if outcome(j) == 0
+            k = 1;
+            while j-k>0 
+                if outcome(j-k)==0
+                    k = k+1;
+                else
+                    break
+                end
+            end                
+            conNrwds(j) = k;
+        end
+    end
+    
+    tbl = table(outcome, outcomeL, outcomeR, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, svsWhenNrwd, conNrwds);
+
+    names = tbl.Properties.VariableNames;
+    % zscore all regressors
+    for cols = 1:length(names)
+        tmp = tbl.(names{cols});
+        if ~isempty(setdiff(tmp(~isnan(tmp)), [0 1 -1 NaN]))
+            tmp(~isnan(tmp)) = zscore(tmp(~isnan(tmp)));
+            tbl.(names{cols}) = tmp;
+        end
+    end
+    % fit model 
+    currSpikes = zscore(currSpikes);
+    currTbl = addvars(tbl, currSpikes);
+    lm = fitlm(currTbl, ['currSpikes~' regressors]);
+    regressorsLm = lm.CoefficientNames(2:end);
+    sigTmp = NaN(1, length(regressorsLm));
+    coeffsTmp = NaN(1, length(regressorsLm));
+    tStatsTmp = NaN(1, length(regressorsLm));
+    for j = 1:(length(lm.CoefficientNames)-1)
+        if lm.Coefficients.pValue(j+1)<0.05
+           sigTmp(j) = sign(lm.Coefficients.Estimate(j+1));
+        else
+           sigTmp(j) = 0;
+        end
+        tStatsTmp(j) = lm.Coefficients.tStat(j+1);
+        coeffsTmp(j) = lm.Coefficients.Estimate(j+1);
+    end
+        sigs(i,:) = sigTmp;
+        tStats(i,:) = tStatsTmp;
+        coeffs(i,:) = coeffsTmp;
+
+    % prepare for tuning curve
+    target = tbl.(targetVar);
+    targetMsTmp = zeros(1, numBins);
+    targetSpikesTmp = zeros(1, numBins);
+    edges = linspace(min(target)-0.001, max(target)+0.001, numBins+1);
+    for b = 1:numBins
+        targetMsTmp(b) = mean(target(target>=edges(b) & target<edges(b+1)));
+        targetSpikesTmp(b) = mean(currSpikes(target>=edges(b) & target<edges(b+1)));
+    end
+    allTarget(i,:) = targetMsTmp;
+    allFocusSpikes(i,:) = targetSpikesTmp;
+    % prepare for PSTH
+    targetPSTHTmp = zeros(numBins, size(matSlide, 2)); 
+    edges = linspace(min(target)-0.001, max(target)+0.001, numBins+1);
+    for b = 1:numBins
+        targetPSTHTmp(b,:) = mean(matSlide(target>=edges(b) & target<edges(b+1), :), 1);
+    end
+
+    allPSTH(:, :, i) = targetPSTHTmp;
+end
+%% plot all rasters
+saveDir = 'F:\allUnits\compareCueVSChoice\';
+sortReg = 'lickLat';
+regressors = '1 + rightSide + Qsum';
+targetVar = 'Qsum';
+focusWinChoice = [2 -1];
+focusWinCue = [2 -0.01];
+focusWinRaster = [2 2];
+focusWinPSTH = focusWinRaster;
+stepSize = 100;
+binSize = 100;
+maxTrial = 1000;
+[root, sep] = currComputer();
+paramNames = getParamNames_dF(modelName, 1);
+numBins = 3;
+colorsPSTH = zeros(numBins, 3);
+for i = 1:numBins
+    colorsPSTH(i, :) = [1, 0.3*(i-1), 0.3*(i-1)]; 
+end
+
+sigsCue = [];
+tStatsCue = []; 
+coeffsCue = [];
+sigsChoice = [];
+tStatsChoice = []; 
+coeffsChoice = [];
+for i = 1:length(allSessions)
+    session = allSessions{i};
+    unit = allUnits{i};
+    os = behAnalysisNoPlot_opMD(session, 'simpleFlag', 1);
+    [~, matChoice] = getUnitMatChoice(session, unit, focusWinChoice(1), focusWinChoice(2), stepSize, binSize);
+    [rasterCellChoice] = getUnitMatChoice(session, unit, focusWinRaster(1), focusWinRaster(2), stepSize, binSize);
+    currSpikesChoice = sum(matChoice, 2)/((focusWinChoice(2)-focusWinChoice(1))/1000);
+    % currSpikes = currSpikes(os.responseInds);
+
+    [~, matCue] = getUnitMatCue(session, unit, focusWinCue(1), focusWinCue(2), stepSize, binSize);
+    [rasterCellCue] = getUnitMatCue(session, unit, focusWinRaster(1), focusWinRaster(2), stepSize, binSize);
+    currSpikesCue = sum(matCue, 2)/((focusWinCue(2)-focusWinCue(1))/1000);
+    currSpikesCue = currSpikesCue(os.responseInds);
+    rasterCellCue = rasterCellCue(os.responseInds);
+
+    [~, ~, matSlide, slideTime] = getUnitMatCue(session, unit, focusWinPSTH(1), focusWinPSTH(2), stepSize, binSize);
+    matSlide = matSlide(os.responseInds, :);
+    matSlide = zscore(matSlide, [], 'all');
+    
+
+    choice = os.allChoices';
+    choice(choice<0) = 0;
+    outcome = abs(os.allRewards)';
+    choice = choice(1:min(length(choice), maxTrial));
+    outcome = outcome(1:length(choice));
+    outcomeL = outcome;
+    outcomeL(outcomeL==0) = -1;
+    outcomeR = outcome;
+    outcomeR(outcomeR==0) = -1;
+    outcomeL(choice==1) = 0;
+    outcomeR(choice==0) = 0;
+    responseInds = os.responseInds(1:min(length(choice), maxTrial)); 
+    preRwd = [NaN abs(os.allRewards(1:end-1))]';
+    % behavior
+    % switch
+    svs = zeros(length(os.responseInds),1);
+    svs(os.changeChoice_Inds) = 1;
+    svsNext = [svs(2:end); NaN];
+    svsWhenNrwd = svsNext;
+    svsWhenNrwd(os.rwd_Inds) = NaN;
+    
+    % model
+    Q = allQ{i};
+    pe = allpe{i};
+    probChoice = allpChoice{i};
+    % diff value
+    Qdiff = abs(Q(:,2)-Q(:,1));
+    % total value
+    Qsum = sum(Q,2);
+    % prepe
+    prePe = [NaN; pe(1:end-1)];
+
+    % dawExp
+    dawExp = double(probChoice <= 0.5);
+    % confidence
+    choiceConf = 2.*probChoice - 1;
+    %time in session
+    timeInSession = [os.behSessionData(responseInds).CSon]' - os.behSessionData(responseInds(1)).CSon;
+    % chosen valie
+    Qchosen  = zeros(length(choice),1);
+    Qunchosen  = zeros(length(choice),1);
+    QchosenUpdate = NaN(length(choice),1);
+    for j = 1:length(choice)
+        if j < length(choice)
+            if choice(j)>0
+                Qchosen(j) = Q(j,2);
+                Qunchosen(j) = Q(j,1);
+                QchosenUpdate(j) = Q(j+2);
+            else
+                Qchosen(j) = Q(j,1);
+                Qunchosen(j) = Q(j,2);
+                QchosenUpdate(j) = Q(j+1);
+            end
+        else                
+            if choice(j)>0
+                Qchosen(j) = Q(j,2);
+                Qunchosen(j) = Q(j,1);
+            else
+                Qchosen(j) = Q(j,1);
+                Qunchosen(j) = Q(j,2);
+            end
+            
+        end
+    end
+    % bias side
+    biasSide = zeros(size(responseInds))';
+    biasInd = contains(paramNames, 'bias');
+    if mean(t.params(:,biasInd))>0
+        biasSide(os.lickR_Inds)=1;
+    else
+        biasSide(os.lickL_Inds)=1;
+    end
+    hmm = double(os.hmmStates==1)';
+    lickLat = os.lickLat';
+    rightSide = zeros(size(pe));
+    rightSide(os.allChoices>0)=1;
+    rightSide(os.allChoices<=0)=-1;
+    preITI = os.timeBtwn';
+    % consecutive no rewards
+    conNrwds = zeros(size(pe));
+    for j = 1:length(choice)
+        if outcome(j) == 0
+            k = 1;
+            while j-k>0 
+                if outcome(j-k)==0
+                    k = k+1;
+                else
+                    break
+                end
+            end                
+            conNrwds(j) = k;
+        end
+    end
+    
+    tbl = table(outcome, outcomeL, outcomeR, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, timeInSession, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, svsWhenNrwd, conNrwds);
+
+    names = tbl.Properties.VariableNames;
+    % zscore all regressors
+    % for cols = 1:length(names)
+    %     tmp = tbl.(names{cols});
+    %     if ~isempty(setdiff(tmp(~isnan(tmp)), [0 1 -1 NaN]))
+    %         tmp(~isnan(tmp)) = zscore(tmp(~isnan(tmp)));
+    %         tbl.(names{cols}) = tmp;
+    %     end
+    % end
+
+    % fit model at time of cue
+    currSpikesChoice = zscore(currSpikesChoice);
+    currTbl = addvars(tbl, currSpikesChoice);
+    lm = fitlm(currTbl, ['currSpikesChoice~' regressors]);
+    regressorsLm = lm.CoefficientNames(2:end);
+    sigTmpChoice = NaN(1, length(regressorsLm));
+    coeffsTmpChoice = NaN(1, length(regressorsLm));
+    tStatsTmpChoice = NaN(1, length(regressorsLm));
+    for j = 1:(length(lm.CoefficientNames)-1)
+        if lm.Coefficients.pValue(j+1)<0.05
+           sigTmpChoice(j) = sign(lm.Coefficients.Estimate(j+1));
+        else
+           sigTmpChoice(j) = 0;
+        end
+        tStatsTmpChoice(j) = lm.Coefficients.tStat(j+1);
+        coeffsTmpChoice(j) = lm.Coefficients.Estimate(j+1);
+    end
+        sigsChoice(i,:) = sigTmpChoice;
+        tStatsChoice(i,:) = tStatsTmpChoice;
+        coeffsChoice(i,:) = coeffsTmpChoice;
+
+    % fit model at time of cue
+    currSpikesCue = zscore(currSpikesCue);
+    currTbl = addvars(tbl, currSpikesCue);
+    lm = fitlm(currTbl, ['currSpikesCue~' regressors]);
+    regressorsLm = lm.CoefficientNames(2:end);
+    sigTmpCue = NaN(1, length(regressorsLm));
+    coeffsTmpCue = NaN(1, length(regressorsLm));
+    tStatsTmpCue = NaN(1, length(regressorsLm));
+    for j = 1:(length(lm.CoefficientNames)-1)
+        if lm.Coefficients.pValue(j+1)<0.05
+           sigTmpCue(j) = sign(lm.Coefficients.Estimate(j+1));
+        else
+           sigTmpCue(j) = 0;
+        end
+        tStatsTmpCue(j) = lm.Coefficients.tStat(j+1);
+        coeffsTmpCue(j) = lm.Coefficients.Estimate(j+1);
+    end
+        sigsCue(i,:) = sigTmpCue;
+        tStatsCue(i,:) = tStatsTmpCue;
+        coeffsCue(i,:) = coeffsTmpCue;
+   
+    [Qsorted, sortInd] = sort(tbl.lickLat);
+    [Qsorted] = sort(tbl.Qsum);
+
+    % generate response and cue rasters
+    lickCell = cell(length(os.responseInds),1);
+    cueCell = cell(length(os.responseInds),1);
+    for j = 1:length(os.responseInds)
+        lickCell{j} = os.lickLat(j);
+        cueCell{j} = -os.lickLat(j);
+    end
+    % prepare for psth
+    target = tbl.(targetVar);
+    targetPSTHTmp = zeros(numBins, size(matSlide, 2)); 
+    edges = linspace(min(target)-0.001, max(target)+0.001, numBins+1);
+    for b = 1:numBins
+        targetPSTHTmp(b,:) = mean(matSlide(target>=edges(b) & target<edges(b+1), :), 1);
+    end
+
+    figure2;
+    LineFormat.Color = [1 0 0];
+    subplot(3,3,[1 4])
+    plotSpikeRaster(rasterCellChoice(sortInd), 'PlotType','vertline', 'VertSpikeHeight',2);
+    plotSpikeRaster(cueCell(sortInd), 'PlotType','vertline', 'VertSpikeHeight', 2,'LineFormat', LineFormat);
+    hold on
+    patch(1000*[-focusWinChoice(1) focusWinChoice(2) focusWinChoice(2) -focusWinChoice(1)], [0 0 length(os.responseInds) length(os.responseInds)], 'r', 'FaceAlpha', 0.25, 'edgeColor', 'none');
+    title(['Choice aligned ' num2str(tStatsTmpChoice(contains(regressors, 'Q')))])
+    ylabel('High <------> Low')
+    xlim(1000*[-focusWinRaster(1) focusWinRaster(2)])
+    
+    subplot(3,3,7)
+    
+    scatter(Qsorted, currSpikesChoice, 25, 'k')
+    title(['sigChoice ' num2str(sigTmpChoice(contains(regressors, 'Q')))])
+
+    subplot(3,3,[2 5])
+    plotSpikeRaster(rasterCellCue(sortInd), 'PlotType','vertline', 'VertSpikeHeight',2);
+    plotSpikeRaster(lickCell(sortInd), 'PlotType','vertline', 'VertSpikeHeight', 2, 'LineFormat', LineFormat);
+    hold on
+    patch(1000*[-focusWinCue(1) focusWinCue(2) focusWinCue(2) -focusWinCue(1)], [0 0 length(os.responseInds) length(os.responseInds)], 'r', 'FaceAlpha', 0.25, 'edgeColor', 'none');
+    title(['Cue aligned ' num2str(tStatsTmpCue(contains(regressors, 'Q')))])
+    xlim(1000*[-focusWinRaster(1) focusWinRaster(2)])
+
+    subplot(3,3,8)
+    scatter(Qsorted, currSpikesCue, 25, 'k')
+    title(['sigChoice ' num2str(sigTmpCue(contains(regressors, 'Q')))])
+
+    subplot(3,3,3)
+    scatter(currSpikesChoice, currSpikesCue, 25, 'k', 'filled', 'MarkerFaceAlpha', 0.10);
+    xlabel('ChoiceWin')
+    ylabel('CueWin')
+    [R, P] = corrcoef(currSpikesChoice, currSpikesCue);
+    title(sprintf('Coeff= %.2f sig= %.2f', R(1,2), P(1,2)))
+
+    subplot(3,3,6)
+    hold on
+    for b = 1:numBins
+        plot(slideTime, targetPSTHTmp(b,:), 'Color', colorsPSTH(b,:), 'LineWidth', 2);    
+    end
+    
+    sgtitle([session unit ' cat ' num2str(ind(i))], 'interpreter', 'none')
+
+    screen = get(0,'Screensize');
+    screen(4) = screen(4) - 100;
+    set(gcf, 'Position', screen)
+    
+    saveFigurePDF(gcf, [saveDir session unit '.pdf']);
+
+end
+%% combine all files into one
+combineFile = 'choiceVScueCombined.pdf';
+allFiles = dir(saveDir);
+allFiles = {allFiles([allFiles.bytes]>0).name}';
+combineInd = contains(allFiles, 'Combined');
+allFiles = allFiles(~combineInd);
+allFiles = strcat(saveDir, allFiles);
+append_pdfs([saveDir combineFile],allFiles{:});
+%%
+bins = 20;
+figure2;
+colors = cool(length(regressorsLm));
+for i = 1:length(regressorsLm)
+    subplot(2, length(regressorsLm), i)
+    hold on
+    edges = linspace(min(tStats(:,i))-0.001, max(tStats(:,i))+0.001, bins);
+    histogram(tStats(sigs(:,i)~=0 & ind==1, i), edges, 'FaceColor', colors(i,:), 'EdgeColor', 'none')
+    histogram(tStats(sigs(:,i)==0 & ind==1, i), edges, 'FaceColor', [0.3 0.3 0.3], 'EdgeColor', 'none')
+    title([regressorsLm{i} ' Type I'])
+    xlim([edges(1) edges(end)])
+
+
+    subplot(2, length(regressorsLm), i + length(regressorsLm))
+    hold on
+    histogram(tStats(sigs(:,i)~=0 & ind==2, i), edges, 'FaceColor', colors(i,:), 'EdgeColor', 'none')
+    histogram(tStats(sigs(:,i)==0 & ind==2, i), edges, 'FaceColor', [0.3 0.3 0.3], 'EdgeColor', 'none')
+    title([regressorsLm{i} ' Type II'])
+    xlim([edges(1) edges(end)])
+end
+sgtitle(['pre' num2str(focusWin(1)) 'post' num2str(focusWin(2))])
+%%
+ load('F:\tmpData\allUnitAUC.mat', 'coeffsMax', 'tStatsMax', 'outcomeInd', 'outcomeInd', 'sigMax');
+%% scatter plot
+figure2Wide;
+currReg = 'Q';
+subplot(1,2,1);
+hold on;
+currInd = sigMax(:, outcomeInd)~= 0 & sigs(:, contains(regressorsLm, currReg)) ~= 0;
+scatter(tStatsMax(ind==1 & currInd, outcomeInd), tStats(ind==1 & currInd, contains(regressorsLm, currReg)), 'r');
+currInd = sigMax(:, outcomeInd)== 0 & sigs(:, contains(regressorsLm, currReg)) == 0;
+scatter(tStatsMax(ind==1 & currInd, outcomeInd), tStats(ind==1 & currInd, contains(regressorsLm, currReg)), [], [0.5 0.5 0.5]);
+currInd = sigMax(:, outcomeInd) + abs(sigs(:, contains(regressorsLm, currReg))) == 1;
+scatter(tStatsMax(ind==1 & currInd, outcomeInd), tStats(ind==1 & currInd, contains(regressorsLm, currReg)), [], [1,0.6,0]);
+title('Type I')
+xlabel('rwdWin')
+ylabel('baseline')
+
+subplot(1,2,2);
+hold on;
+currInd = sigMax(:, outcomeInd)~= 0 & sigs(:, contains(regressorsLm, currReg)) ~= 0;
+scatter(tStatsMax(ind==2 & currInd, outcomeInd), tStats(ind==2 & currInd, contains(regressorsLm, currReg)), 'r');
+currInd = sigMax(:, outcomeInd)== 0 & sigs(:, contains(regressorsLm, currReg)) == 0;
+scatter(tStatsMax(ind==2 & currInd, outcomeInd), tStats(ind==2 & currInd, contains(regressorsLm, currReg)), [], [0.5 0.5 0.5]);
+currInd = sigMax(:, outcomeInd) + abs(sigs(:, contains(regressorsLm, currReg))) == 1;
+scatter(tStatsMax(ind==2 & currInd, outcomeInd), tStats(ind==2 & currInd, contains(regressorsLm, currReg)), [], [1,0.6,0]);
+title('Type II')
+xlabel('rwdWin')
+ylabel('baseline')
+%% polar histogram
+figure2;
+edges = linspace(-pi, pi, 15);
+allVec = [tStatsMax(:, outcomeInd), tStats(:, contains(regressorsLm, currReg))];
+[theta1, rho] = cart2pol(allVec(ind==1,1), allVec(ind==1,2));
+[theta2, rho] = cart2pol(allVec(ind==2,1), allVec(ind==2,2));
+
+polarhistogram(theta1,edges, 'FaceColor', color1, 'FaceAlpha',.7, 'EdgeColor', 'none', 'Normalization', 'Probability');
+hold on; 
+polarhistogram(theta2,edges, 'FaceColor', color2, 'FaceAlpha',.6, 'EdgeColor', 'none', 'Normalization', 'Probability');
+
+title('maxWin Qchosen vs baseline Qsum')
+%% tuning curve
+figure2Wide;
+subplot(1,2,1);
+plotFilled(mean(allTarget(ind==1,:), 1, 'omitmissing'), allFocusSpikes(ind==1,:), color1);
+title('type I')
+ylim([-0.2 0.1])
+xlabel('Qsum')
+ylabel('zscored spike/s baseline')
+subplot(1,2,2);
+plotFilled(mean(allTarget(ind==2,:), 1, 'omitmissing'), allFocusSpikes(ind==2,:), color2);
+title('type II')
+ylim([-0.2 0.1])
+xlabel('Qsum')
+%% tuning curve
+figure2Wide;
+subplot(1,2,1);
+plotFilled(mean(allTarget(ind==1&sigs(:,contains(regressorsLm, 'Q'))<0,:), 1, 'omitmissing'), allFocusSpikes(ind==1&sigs(:,contains(regressorsLm, 'Q'))<0,:), color1);
+title('type I')
+% ylim([-0.1 0.2])
+xlabel('Qsum')
+ylabel('zscored spike/s baseline')
+subplot(1,2,2);
+plotFilled(mean(allTarget(ind==2&sigs(:,contains(regressorsLm, 'Q'))<0,:), 1, 'omitmissing'), allFocusSpikes(ind==2&sigs(:,contains(regressorsLm, 'Q'))<0,:), color2);
+title('type II')
+% ylim([-0.1 0.2])
+xlabel('Qsum')
+%% PSTH
+colorsPSTH = zeros(numBins, 3);
+for i = 1:numBins
+    colorsPSTH(i, :) = [1 0.3*(-i+numBins), 0.3*(-i+numBins)]; 
+end
+
+figure2Wide
+subplot(1, 2, 1)
+for b = 1:numBins
+    temp = squeeze(allPSTH(b,:,ind==1))';
+    plotFilled(slideTime, temp, colorsPSTH(b,:));    
+end
+title('type I')
+legend({'Low Q','','','','','','High Q'})
+
+subplot(1, 2, 2)
+for b = 1:numBins
+    temp = squeeze(allPSTH(b,:,ind==2))';
+    plotFilled(slideTime, temp, colorsPSTH(b,:));    
+end
+title('type II')
+%%
+

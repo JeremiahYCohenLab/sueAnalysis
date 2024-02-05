@@ -1,0 +1,240 @@
+[root, sep] = currComputer();
+dayList = readtable([root 'aniModel.xlsx']);
+allAnis = dayList.ani;
+allCols = dayList.col;
+allFile = dayList.file;
+allSheet = dayList.sheet;
+modelName = '5params';
+% check model fitting
+%% calculate MAP
+paramNames = getParamNames_dF(modelName, 1);
+numBin = 50;
+modelName = '5params';
+allParams = cell(length(allAnis), 1);
+allDates = cell(length(allAnis), 1);
+allSessions = cell(length(allAnis), 1);
+for i = 1:length(allAnis)
+    animalName = allAnis{i};
+    category = allCols{i};
+    sampFile = [animalName category '_', modelName];
+    path = [root animalName sep animalName 'sorted' sep 'stan' sep 'bernoulli' sep modelName sep category sep];
+    modelPath = [path sampFile '.mat'];
+    load(modelPath);
+    eval(['samps = ' sampFile]);
+    eval(['clear ' sampFile]);
+    goodSessions = getDayList(allFile{i}, allSheet{i}, allCols{i});
+    paramAni = NaN(length(goodSessions), length(paramNames)+2);
+    LLani = NaN(size(length(goodSessions)));
+    dates = NaN(length(goodSessions), 1);
+    ws = NaN(length(goodSessions), 1);
+    lc = NaN(length(goodSessions), 1);
+    % get map of all params
+    for sess = 1:length(goodSessions)
+        
+        session = goodSessions{sess};
+        sessInd = find(contains(dayList, session));
+        session = dayList{sessInd};
+        s = behAnalysisNoPlot_opMD(session, 'simpleFlag', 1);
+        paramAni(sess, length(paramNames)+1) = length(intersect(find(s.allRewards==0)+1, s.changeChoice_Inds))/sum(s.allRewards==0);      
+        paramAni(sess, length(paramNames)+2) = length(intersect(find(s.allRewards~=0)+1, s.stayChoice_Inds))/sum(s.allRewards~=0);
+        if sess == 1
+            dayFirst = sessionToDate(session);
+        end
+            for j = 1:length(paramNames)
+                tmp = samps.([paramNames{j}]);
+                tmp = tmp(:, sessInd);
+                noDInd = samps.divergent__~= 1;
+                tmp = tmp(noDInd);
+                [counts, edges] = histcounts(tmp, 50);
+                [~, maxInd] = max(counts);
+                if maxInd<length(counts)
+                    paramAni(sess, j) = mean(tmp(tmp>=edges(maxInd)&tmp<edges(maxInd+1)));
+                else
+                    paramAni(sess, j) = mean(tmp(tmp>=edges(maxInd)&tmp<=edges(maxInd+1)));
+                end
+            end
+        dates(sess) = daysact(dayFirst, sessionToDate(session));
+        tmp = samps.log_lik(:, sessInd);
+        tmp = tmp(noDInd);
+        [counts, edges] = histcounts(tmp, 50);
+        [~, maxInd] = max(counts);
+        if maxInd<length(counts)
+            LLani(sess) = mean(tmp(tmp>=edges(maxInd)&tmp<edges(maxInd+1)))/length(s.allChoices);
+        else
+            LLani(sess) = mean(tmp(tmp>=edges(maxInd)&tmp<=edges(maxInd+1)))/length(s.allChoices);
+        end
+        paramAni(sess, length(paramNames)+3) = LLani(sess);
+    end
+    allParams{i} = paramAni;
+    allDates{i} = dates;
+    allSessions{i} = goodSessions;
+
+end
+%% add lc and ws to params
+paramNames = getParamNames_dF(modelName, 1);
+paramNames = [paramNames, 'lc', 'ws', 'mean(LL)'];
+%% plot all sessions of all animals
+figure2;
+for currParamInd = 1:length(paramNames)
+    figure;
+    sgtitle(paramNames{currParamInd})
+    for i = 1:length(allAnis)
+        hold on
+        subplot(4,6,i)
+        title(allAnis{i})
+        currAllParam = allParams{i};
+
+        currParam = currAllParam(:,currParamInd);
+        [sortedDates, sortedInd] = sort(allDates{i});
+        if strcmp(paramNames(currParamInd), 'bias')
+            currParam = abs(currParam);
+        end
+        currParam = currParam(sortedInd);
+        scatter(sortedDates, currParam, 'k', 'filled');
+        title(allAnis{i})
+    end
+end
+
+
+
+%% plot first and last 10 days
+meanEarly = NaN(length(allAnis), length(paramNames));
+meanLate = NaN(length(allAnis), length(paramNames));
+meanP = NaN(length(allAnis), length(paramNames));
+meanRho = NaN(length(allAnis), length(paramNames));
+trainingLen = NaN(length(allAnis), 1);
+for currParamInd = 1:length(paramNames)
+    for i = 1:length(allAnis)
+
+        currAllParam = allParams{i};
+
+        currParam = currAllParam(:,currParamInd);
+        [sortedDates, sortedInd] = sort(allDates{i});
+        if strcmp(paramNames(currParamInd), 'bias')
+            currParam = abs(currParam);
+        end
+        currParam = currParam(sortedInd);
+        dates = sortedDates;
+        [rho, p] = corr(dates, currParam, 'type','Spearman');
+        meanRho(i, currParamInd) = rho;
+        meanP(i, currParamInd) = p;
+        meanEarly(i, currParamInd) = mean(currParam(dates <= dates(1) + 10));
+        trainingLen(i) = dates(end) - dates(1);
+        if dates(end) - dates(1) >= 20
+            meanLate(i, currParamInd) = mean(currParam(dates >= dates(1) + 20));
+        end
+    end
+end
+%% plot analysis
+numBins = 10;
+
+for currParamInd = 1:length(paramNames)
+    figure2Wide;
+    subplot(1, 3, 1); hold on;
+    edges = linspace(min(meanRho(:, currParamInd))- 0.001, max(meanRho(:, currParamInd))+0.001, numBins+1);
+    histogram(meanRho(meanP(:, currParamInd)<0.05, currParamInd), edges, 'FaceColor','r', 'EdgeColor', 'none');
+    histogram(meanRho(meanP(:, currParamInd)>=0.05, currParamInd), edges, 'FaceColor',[0.7 0.7 0.7], 'EdgeColor', 'none');
+    
+    subplot(1, 3, 2)
+    hold on;
+    plot([ones(1, length(allAnis)); 2*ones(1, length(allAnis))], ...
+        [meanEarly(:, currParamInd)'; meanLate(:, currParamInd)'], 'Color', 'k', 'Marker','o')
+    sgtitle(paramNames{currParamInd})
+    
+    subplot(1, 3, 3)
+    hold on;
+    meanDiff = meanLate(:, currParamInd) - meanEarly(:, currParamInd);
+    edges = linspace(min(meanDiff)- 0.001, max(meanDiff)+0.001, numBins+1);
+    histogram(meanDiff(meanP(:, currParamInd)>0.05), edges, 'FaceColor',[0.7 0.7 0.7], 'EdgeColor', 'none');
+    histogram(meanDiff(meanP(:, currParamInd)<0.05), edges, 'FaceColor','r', 'EdgeColor', 'none');
+     
+    sgtitle(paramNames{currParamInd})
+end
+%% plot analysis long
+numBins = 10;
+longTresh = 30;
+
+for currParamInd = 1:length(paramNames)
+    figure2Wide;
+    subplot(1, 3, 1); hold on;
+    edges = linspace(min(meanRho(:, currParamInd))- 0.001, max(meanRho(:, currParamInd))+0.001, numBins+1);
+    histogram(meanRho(meanP(:, currParamInd)<0.05 & trainingLen>longTresh, currParamInd), edges, 'FaceColor','r', 'EdgeColor', 'none');
+    histogram(meanRho(meanP(:, currParamInd)>=0.05 & trainingLen>longTresh, currParamInd), edges, 'FaceColor',[0.7 0.7 0.7], 'EdgeColor', 'none');
+    
+    subplot(1, 3, 2)
+    hold on;
+    plot([ones(1, sum(trainingLen>longTresh)); 2*ones(1, sum(trainingLen>longTresh))], ...
+        [meanEarly(trainingLen>longTresh, currParamInd)'; meanLate(trainingLen>longTresh, currParamInd)'], 'Color', 'k', 'Marker','o')
+    sgtitle(paramNames{currParamInd})
+    
+    subplot(1, 3, 3)
+    hold on;
+    meanDiff = meanLate(:, currParamInd) - meanEarly(:, currParamInd);
+    edges = linspace(min(meanDiff)- 0.001, max(meanDiff)+0.001, numBins+1);
+    histogram(meanDiff(meanP(:, currParamInd)>0.05 & trainingLen>longTresh), edges, 'FaceColor',[0.7 0.7 0.7], 'EdgeColor', 'none');
+    histogram(meanDiff(meanP(:, currParamInd)<0.05 & trainingLen>longTresh), edges, 'FaceColor','r', 'EdgeColor', 'none');
+     
+    sgtitle(paramNames{currParamInd})
+end
+%% plot analysis long across days
+binSize = 10; % binLen in days
+
+for currParamInd = 1:length(paramNames)
+    figure2;
+    hold on;
+    allParamsTogether = [];
+    allDaysTogether = [];
+    allSessionTogether = [];
+    for i = 1:length(allAnis)
+        currAllParam = allParams{i};
+        currParam = currAllParam(:,currParamInd);
+        [sortedDates, sortedInd] = sort(allDates{i});
+        if strcmp(paramNames(currParamInd), 'bias')
+            currParam = abs(currParam);
+        end
+        currParam = currParam(sortedInd);
+        dates = sortedDates - sortedDates(1);
+        currParam = currParam - currParam(1);
+        goodSessions = allSessions{i};
+        goodSessions = goodSessions(sortedInd);
+        scatter(dates, currParam, 'MarkerEdgeColor', [0.7 0.7 0.7]);
+        allParamsTogether = [allParamsTogether; currParam];
+        allDaysTogether = [allDaysTogether; dates];
+        allSessionTogether = [allSessionTogether; goodSessions];
+    end
+    bins = -1:binSize:max(allDaysTogether)+binSize;
+    sems = NaN(1, length(bins)-1);
+    means = NaN(1, length(bins)-1);
+    meanDays = NaN(1, length(bins)-1);
+    for b = 1:length(bins)-1
+        means(b) = mean(allParamsTogether(allDaysTogether>=bins(b) & allDaysTogether<bins(b+1)), 'omitmissing');
+        meanDays(b) = mean(allDaysTogether(allDaysTogether>=bins(b) & allDaysTogether<bins(b+1)), 'omitmissing');
+        sems(b) = sem(allParamsTogether(allDaysTogether>=bins(b) & allDaysTogether<bins(b+1)));
+    end
+    errorbar(meanDays, means, sems, 'Color', 'k', 'LineWidth', 2);
+    sgtitle([paramNames{currParamInd} '-' paramNames{currParamInd} '_' num2str(0)]);
+end
+%% glm comparison
+binSize = 15; % binLen in days
+edges = -1:binSize:max(allDaysTogether)+binSize;
+colorsNrwd = [linspace(1, 1, length(edges)-1); linspace(0.6, 0, length(edges)-1); linspace(0.6, 0, length(edges)-1)]';
+colorsRwd = [linspace(0.6, 0, length(edges)-1); linspace(0.6, 0, length(edges)-1); linspace(1, 1, length(edges)-1)]';
+figure2; hold on;
+for b = 1:length(edges)-1
+    currSessions = allSessionTogether(allDaysTogether>=edges(b) & allDaysTogether<edges(b+1));
+    [glm_rwdNoRwd] = combineLogReg_session(currSessions, 'numBins', 5);
+    coeffs = glm_rwdNoRwd.Coefficients.Estimate;
+    trialsBack = 0.5 * (length(coeffs) - 1);
+    CIbands = coefCI(glm_rwdNoRwd);
+    coeffs = coeffs(2:end);
+    errorL = abs(coeffs - CIbands(2:end,1));
+    errorU = abs(coeffs - CIbands(2:end,2));
+    
+
+    errorbar((1:trialsBack),coeffs(1:trialsBack),errorL(1:trialsBack),errorU(1:trialsBack),'Color', colorsRwd(b,:),'linewidth',2)
+    errorbar((1:trialsBack),coeffs((1+trialsBack):2*trialsBack),errorL((1+trialsBack):2*trialsBack),errorU((1+trialsBack):2*trialsBack),'Color', colorsNrwd(b,:),'linewidth',2);   
+
+end
+line([0 trialsBack], [0 0], 'color', [0.7, 0.7, 0.7], 'LineStyle', '--');
+%%
+

@@ -267,7 +267,7 @@ figure;
 screen = get(0,'Screensize');
 screen(4) = screen(4) - 100;
 set(gcf, 'Position', screen)
-suptitle([sheet '  ' col])
+sgtitle([sheet '  ' col])
 
 subplot(4,6,1); hold on;
 plot(len, meanLats, 'c', 'lineWidth', 2);

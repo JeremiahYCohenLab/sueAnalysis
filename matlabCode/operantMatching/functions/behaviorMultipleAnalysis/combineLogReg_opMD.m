@@ -50,9 +50,13 @@ for i = 1: length(dayList)
             behSessionData = sessionData;
         end
     elseif p.Results.revForFlag                                    %otherwise generate the struct
-        [behSessionData, ~] = generateSessionData_operantMatching(sessionName);
+        fprintf([sessionName 'no data. \n'])
+        continue
+        % [behSessionData, ~] = generateSessionData_operantMatching(sessionName);
     else
-        [behSessionData, ~, ~, ~] = generateSessionData_operantMatchingDecoupledRwdDelay(sessionName);
+        fprintf([sessionName 'no data. \n'])
+        continue
+        % [behSessionData, ~, ~, ~] = generateSessionData_operantMatchingDecoupledRwdDelay(sessionName);
     end
     if ~exist('behSessionData', 'var')
         behSessionData = sessionData;
@@ -143,7 +147,7 @@ glm_rwdNoRwd = fitglm([combinedRewardsMatx' combinedNoRewardsMatx'], combinedAll
 [fitresult, gof] = singleExpFit(glm_rwdNoRwd.Coefficients.Estimate(2:tMax+1), (1:tMax)');
 
 if p.Results.plotFlag
-    figure2; hold on;
+    figure; hold on;
     relevInds = 2:tMax+1;
     coefVals = glm_rwdNoRwd.Coefficients.Estimate(relevInds);
     CIbands = coefCI(glm_rwdNoRwd);

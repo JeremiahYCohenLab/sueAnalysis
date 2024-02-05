@@ -1,0 +1,29 @@
+folder = 'F:\npOptoRecordings\684930_2023-09-28_12-44-15';
+session = Session(folder);
+events = session.recordNodes{1,1}.recordings{1,1}.ttlEvents('NI-DAQmx-103.PXIe-6341');
+eventsNp = session.recordNodes{1,1}.recordings{1,1}.ttlEvents('Neuropix-PXI-100.ProbeA-AP');
+samples = session.recordNodes{1,1}.recordings{1,1}.continuous('Neuropix-PXI-100.ProbeA-AP').samples;
+ttlSig = session.recordNodes{1,1}.recordings{1,1}.continuous('NI-DAQmx-103.PXIe-6341').samples;
+timeStamps =  session.recordNodes{1,1}.recordings{1,1}.continuous('Neuropix-PXI-100.ProbeA-AP').timestamps;
+ttlSigTime = session.recordNodes{1,1}.recordings{1,1}.continuous('NI-DAQmx-103.PXIe-6341').timestamps;
+%% opto
+ind = find(events.line == 1 & events.state);
+ttlOnTimeNp = events.timestamp(ind);
+%%
+ind = find(eventsNp.line == 1 & eventsNp.state);
+ttlOnTimeNI = events.timestamp(ind);
+%%
+optoFolder = {dir(folder).name};
+optoFolder = optoFolder{contains(optoFolder, 'opto')};
+opto = readmatrix([folder '\' optoFolder]);
+freq = sum(opto(2:end, [6, 9]), 2);
+freq = 1000./freq;
+allFreq = unique(freq);
+sites = opto(2:end, 2);
+allSites = unique(sites);
+%%
+focusWin = [10 11]; % focus time in minutes
+focusWin = focusWin*60 + timeStamps(1);
+
+focusInds = timeStamps>focusWin(1) & timeStamps<focusWin(2);
+

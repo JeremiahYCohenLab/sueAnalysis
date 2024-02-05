@@ -262,7 +262,7 @@ else
     
 end
 titleTxt = strrep([sheet ' - ' p.Results.modelName], '_', ' ');
-suptitle(titleTxt);
+sgtitle(titleTxt);
 set(gcf,'Renderer', 'Painters')
 
 dFig = figure;
@@ -294,7 +294,7 @@ for currPy = 1:numParams
     end
 end
 titleTxt = [titleTxt ' (divergence rate = ' num2str(sum(samples.divergent__)/length(samples.divergent__)) ')'];
-suptitle(titleTxt);
+sgtitle(titleTxt);
 set(gcf, 'renderer', 'painters', 'position', [-1919 41 1920 963])
 
 
@@ -309,11 +309,21 @@ if p.Results.saveFlag
         save([savePath saveFile], sampFile, 'paramEsts', 'params', 'outcome', 'choice');
     else
         if p.Results.nonfixedParams
-            sampFile = [sheet category, '_', p.Results.modelName, '_', p.Results.nonfixedParams];
+            if ~isnan(str2double(sheet))
+                sampFile = ['m' sheet category, '_', p.Results.modelName, '_', p.Results.nonfixedParams];
+            else
+                sampFile = [sheet category, '_', p.Results.modelName, '_', p.Results.nonfixedParams];
+            end
+
             saveFile = [sampFile '.mat'];
             eval([sampFile,  ' = samples;']);
         else
-            sampFile = [sheet category '_', p.Results.modelName];
+            if ~isnan(str2double(sheet))
+                sampFile = ['m' sheet category '_', p.Results.modelName];
+            else
+                sampFile = [sheet category '_', p.Results.modelName];
+            end
+            
             saveFile = [sampFile '.mat'];
             eval([sampFile,  ' = samples;']);
         end
@@ -322,7 +332,7 @@ if p.Results.saveFlag
         save([savePath saveFile], sampFile, 'paramEsts', 'dayList', 'summary');
         
     end
-    %save([savePath saveFile], sampFile, 'paramEsts', 'dayList', 'tbl');
+    % save([savePath saveFile], sampFile, 'paramEsts', 'dayList', 'tbl');
     
 end
     

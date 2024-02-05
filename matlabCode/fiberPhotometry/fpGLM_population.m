@@ -2,14 +2,13 @@ function fpGLM_population(xlFile, sheet, category, region, varargin)
 %task and model parameters
 p = inputParser;
 % default parameters if none given
-p.addParameter('cellName', ['all']);
 p.addParameter('plotFlag', 1);
 p.addParameter('maxTrial', 1000);
 % p.addParameter('modelName','7params_absPePeAN_scale_int_bias_ord')
 p.addParameter('modelName','5params')
-p.addParameter('regressors', '1+pe+biasSide+pe*biasSide')
-p.addParameter('binSize', 1500)% in ms
-p.addParameter('stepSize', 500)
+p.addParameter('regressors', '1+outcome+Qchosen+rightSide')
+p.addParameter('binSize', 1000)% in ms
+p.addParameter('stepSize', 250)
 p.addParameter('saveFigFlag', 1);
 p.parse(varargin{:});
 dayList = getDayList(xlFile, sheet, category);
@@ -41,7 +40,7 @@ for sess = 1:length(dayList)
   
     fprintf([session '\n']);
     % paths
-    fpDataPath = [pd.sortedFolder session '_photometry.mat'];
+    fpDataPath = [pd.sortedFolder session '_photometryCombinewithKH.mat'];
     % load behavior and neurons
     if exist(fpDataPath,'file')
         load(fpDataPath)
@@ -51,7 +50,7 @@ for sess = 1:length(dayList)
 
         %% behavior preparation 
         % parse behavior
-        os = behAnalysisNoPlot_opMD(session);
+        os = behAnalysisNoPlot_opMD(session, 'simpleFlag', 1);
         choice = os.allChoices';
         choice(choice<0) = 0;
         outcome = abs(os.allRewards)';
@@ -72,11 +71,8 @@ for sess = 1:length(dayList)
         svsNext = [svs(2:end); NaN];
         svsWhenNrwd = svsNext;
         svsWhenNrwd(os.rwd_Inds) = NaN;
-        [t,~,noSession] = getStanModelParams_samps(p.Results.modelName, [path sampFile '.mat'], 2000, 'sessionName', session);
-        if noSession
-            fprintf(['no good behavior in ' session '\n']);
-            continue
-        end
+        params = getStanModelParams_sampsOnly(pd.animalName, 'good', p.Results.modelName, 2000, 'sessionName', session);
+        t = inferModelVar(session, params, p.Results.modelName);
         
         % diff value
         Qdiff = abs(t.Q(:,2)-t.Q(:,1));
@@ -124,7 +120,7 @@ for sess = 1:length(dayList)
         else
             biasSide(os.lickL_Inds)=1;
         end
-        hmm = double(os.hmmStates==1)';
+        % hmm = double(os.hmmStates==1)';
         lickLat = os.lickLatLogZ';
         rightSide = zeros(size(pe));
         rightSide(os.allChoices>0)=1;
@@ -151,29 +147,37 @@ for sess = 1:length(dayList)
             peBar = t.peBar;
             pePe = t.pePe;
             scPe = pe.*(1-peBar);
-            tbl = table(outcome, outcomeL, outcomeR, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, svsWhenNrwd, conNrwds, scPe, aN, peBar, pePe);
+            tbl = table(outcome, outcomeL, outcomeR, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, lickLat, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, svsWhenNrwd, conNrwds, scPe, aN, peBar, pePe);
         else
-            tbl = table(outcome, outcomeL, outcomeR, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, lickLat, hmm, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, svsWhenNrwd, conNrwds);
+            tbl = table(outcome, outcomeL, outcomeR, pe, prePe, preRwd, Qsum, Qdiff, choiceConf, biasSide, rightSide, lickLat, Qchosen, Qunchosen, QchosenUpdate, preITI, dawExp, svs, svsNext, svsWhenNrwd, conNrwds);
         end
         names = tbl.Properties.VariableNames;
         % zscore all regressors
-        for cols = 1:length(names)
-            tmp = tbl.(names{cols});
-            if ~isempty(setdiff(tmp(~isnan(tmp)), [0 1 -1 NaN]))
-                tmp(~isnan(tmp)) = zscore(tmp(~isnan(tmp)));
-                tbl.(names{cols}) = tmp;
-            end
-        end
+        % for cols = 1:length(names)
+        %     tmp = tbl.(names{cols});
+        %     if ~isempty(setdiff(tmp(~isnan(tmp)), [0 1 -1 NaN]))
+        %         tmp(~isnan(tmp)) = zscore(tmp(~isnan(tmp)));
+        %         tbl.(names{cols}) = tmp;
+        %     end
+        % end
 
     % slide window
     allTrial_Matx_slide = zeros(length(os.responseInds), length(midPointsGLM));
     if strcmp(region, 'LC')
-        signalMat = LCmatChoice;
+        signalMat = LCmatChoiceG;
     else
         if strcmp(region, 'mPFC')
-            signalMat = mPFCmatChoice;
+            signalMat = mPFCmatChoiceG;
+        else
+            if strcmp(region, 'LCN')
+                signalMat = LCNmatChoiceG;
+            end
         end
     end
+    bl = mean(signalMat(:,midPoints<0), 2);
+    signalMat = signalMat - bl;
+    fprintf([session ' removed baseline \n'])
+    
     midPoints = 1000*midPoints;
     for w = 1:length(midPointsGLM)
         timeInd = (midPoints >= midPointsGLM(w)-0.5*p.Results.binSize) & (midPoints <= (midPointsGLM(w)+0.5*p.Results.binSize -1));
@@ -207,7 +211,8 @@ for sess = 1:length(dayList)
     end
     allPe = [allPe; pe];
     allChoices = [allChoices; choice];
-    focusInd = find(slideTime>301,1);
+    % focusInd = find(slideTime>301,1);
+    focusInd = 15;
     allSignal = [allSignal; allTrial_Matx_slide(:,focusInd)];
     populationSig = cat(3, populationSig, sigs);
     populationTStats  = cat(3,populationTStats, tStats);
@@ -221,7 +226,7 @@ tFig = figure;
 screen = get(0,'Screensize');
 screen(4) = screen(4) - 100;
 set(tFig, 'Position', screen)
-suptitle('tStats distribution')
+sgtitle('tStats distribution')
 colors = cool(length(regressors));
 subplot(length(regressors)+1,1,1); hold on;
 allSig = abs(populationSig);
@@ -258,7 +263,71 @@ for k = 1:length(midPointsGLM)
         end
     end
 end
+%% scatter plot for coeffs
+indX = strcmp(regressors, 'outcome');
+indY = strcmp(regressors, 'Qchosen');
+for k = 1:length(midPointsGLM)
+    figure2Wide;
+    subplot(1,2,1); hold on;
+    tmpCoeffX = squeeze(populationCoeffs(k,indX,:));
+    tmpCoeffY = squeeze(populationCoeffs(k,indY,:));
+    scatter(tmpCoeffX, tmpCoeffY, 'm', 'filled');
+    plot([0 0], minmax(tmpCoeffY'), "Color", 'k', 'LineStyle', '--', 'LineWidth', 2);
+    plot(minmax(tmpCoeffX'), [0 0], "Color", 'k', 'LineStyle', '--', 'LineWidth', 2);
+    xlabel('outcome');
+    ylabel('Qchosen');
 
+
+    allVec = [tmpCoeffX, tmpCoeffY];
+    % allVec = [coeffsMax(:, outcomeInd), coeffsMax(:,qInd)];
+    [theta, rho] = cart2pol(allVec(:,1), allVec(:,2));
+    subplot(1,2,2) 
+    edges = linspace(-pi, pi, 20);
+    polarhistogram(theta,edges, 'FaceColor', [0.1 0.1 0.1], 'FaceAlpha',.7, 'EdgeColor', 'none', 'Normalization', 'Probability');
+    sgtitle(num2str(midPointsGLM(k)));
+
+    
+end
+
+numBins = 6;
+meanPe = NaN(length(dayList), numBins);
+meanSig = NaN(length(dayList), numBins);
+semSig = NaN(length(dayList), numBins);
+
+for i = 1:length(dayList)
+    currPe = allPe{i};
+    currSignal = zscore(allSignal{i});
+    edges = [linspace(min(currPe)-0.001, 0, 0.5*numBins+1), linspace(0, max(currPe)+0.001, 0.5*numBins+1)];
+    edges = edges([1:0.5*numBins+1, 0.5*numBins+3:end]);
+    edges = quantile(currPe, linspace(0, 1, numBins+1));
+    for j = 1:numBins
+        meanPe(i, j) = mean(currPe(currPe>edges(j) & currPe<=edges(j+1)));
+        meanSig(i, j) = mean(currSignal(currPe>edges(j) & currPe<=edges(j+1)));
+        semSig(i, j) = sem(currSignal(currPe>edges(j) & currPe<=edges(j+1)));
+    end    
+end
+
+figure2; hold on;
+plot(meanPe, meanSig, 'Color', 'k', 'LineWidth', 2);
+patch([meanPe, flip(meanPe)], [meanSig-semSig, flip(meanSig+semSig)], 'k', 'FaceAlpha', 0.4, 'edgeColor', 'none')
+xlabel('pe')
+ylabel('dF/F')
+
+figure2; hold on;
+plotFilled(mean(meanPe, 1, 'omitnan'), meanSig, 'k')
+xlabel('pe')
+ylabel('zscored(dF/F)')
+title([sheet num2str(midPointsGLM(focusInd))])
+
+
+
+
+
+
+
+
+
+%%
 % for i = 1:length(midPoints)
 %     titleStr = sprintf('From %d To %d', edges(i), edges(i+1)); 
 %     figure;

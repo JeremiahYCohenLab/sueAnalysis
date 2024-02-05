@@ -15,14 +15,15 @@ import pandas as pd
 import numpy as np
 import deeplabcut
 #%%
-file = r'J:\PSpupil.xlsx'
-sheet  = 'PS02pupil'
+file = r'F:\activationAll.xlsx'
+sheet  = '689515'
 col = 'all'
 cdnn = 'edgeHiddenLEDinPupil-ZS-2021-05-19'
-cdnn = 'pupilEdge-Katie-2021-12-08'
+cdnn = 'pupilAllen-ZS-2023-12-20'
+#cdnn = 'pupilEdge-Katie-2021-12-08'
 
 df = pd.read_excel(file, sheet_name = sheet, usecols = [col])
-ind = df[col] == df[col][50];
+
 for i in range(len(df)):
     deeplabcut.extractPupil(df[col][i], cdnn, label = False)
            
@@ -41,9 +42,9 @@ for i in range(len(ani)):
 #%%    
 deeplabcut.add_new_videos(config,[videoNew],copy_videos=False)
 #%%
-file = r'F:\inhibitionGt.xlsx'
-sheet  = 'allGt'
-col = 'cueOnGood'
+file = r'F:\PSpupil.xlsx'
+sheet  = 'PS02pupil'
+col = 'all'
 cdnn = 'tongueTrackingStraight-ZS-2022-12-01'
 
 df = pd.read_excel(file, sheet_name = sheet, usecols = [col])

@@ -4,7 +4,7 @@ function [m, ind] = myMaxAll(A)
 % m is maximum value
 % ind an 1XD array, indicating position of maximum value in A
 
-[m, I] = max(A,'','all', 'linear');
+[m, I] = max(A,[],'all', 'linear');
 sizeA = size(A);
 ind = zeros(size(sizeA));
 numA = prod(sizeA);

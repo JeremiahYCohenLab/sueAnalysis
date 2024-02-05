@@ -1,8 +1,8 @@
 clear all
-session = 'mZS086d20220612';
+session = 'mZS082d20220607';
 [root, sep] = currComputer();
 pd = parseSessionString_df(session, root, sep);
-load([pd.sortedFolder 'lickSession.mat']);
+load([pd.sortedFolder 'lickSession.mat'], 'lickSession');
 s = behAnalysisNoPlot_opMD(session, 'simpleFlag', 1);
 
 % lick detection
@@ -56,6 +56,7 @@ colNum = ceil(length(s.responseInds)/15);
 % screen = get(0,'Screensize');
 % screen(4) = screen(4) - 100;
 % set(gcf, 'Position', screen);
+%%
 for j = 1:length(s.responseInds)
 %%
     currTongue = lickSession(s.responseInds(j)).tongue;
@@ -256,7 +257,7 @@ for j = 1:length(s.responseInds)
 %         ylabel('right      horizontal      left')
     end
 end
-
+%%
 savepath = [pd.sortedFolder session '_tongue.mat'];
 save(savepath, 'allLicks', 'allLicks');
 %%
@@ -279,7 +280,7 @@ for j = 1:length(allLicks)
         tempY = temp(:,2);
         firstLicks = [firstLicks; temp];
         time = allLicks(j).time(allLicks(j).windows(decisionID,1): allLicks(j).windows(decisionID,2));
-        horiLocation = 30*length(firstLicks);
+        horiLocation = 2*length(firstLicks);
         if s.allChoices(j) == 1
             subplot(1,4,1); hold on;
             plot(time-s.lickLat(j), tempX + horiLocation, 'Color', 'k');
@@ -408,7 +409,7 @@ for j = 1:length(ind)
 
     end
 end
-
+%%
 % speedAtPort(s.allChoices==1 & ~isnan(speedAtPort)) = zscore(speedAtPort(s.allChoices==1 & ~isnan(speedAtPort)));
 % speedAtPort(s.allChoices==-1 & ~isnan(speedAtPort)) = zscore(speedAtPort(s.allChoices==-1 & ~isnan(speedAtPort)));
 
@@ -423,11 +424,11 @@ QdiffChosen(s.allChoices==-1) = - QdiffChosen(s.allChoices==-1);
 pRight = t.probChoice;
 pRight(s.allChoices==1) = 1 - t.probChoice(s.allChoices==1);
 
-[~, ind] = sort(t.probChoice);
+[~, ind] = sort(Qdiff);
 colors = cool(length(s.allChoices));
 
 figure2; hold on;
-s.meanX = NaN(1, length(ind));
+meanX = NaN(1, length(ind));
 meanY = NaN(1, length(ind));
 meanXPre = NaN(1, length(ind));
 meanXMax = NaN(1, length(ind));
@@ -466,9 +467,9 @@ for j = 1:length(ind)
         time = allLicks(ind(j)).time(allLicks(ind(j)).windows(decisionID,1): allLicks(ind(j)).windows(decisionID,2));
 %         horiLocation = 30*length(firstLicks);
         hold on; 
-%         plot(tempX, tempY, 'LineWidth', 0.5, 'LineStyle', ':', 'Color', colors(j,:));
+        plot(tempX, tempY, 'LineWidth', 0.5, 'LineStyle', ':', 'Color', colors(j,:));
 %         patchline(tempX, tempY, 'linestyle', ':', 'edgecolor', colors(j,:), 'linewidth', 0.5, 'edgealpha', 0.4);
-        scatter(meanXMax(ind(j)), meanYMax(ind(j)), 15, colors(j,:), 'filled', 'MarkerFaceAlpha', 0.75);
+        % scatter(meanXMax(ind(j)), meanYMax(ind(j)), 15, colors(j,:), 'filled', 'MarkerFaceAlpha', 0.75);
 
         lickDisTmpX = diff(tempX);
         lickDisTmpY = diff(tempY);
@@ -530,10 +531,10 @@ scatter(meanXMax(ind), meanYMax(ind), 15, colors,  'filled', 'MarkerFaceAlpha', 
 %% tuning with location
 numBins = 3;
 target = QdiffChosen;
-m = abs(meanXMax);
+m = meanXMax;
 % edges = quantile(target, linspace(0, 1, numBins+1));
 edges = linspace(min(target)-0.001, max(target)+0.001, numBins+1);
-edges(1) = edges(1) - 0.0001;
+edges(1) = edges(1) - 0.0001;   
 edges(end) = edges(end) + 0.0001;
 meanTarget = NaN(1, numBins);
 meanXLoc = NaN(1, numBins);
