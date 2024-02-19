@@ -79,8 +79,8 @@ latMin = zeros(size(allUnits));
 fr = zeros(size(allUnits));
 presence = zeros(size(allUnits));
 maxChannel = zeros(size(allUnits));
-waveforms = zeros(length(allUnits), 210);
-waveforms2D = zeros(length(allUnits), 210, 7);
+waveforms = zeros(length(allUnits), 210*2);
+waveforms2D = zeros(length(allUnits), 210*2, 7);
 % waveforms2DLin = [];
 isiThresh = 2/1000; % violation in seconds
 isiMet = zeros(size(allUnits));
@@ -95,14 +95,47 @@ for i = 1:length(allUnits)
     % define left or right
     maxChannel(i) = minChannel;
     currLoc = channelInfo.properties.location(minChannel,1);
+    currY = channelInfo.properties.location(minChannel,2);
+    peakChannelMatch = channelInfo.properties.location(:,1) ~= currLoc & channelInfo.properties.location(:,2) == currY;
+    if sum(peakChannelMatch) == 0
+        peakChannelMatchUp = channelInfo.properties.location(:,1) ~= currLoc & channelInfo.properties.location(:,2) == currY+20;
+        peakChannelMatchDown = channelInfo.properties.location(:,1) ~= currLoc & channelInfo.properties.location(:,2) == currY-20;
+        
+    end
     group = find(channelInfo.properties.location(:,1) == currLoc);
     noGroup = find(channelInfo.properties.location(:,1) ~= currLoc);
     meanWFcurr = currTemplate(:, group);
+    
     [~, peakChannel] = min(min(meanWFcurr, [], 1));
+
     % existChannels = find(mean(meanWFcurr, 1)~=0);
-    meanWFcurr2D = NaN(210, 7);
-    meanWFcurr2D(:, max(1, 3-(peakChannel-2)):(7 - max(0, peakChannel+3 - size(meanWFcurr, 2)))) = meanWFcurr(:, max([peakChannel-3, 1]):min(peakChannel+3,size(meanWFcurr, 2)));
-    meanWFcurr1D = meanWFcurr(:, peakChannel);
+    % meanWFcurr2D = NaN(210, 7);
+    % meanWFcurr2D(:, max(1, 3-(peakChannel-2)):(7 - max(0, peakChannel+3 - size(meanWFcurr, 2)))) = meanWFcurr(:, max([peakChannel-3, 1]):min(peakChannel+3,size(meanWFcurr, 2)));
+    % meanWFcurr1D = meanWFcurr(:, peakChannel);
+
+    %% find the other col
+    meanWFcurrMatch = currTemplate(:, noGroup);
+    peakChannelMatch = find(peakChannelMatch(noGroup));
+    if sum(peakChannelMatch) == 0
+        if sum(peakChannelMatchDown) == 0           
+            peakChannelMatch = 1;
+            temp =  [NaN(210, 1), meanWFcurrMatch(:,1:end)];
+        else
+            peakChannelMatch = find(peakChannelMatchDown(noGroup))+1;
+            temp = [meanWFcurrMatch(:,1:find(peakChannelMatchDown(noGroup))), NaN(210, 1), meanWFcurrMatch(:,find(peakChannelMatchUp(noGroup)):end)];
+        end
+
+        meanWFcurrMatch = temp; 
+
+    end
+    % fprintf([unitID '\n']);
+    meanWFcurr2D = NaN(210*2, 7);
+    meanWFcurr2D(1:210, max(1, 3-(peakChannel-2)):(7 - max(0, peakChannel+3 - size(meanWFcurr, 2)))) = ...
+        [meanWFcurr(:, max([peakChannel-3, 1]):min(peakChannel+3,size(meanWFcurr, 2)))];
+    meanWFcurr2D(211:end, max(1, 3-(peakChannelMatch-2)):(7 - max(0, peakChannelMatch+3 - size(meanWFcurrMatch, 2)))) = ...
+        [meanWFcurrMatch(:, max([peakChannelMatch-3, 1]):min(peakChannelMatch+3,size(meanWFcurrMatch, 2)))];
+    meanWFcurr1D = [meanWFcurr(:, peakChannel); meanWFcurrMatch(:, peakChannelMatch)];
+
     
 
     maxV = max(currTemplate, [], 'all');
@@ -130,8 +163,11 @@ for i = 1:length(allUnits)
     peakChannel = min(squeeze(meanWF(3, :, :, 1)), [], 1);
     [~, peakChannel] = sort(peakChannel);
     
-    waveforms(i,:) = mean(squeeze(meanWF(1, :, peakChannel(1), 1)), 1);
-
+    % waveforms(i,:) = mean(squeeze(meanWF(1, :, peakChannel(1), 1)), 1);
+    % fprintf([unitID ' ' num2str(length(peakChannelMatch)) '\n']);
+    if length(meanWFcurr1D)<400
+        a = 123445;
+    end
     waveforms(i,:) = meanWFcurr1D';
     waveforms2D(i,:,:) = meanWFcurr2D;
     % waveforms2DLin(i,:) = reshape(meanWFcurr2D, 1, []);
@@ -190,14 +226,14 @@ isiT = 0.5; % in percentile
 optoInd = find(pMax > pMean+0.5 & isiMet<isiT & peakAll < -80); 
 
 %%
-optoInd = find(pMax > pMean+0.2 & maxChannel>=min(maxChannel(optoInd)) & maxChannel<= max(maxChannel(optoInd)) & fr<10 & fr>0.1 & isiMet<isiT & peakAll < -100);
+optoInd = find(pMax > pMean+0.2 & maxChannel>=min(maxChannel(optoInd)) & maxChannel<= max(maxChannel(optoInd)) & fr<10 & fr>0.1 & isiMet<isiT & peakAll < -80);
 
 %% prepare waveform
 % realign
-pre = 1/1000; % in s
-post = 2/1000; 
+pre = 2/3 * 1/1000; % in s
+post = 4/3 * 1/1000; 
 sf = 30000;
-len = (pre+post) * sf+1;
+len = 2*((pre+post) * sf+1);
 
 maxChannelOpto = maxChannel(optoInd);
 meanChannelOpto = meanLocs(optoInd);
@@ -206,25 +242,42 @@ baseline = mean(waveformsOpto(:, 1:30), 2);
 
 waveformsAligned = zeros(length(optoInd), len);
 for i = 1:length(optoInd)
-    [peak, peakInd] = min(waveformsOpto(i,:));
-    waveformsAligned(i,:) = waveformsOpto(i,(peakInd-pre*sf):(peakInd+post*sf)) - baseline(i);
-    waveformsAligned(i,:) = waveformsAligned(i,:)/min(waveformsAligned(i,:));
+    [~, peakInd] = min(waveformsOpto(i,:));
+    waveformsAligned(i,:) = waveformsOpto(i,[(peakInd-pre*sf):(peakInd+post*sf), 210+((peakInd-pre*sf):(peakInd+post*sf))]) - baseline(i);
+    peak = min(waveformsAligned(i,:));
+    waveformsAligned(i,:) = waveformsAligned(i,:)/peak;
 end
 %% 2D waveform analysis
 clear waveforms2DAligned
 maxChannelOpto = maxChannel(optoInd);
 meanChannelOpto = meanLocs(optoInd);
 waveformsOpto = waveforms(optoInd, :);
-baseline = mean(waveformsOpto(:, 1:30), 2);
+baseline = mean(waveformsOpto(:, 20:40), 2);
 waveforms2DLinAligned = [];
 for j = 1:length(optoInd)
     currWF2D = squeeze(waveforms2D(optoInd(j), :, :))';
    
-
+    % Normalize to peak channel
     [peak, peakInd] = min(waveformsOpto(j,:));
 
-    alignTemp = currWF2D(:, (peakInd-pre*sf):(peakInd+post*sf)) - baseline(j);
+    alignTemp = [currWF2D(:, (peakInd-pre*sf):(peakInd+post*sf)), currWF2D(:, 210+((peakInd-pre*sf):(peakInd+post*sf)))] - baseline(j);
     alignTemp = alignTemp/peak;
+    figure2 
+    imagesc(alignTemp);
+    colorbar
+    % if alignTemp(3, pre*sf+1) > alignTemp(5, pre*sf+1)
+    %     alignTemp = flip(alignTemp, 1);
+    % end
+
+
+    % Normalize all channels
+    % [~, peakInd] = min(currWF2D(4,1:210));
+    % 
+    % baseline = mean(currWF2D(:, 1:30), 2);
+    % alignTemp = [currWF2D(:, (peakInd-pre*sf):(peakInd+post*sf)), currWF2D(:, 210+((peakInd-pre*sf):(peakInd+post*sf)))] - baseline;
+    % peak = min(alignTemp(:, 1:0.5*size(alignTemp,2)), [], 2);
+    % alignTemp = alignTemp./peak;
+
 
     waveforms2DAligned(j,:,:) = alignTemp;
 
@@ -233,22 +286,22 @@ for j = 1:length(optoInd)
 
     waveforms2DLinAligned(j, :) = alignLin;
 
-       %plot
-        figure2;
-        subplot(3,2,[1, 3]);
-        imagesc(currWF2D);
-
-        subplot(3,2,5);
-        plot(waveforms(optoInd(j), :)');
-
-        subplot(3,2,[2, 4]);
-        imagesc(alignTemp);
-        
-
-        subplot(3,2,6);
-        plot(waveformsAligned(j,:));
-
-        sgtitle(num2str(maxChannelOpto(j)));
+       % plot
+        % figure2;
+        % subplot(3,2,[1, 3]);
+        % imagesc(currWF2D);
+        % 
+        % subplot(3,2,5);
+        % plot(waveforms(optoInd(j), :)');
+        % 
+        % subplot(3,2,[2, 4]);
+        % imagesc(alignTemp);
+        % 
+        % 
+        % subplot(3,2,6);
+        % plot(waveformsAligned(j,:));
+        % 
+        % sgtitle(num2str(maxChannelOpto(j)));
     
 end
 %% plot
@@ -381,7 +434,13 @@ if plotFlag
     append_pdfs([savePath session 'CombinedTaggedOnly.pdf'],optoFiles{:});
 end
 %%
+allUnitsOpto = allUnits(optoInd);
+for i = 1:length(allUnitsOpto)
+    temp = split(allUnitsOpto{i}, '_');
+    allUnitsOpto{i} = temp{1};
+end
+optoMetrics = metrics(optoInd,:);
 savePath = [folderPath, session, '\sorted\'];
-save([savePath 'wfLoc.mat'], "waveformsOpto", 'waveformsAligned', 'waveforms2DAligned', 'waveforms2DLinAligned', 'maxChannelOpto', 'meanChannelOpto');
+save([savePath 'wfLoc.mat'], "waveformsOpto", 'waveformsAligned', 'waveforms2DAligned', 'waveforms2DLinAligned', 'maxChannelOpto', 'meanChannelOpto', 'allUnitsOpto', "optoMetrics");
 
 %%

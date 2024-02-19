@@ -1,0 +1,8 @@
+fitGaussMixture
+------------------------
+
+Functions implementing the EM-algorithm for fitting a mixture of Gaussians. 
+Since the EM-algorithm naturally handles missing data, the implementation also 
+allows the data matrix X to have missing data, indicated by NaNs.
+
+See the included documentary for more details.
