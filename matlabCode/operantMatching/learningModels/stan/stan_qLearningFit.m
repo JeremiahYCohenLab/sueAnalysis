@@ -120,7 +120,7 @@ else
         end
         outcomeTmp{i} = abs(behavStruct.allRewards); 
         ITItemp{i} = behavStruct.timeBtwn;
-        Tsesh(i,1) = length(outcomeTmp{i});
+        Tse  sh(i,1) = length(outcomeTmp{i});
     end
     transGuess = [0.4 0.3 0.3;
                   0.2 0.8 0;

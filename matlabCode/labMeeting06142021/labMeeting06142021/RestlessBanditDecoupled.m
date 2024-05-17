@@ -47,7 +47,7 @@ classdef RestlessBanditDecoupled < handle
             obj.RewardProbabilitiesList = p.Results.RewardProbabilities;
             obj.RewardProbabilities(1,1) = obj.RewardProbabilitiesList(randi(3));
             obj.RewardProbabilities(1,2) = obj.RewardProbabilitiesList(randi(3));
-            while obj.RewardProbabilities(1,:) == 10;
+            while obj.RewardProbabilities(1,:) == 10
                 obj.RewardProbabilities(1,1) = obj.RewardProbabilitiesList(randi(3));
                 obj.RewardProbabilities(1,2) = obj.RewardProbabilitiesList(randi(3));
             end

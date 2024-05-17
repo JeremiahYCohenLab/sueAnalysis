@@ -106,39 +106,39 @@ for sess = 1:length(dayList)
     Qcombined = [Qcombined Qchosen'];
     rpeCombined = [rpeCombined t.peOri'];
 
-%     figure;
-%     % raw figure
-%     subplot(4,4,[1 5 9])
-%     [~, sortInd] = sort(s.lickLatZ);
-%     plotSpikeRaster(allTrial_lick(sortInd),'PlotType','vertline'); 
-%     xlim([-200 2000])
-%     subplot(4,4, 13)
-%     edges = 0:20:max(ILIDist)+1;
-%     histogram(ILIDist, edges, 'FaceColor', 'c', 'EdgeColor', 'none')
-%     set(gca, 'YScale', 'log')
-%     
-%     % cleaned figure
-%     subplot(4,4,[2 6 10])
-%     [~, sortInd] = sort(s.lickLatZ);
-%     plotSpikeRaster(allTrial_lickClean(sortInd),'PlotType','vertline'); 
-%     xlim([-200 2000])
-%     subplot(4,4, 14)
-%     edges = 0:20:max(ILIDistCleaned)+1;
-%     histogram(ILIDistCleaned, edges, 'FaceColor', 'm', 'EdgeColor', 'none')
-%     set(gca, 'YScale', 'log')
-%     
-%     subplot(4,4,[3, 7, 11]); hold on;
-%     [~, sortInd] = sort(t.pe);    
-%     plot([-200 2000], [length(s.nrwd_Inds) length(s.nrwd_Inds)], 'LineStyle', '--', 'Color', 'r'); hold on;
-%     plotSpikeRaster(allTrial_lick(sortInd),'PlotType','vertline'); hold on;
-%     plot(([s.rwdDelay+50 s.rwdDelay+50]), [0 length(s.allChoices)], 'LineStyle', '--', 'Color', 'r');
-%     plot(([s.rwdDelay+50+500 s.rwdDelay+50+500]), [0 length(s.allChoices)], 'LineStyle', '--', 'Color', 'r');
-%     xlim([-200 2000])
-%        
-%     sgtitle(session)
-%     screen = get(0,'Screensize');
-%     screen(4) = screen(4) - 100;
-%     set(gcf, 'Position', screen);
+    figure;
+    % raw figure
+    subplot(4,4,[1 5 9])
+    [~, sortInd] = sort(s.lickLatZ);
+    plotSpikeRaster(allTrial_lick(sortInd),'PlotType','vertline'); 
+    xlim([-200 2000])
+    subplot(4,4, 13)
+    edges = 0:20:max(ILIDist)+1;
+    histogram(ILIDist, edges, 'FaceColor', 'c', 'EdgeColor', 'none')
+    set(gca, 'YScale', 'log')
+
+    % cleaned figure
+    subplot(4,4,[2 6 10])
+    [~, sortInd] = sort(s.lickLatZ);
+    plotSpikeRaster(allTrial_lickClean(sortInd),'PlotType','vertline'); 
+    xlim([-200 2000])
+    subplot(4,4, 14)
+    edges = 0:20:max(ILIDistCleaned)+1;
+    histogram(ILIDistCleaned, edges, 'FaceColor', 'm', 'EdgeColor', 'none')
+    set(gca, 'YScale', 'log')
+
+    subplot(4,4,[3, 7, 11]); hold on;
+    [~, sortInd] = sort(t.pe);    
+    plot([-200 2000], [length(s.nrwd_Inds) length(s.nrwd_Inds)], 'LineStyle', '--', 'Color', 'r'); hold on;
+    plotSpikeRaster(allTrial_lick(sortInd),'PlotType','vertline'); hold on;
+    plot(([s.rwdDelay+50 s.rwdDelay+50]), [0 length(s.allChoices)], 'LineStyle', '--', 'Color', 'r');
+    plot(([s.rwdDelay+50+500 s.rwdDelay+50+500]), [0 length(s.allChoices)], 'LineStyle', '--', 'Color', 'r');
+    xlim([-200 2000])
+
+    sgtitle(session)
+    screen = get(0,'Screensize');
+    screen(4) = screen(4) - 100;
+    set(gcf, 'Position', screen);
     edges = quantile(s.lickLatLogZ, linspace(0, 1, numBins+1));
 %     edges = linspace(min(s.lickLatLogZ)-0.01, max(s.lickLatLogZ)+0.01, numBins+1);
     edges(1) = edges(1)-0.01;
@@ -260,4 +260,130 @@ figure2; hold on;
 edges = linspace(min(lickNumPostRwdCombined), max(lickNumPostRwdCombined), 50);
 histogram(lickNumPostRwdCombined(indLaser),edges, 'Normalization', 'probability', 'FaceColor', 'm', 'EdgeColor', 'none');
 histogram(lickNumPostRwdCombined(indNoLaser),edges, 'Normalization', 'probability', 'FaceColor', 'k', 'EdgeColor', 'none');
+%% to analyze no lick window distribution 
 %%
+numBins = 6;
+tf = 10;
+tb = 10;
+minILI = 50;
+postRwdTime = 500;
+earlyLickRate = [];
+ILIDist = [];
+ILIDistCleaned = [];
+lickDiffCombined =[];
+lickLatCombined = [];
+lickNumPostRwdCombined = [];
+laserCombined = [];
+rwdCombined = [];
+rpeCombined = [];
+svsCombined = [];
+Qcombined = [];
+lickLatBinned = NaN(length(dayList), numBins);
+lickDiffBinned = NaN(length(dayList), numBins);
+lickNumBinned = NaN(length(dayList), numBins);
+peBinned = NaN(length(dayList), numBins);
+lickNumPeBinned = NaN(length(dayList), numBins);
+lickNumPeBinnedLaser = NaN(length(dayList), numBins);
+lickNumPeBinnedNoLaser = NaN(length(dayList), numBins);
+peBinnedNrwd = NaN(length(dayList), 0.5*numBins);
+lickNumPeBinnedNrwd = NaN(length(dayList), 0.5*numBins);
+lickNumPeBinnedLaserNrwd = NaN(length(dayList), 0.5*numBins);
+lickNumPeBinnedNoLaserNrwd = NaN(length(dayList), 0.5*numBins);
+peOriBinnedNrwd = NaN(length(dayList), 0.5*numBins);
+lickNumPeOriBinnedNrwd  = NaN(length(dayList), 0.5*numBins);
+lickNumPeOriBinnedLaserNrwd  = NaN(length(dayList), 0.5*numBins);
+lickNumPeOriBinnedNoLaserNrwd  = NaN(length(dayList), 0.5*numBins);
+for sess = 1:length(dayList)
+    session = dayList{sess};
+    s = behAnalysisNoPlot_opMD(session, 'simpleFlag', 1);
+    sessionData = s.behSessionData;
+    allLicks = sessionData.allLicks;
+    allTrial_lick = {};
+    for k = 1:length(s.responseInds)
+        currLickInds = allLicks>(sessionData(s.responseInds(k)).CSon - tb*1000) & (allLicks<sessionData(s.responseInds(k)).CSon + tf*1000);
+        currLicks = allLicks(currLickInds) - sessionData(s.responseInds(k)).CSon;
+        allTrial_lick{k} = currLicks;
+    end
+
+    figure2;hold on
+    % raw figure licks
+    [~, sortInd] = sort(s.lickLatZ);
+    plotSpikeRaster(allTrial_lick(sortInd),'PlotType','vertline'); 
+    title(session)
+    hold on
+    xlim([-tb*1000 tf*1000])
+    plot([0, 0], [0, length(sessionData)], 'Color', 'r', "LineStyle", '--')
+    plot([-1000, -1000], [0, length(sessionData)], 'Color', 'b', "LineStyle", '--')
+    % P(lick) - time since ITI start, 1s window
+    
+    
+
+
+end
+%%
+plotSessionLick('m689514d20240109')
+plotSessionLick('m689514d20231129') 
+plotSessionLick('m689514d20231129') 
+plotSessionLick('mZS060d20210426')
+plotSessionLick('m699462d20240119')
+plotSessionLick('m684890d20231211')
+%%
+function plotSessionLick(session)
+    tb = 3;
+    tf = 5;
+    binSize = 100;
+    stepSize = 50;
+    edgesLick = [-tb*1000+binSize*0.5]:stepSize:[tf*1000-binSize*0.5];
+    s = behAnalysisNoPlot_opMD(session, 'simpleFlag', 1);
+    sessionData = s.behSessionData;
+    allLicks = sessionData.allLicks;
+    allTrial_lick = {};
+    allLick_mat = zeros(length(sessionData), length(edgesLick));
+    for k = 1:length(s.responseInds)
+        currLickInds = allLicks>(sessionData(s.responseInds(k)).CSon - tb*1000) & (allLicks<sessionData(s.responseInds(k)).CSon + tf*1000);
+        currLicks = allLicks(currLickInds) - sessionData(s.responseInds(k)).CSon;
+        allTrial_lick{k} = currLicks;
+        countsPre = searchsort(currLicks, edgesLick-binSize*0.5);
+        countsPost = searchsort(currLicks, edgesLick+binSize*0.5);
+        allLick_mat(k,:) = 1000 * (countsPost - countsPre)/binSize;
+    end
+    figure; 
+    subplot(3, 1, 2); hold on
+    % raw figure licks
+    [~, sortInd] = sort(s.lickLatZ);
+    LineFormat = struct;
+    LineFormat.LineWidth = 2;
+    plotSpikeRaster(allTrial_lick(sortInd),'PlotType','vertline', 'LineFormat', LineFormat); 
+    title(session)
+    hold on
+    xlim([-tb*1000 tf*1000])
+    plot([0, 0], [0, length(sessionData)], 'Color', 'r', "LineStyle", '--')
+    plot([-1000, -1000], [0, length(sessionData)], 'Color', 'b', "LineStyle", '--')
+
+    subplot(3, 1, 1); hold on
+    edges = 0:20:2000;
+    small = find(diff(allLicks)<50) + 1;
+    allLicks(small) = NaN;
+    allLicks = allLicks(~isnan(allLicks));
+    histogram(diff(allLicks), edges)
+    title('inter lick interval')  
+
+    subplot(3, 1, 3); hold on
+    plotFilled(edgesLick, allLick_mat, 'k')
+    xlim([-tb*1000 tf*1000])
+    title('Mean lick rate')
+    xlabel('Time from go cue')
+
+    sgtitle(session)
+
+end
+%%
+function locs = searchsort(x, edges)
+    locs = zeros(size(edges));
+    for i = 1:length(locs)
+        locs(i) = sum(x<=edges(i));
+    end
+end
+
+
+    

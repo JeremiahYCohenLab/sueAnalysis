@@ -6,7 +6,7 @@ p.addParameter('cellName', ['all']);
 p.addParameter('plotFlag', 1);
 p.addParameter('maxTrial', 1000);
 p.addParameter('modelName','5params')
-p.addParameter('regressors', '1+outcome+Qchosen')
+p.addParameter('regressors', '1+outcome+Qchosen+rightSide')
 p.addParameter('binSize', 1500)% in ms
 p.addParameter('stepSize', 500)
 p.addParameter('focusWin', [0 1500])% in ms, from time of reward
@@ -47,7 +47,8 @@ for sess = 1:length(dayList)
     if exist(fpDataPath,'file')
         load(fpDataPath)
     else
-        fprintf([session 'no fp file' '\n']);;
+        fprintf([session 'no fp file' '\n']);
+        continue
     end
         midPoints = 1000*midPoints;
 
@@ -156,7 +157,7 @@ for sess = 1:length(dayList)
             signalMat = mPFCmatChoiceG(:, :);
         else 
             if strcmp(region, 'LCN')
-                signalMat = LCNmatG(responseInds, :);
+                signalMat = LCNmatChoiceG(:, :);
             end
         end
     end
@@ -164,9 +165,9 @@ for sess = 1:length(dayList)
     
     signalMat = zscore(signalMat, [], 'all');
     bl = mean(signalMat(:,midPoints<-500 & midPoints>-1500), 2);
-    signalMat = signalMat - bl;
-
-    fprintf([session ' removed baseline \n'])
+    % signalMat = signalMat - bl;
+    % 
+    % fprintf([session ' removed baseline \n'])
     
 
     % bin signal by PE
@@ -193,7 +194,7 @@ for sess = 1:length(dayList)
     
     % linear model
     
-    tbl = table(outcome, Qchosen, Qunchosen, Qsum, Qdiff, svs);
+    tbl = table(outcome, Qchosen, Qunchosen, Qsum, Qdiff, svs, rightSide);
     currSignal = signalFocus;
     currTbl = addvars(tbl, currSignal);
     lm = fitlm(currTbl, ['currSignal~' p.Results.regressors]);

@@ -32,7 +32,7 @@ switch a.Results.taskType
 end
     
 % [left, right]; these are Q values going INTO that trial, before making a decision
-Q = [0 0; NaN(maxTrial-1, 2)]; % initialize Q values as 0
+ Q = [0 0; NaN(maxTrial-1, 2)]; % initialize Q values as 0
 %rBar values, initialized by specified input
 
 allChoices = ones(1, maxTrial);

@@ -1,0 +1,7 @@
+x=139, y=219, width=107, height=97
+x=244, y=315, width=0, height=0
+x=168, y=238, width=41, height=46
+x=212, y=290, width=0, height=0
+x=150, y=225, width=9, height=11
+x=234, y=299, width=0, height=0
+x=155, y=217, width=84, height=96

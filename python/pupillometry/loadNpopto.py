@@ -4,13 +4,15 @@ Created on Tue Oct 10 21:49:55 2023
 
 @author: zhixi
 """
-
+#%%
 import spikeinterface as si
 import numpy as np
 from pathlib import Path
 from scipy.io import savemat
 import os
+from spikeinterface.curation import apply_sortingview_curation
 
+#%%
 sessionID = '684930_2023-09-28_12-44-15'
 savePath = fr"F:/npOptoRecordings/{sessionID}/sorted/processed/";
 
@@ -89,3 +91,14 @@ laser_response_metrics = laser_response_metrics.astype(object)
 
 print('Unit number')
 print(np.shape(sorting_good.unit_ids))
+#%%
+
+from neuroconv.tools.spikeinterface.spikeinterface import (
+    add_electrodes_info,
+    add_units_table,
+    get_electrode_group_indices
+)
+add_units_table
+
+
+np.load('C:/Users/zhixi/Downloads/spikes.npy')

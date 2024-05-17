@@ -1,13 +1,13 @@
-session = 'mZS082d20220610';
+% load from session folder: 
 videoName = '19-11-11.958';
 rootVideo = 'D:\video\';
 [root, sep] = currComputer(); 
 dlcName = 'tongueTrackingStraightDec1shuffle1_250000';
-%% play raw video
+% play raw video
 pdVideo = parseSessionString_df(session, rootVideo, sep);
 lickVideo = [pdVideo.lickPath videoName '.avi'];
 % implay(lickVideo);
-%% load trajectories
+% load trajectories
 pd = parseSessionString_df(session, root, sep);
 s = behAnalysisNoPlot_opMD(session, 'simpleFlag', 1);
 trajPath = [pd.sortedFolder 'lickSession.mat'];
@@ -138,8 +138,8 @@ for i = startF:endF
         end
     end
     plot([crop(1,2)-crop(1,1) crop(1,2)-crop(1,1)-1*ratio], [360 360], 'LineWidth', 2, 'Color', 'w')
-    text(crop(1,2)-crop(1,1)-10, crop(1,2)-crop(1,1)-50, sprintf('%d mm', 1), 'FontSize', 20, 'Color', [1, 1, 1], 'HorizontalAlignment','right') 
-    text(0.5*(crop(1,2)-crop(1,1)), crop(2,2)-crop(2,1)+50, sprintf('%d ms', round(time(i)-time(startF))), 'FontSize', 20, 'Color', [0 0 0], 'HorizontalAlignment','center')
+    text(crop(1,2)-crop(1,1)-5, crop(1,2)-crop(1,1)-50, sprintf('%d mm', 1), 'FontSize', 20, 'Color', [1, 1, 1], 'HorizontalAlignment','right') 
+    text(0.5*(crop(1,2)-crop(1,1)), crop(2,2)-crop(2,1)+20, sprintf('%d ms', round(time(i)-time(startF))), 'FontSize', 20, 'Color', [0 0 0], 'HorizontalAlignment','center')
     hold off
     % subplot(10,2,6)
     % plot(time(startF:i), cueStates(startF:i), 'LineWidth', 3, 'Color', 'k');

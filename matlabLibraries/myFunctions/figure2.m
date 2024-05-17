@@ -15,7 +15,7 @@ else                 % Multiple monitors
   set(FigH, 'Units', 'pixels');
   pos = get(FigH, 'Position');
   x = MP(1,1) + 0.5*MP(2,1) - 0.5*pos(3) ;
-  y = MP(2,2) + 0.5*MP(1,4) - 0.5*pos(4) + 500; 
+  y = MP(2,2) + 0.5*MP(1,4) - 0.5*pos(4) + 100; 
   set(FigH, 'Position', [x,y, pos(3:4)], ...
             'Visible', paramVisible);
 end
