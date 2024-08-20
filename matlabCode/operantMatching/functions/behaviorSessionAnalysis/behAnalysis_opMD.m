@@ -81,7 +81,7 @@ end
 %% 
 figure
 set(gcf, 'Position', get(0,'Screensize'))
-suptitle(sessionName)
+sgtitle(sessionName)
 
 %%
 subplot(6,8,[17:20 25:28]); hold on

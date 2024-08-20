@@ -1,4 +1,4 @@
-function PhotometryPreprocessingAllen(session)
+function PhotometryPreprocessingAllen_Gi_Th(session)
 samplingFreq = 20;
 fc = 9;
 tb = 5000;
@@ -7,12 +7,12 @@ binSize = 100;
 stepSize = 100;
 [root, sep] = currComputer();
 pd = parseSessionString_df(session, root, sep);
-%% prevent it from over-writing previous data
+% % prevent it from over-writing previous data
 % if exist([pd.sortedFolder session '_photometry.mat'], "file")
 %     fprintf([session ' photometry data preprocessed before. \n']);
 %     return
 % end
-%%
+% %
 s = behAnalysisNoPlot_opMD(session, 'simpleFlag', 1);  
 p = parseSessionString_df(session, root, sep);
 fpDir = [p.baseFolder sep 'photometry' sep];
@@ -76,7 +76,7 @@ end
 timeFIP = timeStampsG; % in ms 
 % detect when recording started and ended
 diffSig = max(GSig, [], 2) - min(GSig, [], 2);
-startInd = find(diffSig>50, 1);
+startInd = find(diffSig>30,1)+1;
 
 GSig = GSig(startInd:end,:);
 IsoSig = IsoSig(startInd:end,:);
@@ -102,8 +102,8 @@ end
 % aligned to go cue
 midPoints = (-tb + 0.5*binSize):stepSize:(tf - 0.5*binSize);
 mPFCmatG = zeros(length(trialStarts), length(midPoints));
-LCNmatG = zeros(length(trialStarts), length(midPoints));
-LCmatG = zeros(length(trialStarts), length(midPoints));
+THmatG = zeros(length(trialStarts), length(midPoints));
+GimatG = zeros(length(trialStarts), length(midPoints));
 
 for i = 1:length(trialStarts)
     tmpTime = timeFIP(timeFIP > (trialStarts(i)-tb) & timeFIP <= (trialStarts(i)+tf));
@@ -112,14 +112,14 @@ for i = 1:length(trialStarts)
     tmp3 = dFF{3}(timeFIP > (trialStarts(i)-tb) & timeFIP <= (trialStarts(i)+tf));
     for j = 1:length(midPoints)
         mPFCmatG(i,j) = mean(tmp1(tmpTime>trialStarts(i)+midPoints(j)-0.5*binSize & tmpTime<=trialStarts(i)+midPoints(j)+0.5*binSize));
-        LCNmatG(i,j) = mean(tmp2(tmpTime>trialStarts(i)+midPoints(j)-0.5*binSize & tmpTime<=trialStarts(i)+midPoints(j)+0.5*binSize));
-        LCmatG(i,j) = mean(tmp3(tmpTime>trialStarts(i)+midPoints(j)-0.5*binSize & tmpTime<=trialStarts(i)+midPoints(j)+0.5*binSize));
+        THmatG(i,j) = mean(tmp2(tmpTime>trialStarts(i)+midPoints(j)-0.5*binSize & tmpTime<=trialStarts(i)+midPoints(j)+0.5*binSize));
+        GimatG(i,j) = mean(tmp3(tmpTime>trialStarts(i)+midPoints(j)-0.5*binSize & tmpTime<=trialStarts(i)+midPoints(j)+0.5*binSize));
     end
 end
 % aligned to choice
 mPFCmatChoiceG = zeros(length(s.responseInds), length(midPoints));
-LCNmatChoiceG = zeros(length(s.responseInds), length(midPoints));
-LCmatChoiceG = zeros(length(s.responseInds), length(midPoints));
+THmatChoiceG = zeros(length(s.responseInds), length(midPoints));
+GimatChoiceG = zeros(length(s.responseInds), length(midPoints));
 for i = 1:length(s.responseInds)
     currTime = trialStarts(s.responseInds(i)) + s.lickLat(i);
     tmpTime = timeFIP(timeFIP > (currTime-tb) & timeFIP <= (currTime+tf));
@@ -128,8 +128,8 @@ for i = 1:length(s.responseInds)
     tmp3 = dFF{3}(timeFIP > (currTime-tb) & timeFIP <= (currTime+tf));
     for j = 1:length(midPoints)     
         mPFCmatChoiceG(i,j) = mean(tmp1(tmpTime>currTime+midPoints(j)-0.5*binSize & tmpTime<=currTime+midPoints(j)+0.5*binSize));
-        LCNmatChoiceG(i,j) = mean(tmp2(tmpTime>currTime+midPoints(j)-0.5*binSize & tmpTime<=currTime+midPoints(j)+0.5*binSize));
-        LCmatChoiceG(i,j) = mean(tmp3(tmpTime>currTime+midPoints(j)-0.5*binSize & tmpTime<=currTime+midPoints(j)+0.5*binSize));
+        THmatChoiceG(i,j) = mean(tmp2(tmpTime>currTime+midPoints(j)-0.5*binSize & tmpTime<=currTime+midPoints(j)+0.5*binSize));
+        GimatChoiceG(i,j) = mean(tmp3(tmpTime>currTime+midPoints(j)-0.5*binSize & tmpTime<=currTime+midPoints(j)+0.5*binSize));
     end
 end
 frameRate = samplingFreq;
@@ -141,24 +141,25 @@ end
 midPoints = midPoints/1000;
 
 figure;
-for i = 1:2
-    subplot(4,2,i);
+num_channels_plot = 3;
+for i = 1:num_channels_plot
+    subplot(4,num_channels_plot,i);
     hold on;
     plot(GSig(:,i), 'Color','b')
     plot(bl{i})
     plot(isoBl{i})
     legend({'signal', 'bl', 'isobl'})
-    title('G')
+    title(['G-channel ' num2str(i)])
 
-    subplot(4,2,2+i)
+    subplot(4,num_channels_plot,num_channels_plot+i)
     plot(IsoSig(:,i), 'Color','k')
     title('Iso')
 
-    subplot(4,2,4+i)
+    subplot(4,num_channels_plot,2*num_channels_plot+i)
     plot(GSig(:,i), 'Color', 'b')
     title('iso removal')
 
-    subplot(4,2,6+i)
+    subplot(4,num_channels_plot,3*num_channels_plot+i)
     plot(dFF{i}, 'Color', 'k')
     title('baseline removal')    
 
@@ -172,5 +173,5 @@ set(gcf, 'Position', screen);
 savePath = pd.saveFigFolder;
 saveFigurePDF(gcf,[savePath session 'preCompare.pdf']);
 
-save([pd.sortedFolder session '_photometryCombinewithKH.mat'], 'mPFCmatG', 'LCNmatG', 'LCmatG', 'mPFCmatChoiceG', 'LCNmatChoiceG', 'LCmatChoiceG','tb', 'tf', 'frameRate', 'binSize', 'stepSize', 'midPoints', 'GSig', 'dFF', 'timeFIP', 'trialStarts');
+save([pd.sortedFolder session '_photometryGi.mat'], 'mPFCmatG', 'THmatG', 'GimatG', 'mPFCmatChoiceG', 'THmatChoiceG', 'GimatChoiceG','tb', 'tf', 'frameRate', 'binSize', 'stepSize', 'midPoints', 'GSig', 'dFF', 'timeFIP', 'trialStarts');
 
