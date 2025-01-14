@@ -91,12 +91,18 @@ allNoRewards(allRewards~=0) = 0;
 timeBtwn = [behSessionData(responseInds(2:end)).CSon] - [behSessionData(responseInds(1:end-1)).rewardTime];
 timeBtwn(timeBtwn < 0 ) = 0;
 timeBtwn = [NaN timeBtwn(~isnan(timeBtwn))];
+% all licksL
+combinedLicksL = horzcat(behSessionData.licksL);
+% all licksR
+combinedLicksR = horzcat(behSessionData.licksR);
+[licksL_cleaned, licksR_cleaned] = clean_up_licks(combinedLicksL, combinedLicksR, 'plot', 0, 'rebound_thresh', 50, 'crosstalk_thresh', 100);
 
 %% determine and plot lick latency distributions for each spout
 lickLat = [];       lickRate = [];      lickRateRwd = [];
 lickLat_L = [];     lickRate_L = [];    lickRateRwd_L = [];
 lickLat_R = [];     lickRate_R = [];    lickRateRwd_R = [];
 lickSide = NaN(1,length(behSessionData));
+harvest_time = 1500;
 for i = 1:length(behSessionData)
     if ~isnan(behSessionData(i).rewardTime)
         lickLat = [lickLat behSessionData(i).respondTime - behSessionData(i).CSon];
@@ -104,8 +110,8 @@ for i = 1:length(behSessionData)
             lickSide(i) = -1;
             lickLat_L = [lickLat_L behSessionData(i).respondTime - behSessionData(i).CSon];
          
-            lickRateTemp = length(find(behSessionData(i).licksL < behSessionData(i).rewardTime))/(0.001*rwdDelay);
-            lickRateRwdTemp = sum(behSessionData(i).licksL >= behSessionData(i).rewardTime & behSessionData(i).licksL < behSessionData(i).rewardTime+1000)/(0.001 * 1000); 
+            lickRateTemp = length(find(licksL_cleaned < behSessionData(i).rewardTime & licksL_cleaned > behSessionData(i).CSon))/(0.001*rwdDelay);
+            lickRateRwdTemp = sum(licksL_cleaned >= behSessionData(i).rewardTime & licksL_cleaned <behSessionData(i).rewardTime+harvest_time)/(0.001 * harvest_time); 
             lickRate = [lickRate lickRateTemp];
             lickRateRwd = [lickRateRwd lickRateRwdTemp];
 
@@ -113,21 +119,29 @@ for i = 1:length(behSessionData)
             lickSide(i) = 1;
             lickLat_R = [lickLat_R behSessionData(i).respondTime - behSessionData(i).CSon];   
             
-            lickRateTemp = length(find(behSessionData(i).licksR < behSessionData(i).rewardTime))/(0.001*rwdDelay);
-            lickRateRwdTemp = sum(behSessionData(i).licksR >= behSessionData(i).rewardTime & behSessionData(i).licksR < behSessionData(i).rewardTime+1000)/(0.001 * 1000); 
+            lickRateTemp = length(find(licksR_cleaned < behSessionData(i).rewardTime & licksR_cleaned > behSessionData(i).CSon))/(0.001*rwdDelay);
+            lickRateRwdTemp = sum(licksR_cleaned >= behSessionData(i).rewardTime & licksR_cleaned < behSessionData(i).rewardTime+harvest_time)/(0.001 * harvest_time); 
             lickRate = [lickRate lickRateTemp];
             lickRateRwd = [lickRateRwd lickRateRwdTemp];
 
         end
     else
         lickTemp = [behSessionData(i).licksL, behSessionData(i).licksR];
-        if min(lickTemp) <= behSessionData(i).CSon + 1000
-            if min(behSessionData(i).licksL) < min(behSessionData(i).licksR)
-                lickSide(i) = -1;
-            else
-                lickSide(i) = 1;
+        lickRateRwdTemp = 0;
+        if ~isempty(lickTemp)
+            if min(lickTemp) <= behSessionData(i).CSon + 1000
+                if min(behSessionData(i).licksL) < min(behSessionData(i).licksR)
+                    lickSide(i) = -1;
+                    lickRateRwdTemp = sum(licksL_cleaned >= behSessionData(i).CSon & licksL_cleaned < behSessionData(i).CSon+harvest_time)/(0.001 * harvest_time); 
+    
+                else
+                    lickSide(i) = 1;
+                    lickRateRwdTemp = sum(licksR_cleaned >= behSessionData(i).CSon & licksR_cleaned < behSessionData(i).CSon+harvest_time)/(0.001 * harvest_time);
+                end
             end
         end
+
+        lickRateRwd = [lickRateRwd lickRateRwdTemp];
         
     end
  end
@@ -151,14 +165,16 @@ lickLatLogZ(indsL) = zscore(lickLat_Llog);
 
 %% Z scored lick rate (eliminates trials with impossible lick rates)
 % and remove too short lickLats.
-realID = lickRate<20 & lickRateRwd < 20 ; % take 20Hz as the max lickRate
-responseRateInds = find(lickRate < 20 & lickRateRwd < 20);
+% realID = lickRate<20 & lickRateRwd < 20 ; % take 20Hz as the max lickRate
+responseRateInds = find(lickRate < 20 & lickRateRwd(responseInds) < 20);
 lickRateZ = NaN(1,length(allChoices));
-lickRate(~realID) = NaN;
+% lickRate(~realID) = NaN;
 lickRateRwdZ = NaN(1,length(allChoices));
-lickRateRwd(~realID) = NaN;
-indsR = allChoices == 1 & realID;
-indsL = allChoices == -1 & realID;
+% lickRateRwd(~realID) = NaN;
+% indsR = allChoices == 1 & realID;
+% indsL = allChoices == -1 & realID;
+indsR = allChoices == 1;
+indsL = allChoices == -1;
 lickRate_R = zscore(lickRate(indsR));
 lickRate_L = zscore(lickRate(indsL));
 lickRateRwd_R = zscore(lickRateRwd(indsR));

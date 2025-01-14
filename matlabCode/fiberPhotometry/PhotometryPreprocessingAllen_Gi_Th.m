@@ -76,11 +76,11 @@ end
 timeFIP = timeStampsG; % in ms 
 % detect when recording started and ended
 diffSig = max(GSig, [], 2) - min(GSig, [], 2);
-startInd = find(diffSig>30,1)+1;
+startInd = find(diffSig>30,1)+1+20;
 
-GSig = GSig(startInd:end,:);
-IsoSig = IsoSig(startInd:end,:);
-timeFIP = timeFIP(startInd:end,:);
+GSig = GSig(startInd:end-300,:);
+IsoSig = IsoSig(startInd:end-300,:);
+timeFIP = timeFIP(startInd:end-300,:);
 dFF = cell(3,1);
 winLeft = samplingFreq * 60; % used to be 20s before sample
 p = 10; % percentage
@@ -92,10 +92,17 @@ for i = 1:numChannels
     isoLow = filtfilt(b, a, IsoSig(:,i));
     GLow = filtfilt(b, a, zscore(GSig(:,i)));
     fit = fitlm(IsoSig(:,i), zscore(GSig(:,i))); 
+    dFF{i} = zscore(GSig(:,i));
     dFF{i} = zscore(GSig(:,i)) - fit.predict;
+    % dFF{i} = fit.predict;
     bl{i} = running_percentile_filter(dFF{i}, winLeft, winRight, p); 
     dFF{i} = dFF{i} - bl{i};
     isoBl{i} = fit.predict; 
+    
+    % for iso channel analysis
+    dFF{i} = zscore(IsoSig(:,i));
+    bl{i} = running_percentile_filter(dFF{i}, winLeft, winRight, p);
+    dFF{i} = dFF{i} - bl{i};
 end
 
 %% truncate into trials
@@ -104,7 +111,7 @@ midPoints = (-tb + 0.5*binSize):stepSize:(tf - 0.5*binSize);
 mPFCmatG = zeros(length(trialStarts), length(midPoints));
 THmatG = zeros(length(trialStarts), length(midPoints));
 GimatG = zeros(length(trialStarts), length(midPoints));
-
+      
 for i = 1:length(trialStarts)
     tmpTime = timeFIP(timeFIP > (trialStarts(i)-tb) & timeFIP <= (trialStarts(i)+tf));
     tmp1 = dFF{1}(timeFIP > (trialStarts(i)-tb) & timeFIP <= (trialStarts(i)+tf));
@@ -173,5 +180,5 @@ set(gcf, 'Position', screen);
 savePath = pd.saveFigFolder;
 saveFigurePDF(gcf,[savePath session 'preCompare.pdf']);
 
-save([pd.sortedFolder session '_photometryGi.mat'], 'mPFCmatG', 'THmatG', 'GimatG', 'mPFCmatChoiceG', 'THmatChoiceG', 'GimatChoiceG','tb', 'tf', 'frameRate', 'binSize', 'stepSize', 'midPoints', 'GSig', 'dFF', 'timeFIP', 'trialStarts');
+save([pd.sortedFolder session '_photometryGi_isoOnly.mat'], 'mPFCmatG', 'THmatG', 'GimatG', 'mPFCmatChoiceG', 'THmatChoiceG', 'GimatChoiceG','tb', 'tf', 'frameRate', 'binSize', 'stepSize', 'midPoints', 'GSig', 'dFF', 'timeFIP', 'trialStarts');
 

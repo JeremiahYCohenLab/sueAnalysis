@@ -62,7 +62,7 @@ for i = 1:length(allSessions)
         allAUCZS(i,j) = auROCZS(spikeCounts(outcome==0), spikeCounts(outcome==1));
     end
     allAUC(i,:) = rwdAUC;
-    allCoeff(i,:) = rwdTStats;
+    allCoeffs(i,:) = rwdTStats;
     allAUCsig(i,:) = aucSig;
 end
 %% clustering by waveform

@@ -81,6 +81,7 @@ for i = 1:numChannels
     dFF{i} = zscore(GSig(:,i)) - fit.predict;
     baseline{i} = running_percentile_filter(dFF{i}, winLeft, winRight, p); 
     dFFbl{i} = dFF{i} - baseline{i};
+    dFF{i} = dFFbl{i};
 
     [b, a] = butter(2, 1/(samplingFreq/2), "low");
     isoBl = filtfilt(b,a, IsoSig(:,i));   
@@ -223,5 +224,5 @@ set(gcf, 'Position', screen);
 
 savePath = pd.saveFigFolder;
 saveFigurePDF(gcf,[savePath session 'preCompare.pdf']);
-save([pd.sortedFolder session '_photometryCombinewithKH.mat'], 'mPFCmatG', 'NACmatG', 'LCmatG', 'mPFCmatChoiceG', 'NACmatChoiceG', 'LCmatChoiceG', 'mPFCmatR', 'NACmatR', 'LCmatR', 'mPFCmatChoiceR', 'NACmatChoiceR', 'LCmatChoiceR', 'tb', 'tf', 'frameRate', 'binSize', 'stepSize', 'midPoints', 'GSig', 'dFF', 'timeFIP', 'trialStarts');
+save([pd.sortedFolder session '_photometryCombinewithKH-bl.mat'], 'mPFCmatG', 'NACmatG', 'LCmatG', 'mPFCmatChoiceG', 'NACmatChoiceG', 'LCmatChoiceG', 'mPFCmatR', 'NACmatR', 'LCmatR', 'mPFCmatChoiceR', 'NACmatChoiceR', 'LCmatChoiceR', 'tb', 'tf', 'frameRate', 'binSize', 'stepSize', 'midPoints', 'GSig', 'dFF', 'timeFIP', 'trialStarts');
 

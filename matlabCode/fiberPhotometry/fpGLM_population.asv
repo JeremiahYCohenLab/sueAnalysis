@@ -34,15 +34,10 @@ for sess = 1:length(dayList)
     pd = parseSessionString_df(session, root, sep);
     sampFile = [pd.animalName 'good' '_', p.Results.modelName];
     path = [root pd.animalName sep pd.animalName 'sorted' sep 'stan' sep 'bernoulli' sep p.Results.modelName sep 'good' sep];
-    col = 'good';
     if ~exist(path, 'file')
         sampFile = [pd.animalName 'good_beh' '_', p.Results.modelName];
         path = [root pd.animalName sep pd.animalName 'sorted' sep 'stan' sep 'bernoulli' sep p.Results.modelName sep 'good' sep];
-        col = 'good_beh';
     end
-
-    params = getStanModelParams_sampsOnly(pd.animalName, col, p.Results.modelName, 2000, 'sessionName', session);
-
 
 
     % load sessionList and unitList
@@ -86,8 +81,7 @@ for sess = 1:length(dayList)
         svs(os.changeChoice_Inds) = 1;
         svsNext = [svs(2:end); NaN];
         svsWhenNrwd = svsNext;
-        svsWhenNrwd(os.rwd_Inds) = NaN;
-        t = inferModelVar(session, params, p.Results.modelName);
+        svsWhenNrwd(os.rwd_Inds) = NaN        t = inferModelVar(session, params, p.Results.modelName);
         
         % diff value
         Qdiff = abs(t.Q(:,2)-t.Q(:,1));
