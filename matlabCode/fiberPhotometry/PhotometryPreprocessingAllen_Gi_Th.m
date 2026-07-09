@@ -1,6 +1,6 @@
 function PhotometryPreprocessingAllen_Gi_Th(session)
 samplingFreq = 20;
-fc = 9;
+ 
 tb = 5000;
 tf = 10000;
 binSize = 100;

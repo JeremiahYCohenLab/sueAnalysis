@@ -5,6 +5,7 @@ tb = 1;
 tf = 2;
 stepSize = 200;
 binSize = 1000;
+%% 
 
 transIdx = zeros(length(waveformsSession), 1);
 for i = 1:length(transIdx)
@@ -662,6 +663,18 @@ figure2;
 hold on;
 plotFilled(mean(allPe(sigMax(:,1) & tStatsMax(:,1)>0 & ind==2,:), 'omitnan'), allSpikes(sigMax(:,1) & tStatsMax(:,1)>0 & ind==2,:), color2);
 plotFilled(mean(allPe(sigMax(:,1) & tStatsMax(:,1)<0 & ind==1,:), 'omitnan'), allSpikes(sigMax(:,1) & tStatsMax(:,1)<0 & ind==1,:), color1);
+
+set(gca, 'Box', 'off')
+set(gca,'tickdir', 'out')
+set(gca, 'XTick', [-1 0 1])
+set(gca, 'YTick', [-0.5 0 0.5])
+xlabel('rpe', 'FontSize', 18)
+ylabel('spikes/s (zscored)', 'FontSize', 18)
+%% population tuning curve by outcomeT
+figure2;
+hold on;
+plotFilled(mean(allPe(sigMax(:,1) & tStatsMax(:,1)>0,:), 'omitnan'), allSpikes(sigMax(:,1) & tStatsMax(:,1)>0,:), color2);
+plotFilled(mean(allPe(sigMax(:,1) & tStatsMax(:,1)<0,:), 'omitnan'), allSpikes(sigMax(:,1) & tStatsMax(:,1)<0,:), color1);
 
 set(gca, 'Box', 'off')
 set(gca,'tickdir', 'out')

@@ -1,4 +1,4 @@
-function [s] = behAnalysisNoPlot_opMD(sessionName, varargin)
+ function [s] = behAnalysisNoPlot_opMD(sessionName, varargin)
 
 p = inputParser;
 % default parameters if none given
@@ -53,11 +53,11 @@ end
 responseInds = find(~isnan([behSessionData.rewardTime])); % find CS+ trials with a response in the lick window
 omitInds = isnan([behSessionData.rewardTime]); 
 
-blockProbs = [[behSessionData.rewardProbL]; [behSessionData.rewardProbR]]';
-blockProbs = blockProbs(responseInds,:);
-blockSwitchL = [1; find(blockProbs(2:end,1)~= blockProbs(1:end-1,1)) + 1];
-blockSwitchR = [1; find(blockProbs(2:end,2)~= blockProbs(1:end-1,2)) + 1];
-blockSwitch = unique([blockSwitchL; blockSwitchR]);
+% blockProbs = [[behSessionData.rewardProbL]; [behSessionData.rewardProbR]]';
+% blockProbs = blockProbs(responseInds,:);
+% blockSwitchL = [1; find(blockProbs(2:end,1)~= blockProbs(1:end-1,1)) + 1];
+% blockSwitchR = [1; find(blockProbs(2:end,2)~= blockProbs(1:end-1,2)) + 1];
+% blockSwitch = unique([blockSwitchL; blockSwitchR]);
 
 rwdDelay = mode([behSessionData(responseInds).rewardTime] - [behSessionData(responseInds).respondTime]);
 allReward_R = [behSessionData(responseInds).rewardR]; 
@@ -587,7 +587,6 @@ end
 if ~p.Results.revForFlag && exist('blockSwitchL')
     s.blockSwitchL = blockSwitchL;
     s.blockSwitchR = blockSwitchR;
-    s.blockSwitch = blockSwitch;
 end
 
 

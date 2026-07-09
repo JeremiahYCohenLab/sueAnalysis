@@ -697,15 +697,15 @@ for i = 1:length(clust)
 %         ylim([0 maxFreq]);
 
 
-        z(20) = subplot(8,7,[43 50]); hold on;
-        mySDF_one_spike = allTrial_spikeMatx_slide(s.responseInds(s.lickInds==0),:);
-        mySDF_two_spike = allTrial_spikeMatx_slide(s.responseInds(s.lickInds==1),:);
-        plotFilled(slideTime, mySDF_one_spike,[0 0 1])
-        plotFilled(slideTime, mySDF_two_spike,[0.7 0 1])
-        line([0 0], [0 maxLick], 'color', 'r')
-        legend('shortLicks', '', 'longLicks', '')
-        title('short vs long')
-        ylim([0 maxFreq]);
+        % z(20) = subplot(8,7,[43 50]); hold on;
+        % mySDF_one_spike = allTrial_spikeMatx_slide(s.responseInds(s.lickInds==0),:);
+        % mySDF_two_spike = allTrial_spikeMatx_slide(s.responseInds(s.lickInds==1),:);
+        % plotFilled(slideTime, mySDF_one_spike,[0 0 1])
+        % plotFilled(slideTime, mySDF_two_spike,[0.7 0 1])
+        % line([0 0], [0 maxLick], 'color', 'r')
+        % legend('shortLicks', '', 'longLicks', '')
+        % title('short vs long')
+        % ylim([0 maxFreq]);
     end
     
     % CSplus vs CSminus

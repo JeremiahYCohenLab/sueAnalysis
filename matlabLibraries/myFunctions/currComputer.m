@@ -1,14 +1,16 @@
-function [root, sep] = currComputer()
+function [root, sep] = currComputer(customRoot)
 
+if nargin > 0 && ~isempty(customRoot)
+    root = customRoot;
+else 
+    root = 'F:\';
+end
+
+% Default behavior based on OS
 if ismac
-    root = '/Volumes/cooper/';
-  %  root = '/Volumes/bbari1/';
     sep = '/';
 elseif ispc
-   root = 'F:\';
-  %  root = 'Z:\';
-%    root = 'C:\Users\zhixi\Documents\data\';
-  %  root = 'D:\';
-%     root = 'C:\Users\zhixi\Documents\data\';
     sep = '\';
+else
+    error('Unsupported OS');
 end

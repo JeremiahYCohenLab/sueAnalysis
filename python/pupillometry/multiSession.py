@@ -15,9 +15,9 @@ import pandas as pd
 import numpy as np
 import deeplabcut
 #%%
-file = r'F:\activationAll.xlsx'
-sheet  = '689515'
-col = 'all'
+file = r'F:\photometry_summary.xlsx'
+sheet  = '699461'
+col = 'mPFC'
 cdnn = 'edgeHiddenLEDinPupil-ZS-2021-05-19'
 cdnn = 'pupilAllen-ZS-2023-12-20'
 #cdnn = 'pupilEdge-Katie-2021-12-08'
@@ -29,9 +29,9 @@ for i in range(len(df)):
            
     
 #%%
-ani = ['ZS082', 'ZS083', 'ZS084', 'ZS085', 'ZS086'];
-dates = ['20220612'];
-
+ani = ['754896'];
+dates = ['20250108'];
+cdnn = 'pupilAllen-ZS-2023-12-20'
 for i in range(len(ani)):
     for j in range(len(dates)):
         session = f"m{ani[i]}d{dates[j]}";  

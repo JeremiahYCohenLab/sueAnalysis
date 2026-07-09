@@ -14,7 +14,7 @@ p.addParameter('iter', 10000);
 p.addParameter('warmup', []);
 p.addParameter('saveFlag', 1);
 p.addParameter('maxTrial', 1000);
-p.addParameter('numChains', 8);
+p.addParameter('nudamChains', 8);
 p.addParameter('simFlag', 0);
 p.addParameter('control', struct('delta', 0.85))
 p.parse(varargin{:});

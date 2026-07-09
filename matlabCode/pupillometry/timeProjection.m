@@ -14,5 +14,5 @@ function [p, csF, csFT] = timeProjection(ledLL, csT, startFrame, startTrial, rat
     cskernel = ones(1, round(0.5 * ratio));
     csF = conv(csF, cskernel);
     csF = csF(1:(end - length(cskernel) + 1));
-    p = csF * ledLL;
+    p = (2*csF) * ledLL;
 end

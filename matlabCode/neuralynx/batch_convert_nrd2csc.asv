@@ -1,0 +1,91 @@
+% Get day list and paths
+% Get day list and paths
+dayList = getDayList('ZS059', 'ZS059', 'all');
+[root, sep] = currComputer('E:\');
+[root_save, sep_save] = currComputer('D:\raw_ephys_conversion\');
+
+%% check range
+% Define the session indices to process
+session_inds = 1:length(dayList);
+session_max = [];
+session_min = [];
+
+session_inds = 1:5;
+
+% Loop over sessions
+for idx = 1:length(session_inds)
+    session_ind = session_inds(idx);
+    session = dayList{session_ind};
+    fprintf('Processing %s\n', session);
+
+    % Parse session paths 
+    ani_dir = parseSessionString_df(session, root, sep);
+    ani_dir_save = parseSessionString_df(session, root_save, sep_save);
+
+    % --- SESSION DATA ---
+    if isfield(ani_dir, 'nLynxFolderSession') 
+        session_raw = ani_dir.nLynxFolderSession;
+        session_raw_save = fullfile(ani_dir_save.baseFolder, 'neuralynx', 'session'); % safer than string concat
+        fprintf('%s raw \n', session);
+
+        % Run your helper function
+        [all_min, all_max] = read_range(session_raw);
+
+        % Concatenate results vertically
+        session_min = [session_min; all_min(:)];  
+        session_max = [session_max; all_max(:)];
+    else
+        fprintf('%s no session recording \n', session);
+    end
+end
+
+
+%% 
+
+% Define the session indices to process
+session_inds = 3:length(dayList);
+
+% Start parallel loop
+for idx = 1:length(session_inds)
+    session_ind = session_inds(idx);
+    session = dayList{session_ind};
+    fprintf(['Processing ' session '\n'])
+    % Parse session paths 
+    ani_dir = parseSessionString_df(session, root, sep);
+    ani_dir_save = parseSessionString_df(session, root_save, sep_save);
+
+    % --- SESSION DATA ---
+    if isfield(ani_dir, 'nLynxFolderSession') 
+        session_raw = ani_dir.nLynxFolderSession;
+        session_raw_save = [ani_dir_save.baseFolder 'neuralynx\session\'];
+        if ~exist(session_raw_save, 'dir')
+            mkdir(session_raw_save)
+        end
+        fprintf([session ' raw \n'])
+        convert_nrd2csc(session_raw, session_raw_save)
+    else
+        fprintf([session ' no session recording \n'])
+    end
+
+    % --- OPTO FILES ---
+    if isfield(ani_dir, 'nLynxFolderSession') 
+        opto_dir = ani_dir.nLynxFolderOpto;
+        if exist(opto_dir, 'dir')
+            contents = dir(opto_dir);
+            opto_folders = {contents([contents.isdir] & ~ismember({contents.name}, {'.', '..'})).name};
+    
+            for opto_folder_ind = 1:length(opto_folders)
+                opto_folder = opto_folders{opto_folder_ind};
+                fprintf([session ' ' opto_folder '\n'])
+                session_raw = [opto_dir opto_folder '\'];
+                session_raw_save = [ani_dir_save.baseFolder 'neuralynx\opto\' opto_folder, '\'];
+                if ~exist(session_raw_save, 'dir')
+                    mkdir(session_raw_save)
+                end
+                convert_nrd2csc(session_raw, session_raw_save)
+            end
+        end
+    else
+        fprintf([session ' no opto recording \n'])
+    end
+end

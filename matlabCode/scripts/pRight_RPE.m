@@ -117,7 +117,7 @@ choiceCombined = choiceCombined(1:maxTrial, :)';
 predRCombined = predRCombined(1:maxTrial, :)';
 predCCombined = predCCombined(1:maxTrial, :)';
 %% simulation analysis session by session
-numBins = 20;
+numBins = 10;
 allMeans = NaN(size(peCombined, 1), numBins);
 meanPe = NaN(size(peCombined, 1), numBins);
 
@@ -614,7 +614,7 @@ for i = 1:length(allSessions)
 %     allMeans(i,:) = temp;
     allMeans(i,:) = allMeans(i,:) - meanChange;
 end
-%%
+%% plot by type I and II 
 coeffsMax = [lmMaxAll.coeffs]';
 tStatsMax = [lmMaxAll.tStats]';
 sigMax = [lmMaxAll.ps]'<0.05;
@@ -636,6 +636,32 @@ subplot(1,2,2);
 errorbar(mean(meanPe(sigMax(:,1)==1&coeffsMax(:,1)<0&ind==1,:), 'omitnan'), mean(allMeans(sigMax(:, 1)==1&coeffsMax(:,1)<0&ind==1,:), 'omitnan'), ...
     sem(allMeans(sigMax(:, 1)==1&coeffsMax(:,1)<0&ind==1,:)), 'LineWidth', 2, 'Color', color1);
 title('deltaP(currC)-spike, typeII')
+set(gca,'Box', 'off');
+set(gca, 'TickDir', 'out')
+xlabel('spike/s (zscored)')
+ylim([-0.05 0.05])
+%% plot by outcome sign
+coeffsMax = [lmMaxAll.coeffs]';
+tStatsMax = [lmMaxAll.tStats]';
+sigMax = [lmMaxAll.ps]'<0.05;
+
+color1 = [0 0 0];
+color2 = [0.5 0.5 0.5];
+
+figure2Wide;
+subplot(1,2,1);
+errorbar(mean(meanPe(sigMax(:,1)==1&coeffsMax(:,1)>0,:), 'omitnan'), mean(allMeans(sigMax(:, 1)==1&coeffsMax(:,1)>0&ind==2,:), 'omitnan'), ...
+    sem(allMeans(sigMax(:, 1)==1&coeffsMax(:,1)>0&ind==2,:)), 'LineWidth', 2, 'Color', color2);
+title('deltaP(curr)-spike, pos')
+set(gca,'Box', 'off');
+set(gca, 'TickDir', 'out')
+xlabel('spike/s (zscored)')
+ylabel('deltaP(currC)')
+ylim([-0.05 0.05])
+subplot(1,2,2);
+errorbar(mean(meanPe(sigMax(:,1)==1&coeffsMax(:,1)<0,:), 'omitnan'), mean(allMeans(sigMax(:, 1)==1&coeffsMax(:,1)<0&ind==1,:), 'omitnan'), ...
+    sem(allMeans(sigMax(:, 1)==1&coeffsMax(:,1)<0&ind==1,:)), 'LineWidth', 2, 'Color', color1);
+title('deltaP(currC)-spike, neg')
 set(gca,'Box', 'off');
 set(gca, 'TickDir', 'out')
 xlabel('spike/s (zscored)')

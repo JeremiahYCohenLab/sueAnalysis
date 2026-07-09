@@ -208,8 +208,8 @@ sessionRwdsSmooth = sessionRwdsSmooth(1:(end-(length(boxKern)-1)));
 
 
 %% Generate smoothed choice-history values       
-[choiceHx_Sorted,choiceHx_Inds] = sort(s.choiceHx);                                          %sort by choice history
-choiceHx_Lims = [find(choiceHx_Sorted < -0.9999, 1) find(choiceHx_Sorted > 0.9999, 1)];           %find where choice hist is all L or all R
+% [choiceHx_Sorted,choiceHx_Inds] = sort(s.choiceHx);                                          %sort by choice history
+% choiceHx_Lims = [find(choiceHx_Sorted < -0.9999, 1) find(choiceHx_Sorted > 0.9999, 1)];           %find where choice hist is all L or all R
 
 
 %% Generate smoothed reward-history values over trials
@@ -392,7 +392,7 @@ for i = 1:length(clust)
     % All trials
     r(1) = subplot(8,7,[1 8 15 22]); t(1) = title('All Trials');
     plotSpikeRaster(allTrial_spike_choice(i,:),'PlotType','vertline'); hold on
-    plot(repmat([-5000 10000],length(s.blockSwitch),1)', [s.blockSwitch; s.blockSwitch],'r')
+    plot(repmat([-5000 10000],length(s.blockSwitch),1)', [s.blockSwitch, s.blockSwitch]','r')
     line([s.rwdDelay s.rwdDelay], [0 length(s.responseInds)], 'color', 'r')
     
     
